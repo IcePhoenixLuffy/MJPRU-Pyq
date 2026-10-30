@@ -1,0 +1,76 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --color-mjpru-green: #8bf0ba;
+    --color-mjpru-blue: #0e0fed;
+    --color-mjpru-cyan: #94f0f1;
+    --color-mjpru-pink: #f2b1d8;
+    --color-mjpru-yellow: #ffdc6a;
+  }
+
+  body {
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    overflow-x: hidden;
+    background-color: #f8fafc;
+    color: #0f172a;
+  }
+
+  code, pre, .font-mono {
+    font-family: 'JetBrains Mono', monospace;
+  }
+}
+
+/* Light theme custom scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Luminous gradient text with accessible contrast */
+.gradient-text-primary {
+  background: linear-gradient(135deg, #0e0fed 0%, #0284c7 60%, #059669 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.gradient-text-brand {
+  background: linear-gradient(135deg, #0e0fed 0%, #ec4899 50%, #059669 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.gradient-text-accent {
+  background: linear-gradient(135deg, #d97706 0%, #059669 50%, #0284c7 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Light gradient border card */
+.gradient-border-light {
+  position: relative;
+  border-radius: 1rem;
+  background: linear-gradient(135deg, rgba(139, 240, 186, 0.4), rgba(14, 15, 237, 0.25), rgba(242, 177, 216, 0.4));
+  padding: 1px;
+}
+
+.gradient-border-inner-light {
+  background: #ffffff;
+  border-radius: calc(1rem - 1px);
+}
+
+/* Magnetic element smooth transition */
+.magnetic-target {
+  transition: transform 0.22s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.22s ease-out;
+  will-change: transform;
+}

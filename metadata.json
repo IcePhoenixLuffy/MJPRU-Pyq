@@ -1,0 +1,6 @@
+{
+  "name": "MJPRU PYQ – University Question Paper Library",
+  "description": "Previous Year Question Paper (PYQ) platform for M.J.P. Rohilkhand University, Bareilly. Access B.Tech papers by department, semester, and subject with online preview.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
