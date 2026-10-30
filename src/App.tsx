@@ -152,8 +152,8 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#f8fafc] text-slate-900 selection:bg-[#8bf0ba] selection:text-slate-900">
-      {/* Magnetic Cursor for Desktop (True magnetic element attraction, no dot or circle) */}
+    <div className="min-h-screen flex flex-col bg-gradient-full-mesh text-slate-900 selection:bg-[#8bf0ba] selection:text-slate-900 relative">
+      {/* Custom Magnetic Cursor (Replaces default Windows cursor, no dot/ring) */}
       <MagneticCursor />
 
       {/* Top Navbar */}

@@ -306,67 +306,69 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   };
 
   // -------------------------------------------------------------
-  // LOGIN SCREEN (LIGHT THEME)
+  // LOGIN SCREEN (LIGHT GRADIENT THEME)
   // -------------------------------------------------------------
   if (!isAuthenticated) {
     return (
       <div className="max-w-md mx-auto px-4 py-16">
-        <div className="bg-white border border-slate-200/90 rounded-3xl p-8 space-y-6 shadow-xl">
-          <div className="text-center space-y-2">
-            <div className="w-12 h-12 rounded-2xl bg-blue-50 text-[#0e0fed] flex items-center justify-center mx-auto border border-blue-100 shadow-2xs">
-              <Lock className="w-6 h-6" />
-            </div>
-            <h1 className="text-xl font-extrabold text-slate-900">Administrator Access</h1>
-            <p className="text-xs text-slate-500">
-              Sign in to manage departments, subjects, and upload question paper PDFs.
-            </p>
-          </div>
-
-          {authError && (
-            <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-xs text-red-600 flex items-center gap-2">
-              <AlertCircle className="w-4 h-4 shrink-0" />
-              <span>{authError}</span>
-            </div>
-          )}
-
-          <form onSubmit={handleLogin} className="space-y-4">
-            <div className="space-y-1.5">
-              <label className="text-xs font-bold text-slate-700">Admin Email</label>
-              <input
-                type="email"
-                required
-                value={adminEmail}
-                onChange={(e) => setAdminEmail(e.target.value)}
-                placeholder="admin@mjpru.ac.in"
-                className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:border-[#0e0fed]"
-              />
+        <div className="p-0.5 rounded-3xl bg-gradient-to-br from-[#8bf0ba] via-[#94f0f1] to-[#f2b1d8] shadow-xl">
+          <div className="bg-white/95 backdrop-blur-md rounded-[22px] p-8 space-y-6">
+            <div className="text-center space-y-2">
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-[#94f0f1]/30 via-[#8bf0ba]/30 to-[#f2b1d8]/30 text-[#0e0fed] flex items-center justify-center mx-auto border border-blue-200/80 shadow-sm">
+                <Lock className="w-7 h-7" />
+              </div>
+              <h1 className="text-2xl font-black text-slate-900">Administrator Access</h1>
+              <p className="text-xs text-slate-600 font-medium">
+                Sign in to manage departments, subjects, and upload question paper PDFs.
+              </p>
             </div>
 
-            <div className="space-y-1.5">
-              <label className="text-xs font-bold text-slate-700">Password</label>
-              <input
-                type="password"
-                required
-                value={adminPassword}
-                onChange={(e) => setAdminPassword(e.target.value)}
-                placeholder="••••••••"
-                className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:border-[#0e0fed]"
-              />
+            {authError && (
+              <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-xs text-red-600 flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 shrink-0" />
+                <span>{authError}</span>
+              </div>
+            )}
+
+            <form onSubmit={handleLogin} className="space-y-4">
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-slate-700">Admin Email</label>
+                <input
+                  type="email"
+                  required
+                  value={adminEmail}
+                  onChange={(e) => setAdminEmail(e.target.value)}
+                  placeholder="admin@mjpru.ac.in"
+                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:border-[#0e0fed] focus:ring-2 focus:ring-[#0e0fed]/20 font-medium"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-slate-700">Password</label>
+                <input
+                  type="password"
+                  required
+                  value={adminPassword}
+                  onChange={(e) => setAdminPassword(e.target.value)}
+                  placeholder="••••••••"
+                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:border-[#0e0fed] focus:ring-2 focus:ring-[#0e0fed]/20 font-medium"
+                />
+              </div>
+
+              <button
+                type="submit"
+                className="w-full py-3 bg-gradient-to-r from-[#0e0fed] to-[#2563eb] text-white font-extrabold text-xs rounded-xl hover:opacity-95 transition-all shadow-md active:scale-95 magnetic-target"
+                data-magnetic="true"
+              >
+                Sign In to Admin Portal
+              </button>
+            </form>
+
+            <div className="pt-2 border-t border-slate-100 text-center">
+              <span className="text-[11px] text-slate-500 font-semibold">
+                Default credentials pre-filled for university demo access.
+              </span>
             </div>
-
-            <button
-              type="submit"
-              className="w-full py-3 bg-[#0e0fed] text-white font-bold text-xs rounded-xl hover:bg-blue-700 transition-all shadow-md active:scale-95 magnetic-target"
-              data-magnetic="true"
-            >
-              Sign In to Admin Portal
-            </button>
-          </form>
-
-          <div className="pt-2 border-t border-slate-100 text-center">
-            <span className="text-[11px] text-slate-400 font-medium">
-              Default access configured for university administrators.
-            </span>
           </div>
         </div>
       </div>
@@ -392,32 +394,32 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       )}
 
       {/* Top Header & Logout */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-6">
+      <div className="relative overflow-hidden rounded-3xl p-6 sm:p-8 bg-gradient-to-r from-white/95 via-[#94f0f1]/25 to-[#f2b1d8]/30 border border-white/70 shadow-sm backdrop-blur-md flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <span className="text-xs font-bold uppercase tracking-wider text-[#0e0fed]">
+            <span className="text-xs font-black uppercase tracking-wider text-[#0e0fed]">
               Administrative Console
             </span>
-            <span className={`text-[10px] font-mono px-2.5 py-0.5 rounded-full border font-semibold ${
+            <span className={`text-[10px] font-mono px-2.5 py-0.5 rounded-full border font-bold ${
               isSupabaseConfigured()
-                ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                : 'bg-amber-50 text-amber-700 border-amber-200'
+                ? 'bg-emerald-50 text-emerald-700 border-emerald-300'
+                : 'bg-amber-50 text-amber-700 border-amber-300'
             }`}>
               {isSupabaseConfigured() ? '● Supabase Connected' : '○ Local Storage Engine'}
             </span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1">
-            MJPRU PYQ Management System
+          <h1 className="text-2xl sm:text-3xl font-black text-slate-900 mt-1">
+            MJPRU PYQ <span className="gradient-text-primary">Management System</span>
           </h1>
-          <p className="text-xs text-slate-500 mt-1 font-medium">
-            Logged in as <span className="text-slate-800 font-mono font-bold">{adminEmail}</span>
+          <p className="text-xs text-slate-600 mt-1 font-semibold">
+            Logged in as <span className="text-[#0e0fed] font-mono font-bold">{adminEmail}</span>
           </p>
         </div>
 
         <div className="flex items-center gap-3">
           <button
             onClick={onResetData}
-            className="px-3.5 py-2 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 rounded-xl text-xs font-bold transition-colors shadow-2xs magnetic-target"
+            className="px-3.5 py-2 bg-white/90 border border-slate-300 hover:bg-slate-50 text-slate-800 rounded-xl text-xs font-extrabold transition-all shadow-2xs magnetic-target active:scale-95"
             title="Restore sample university data"
             data-magnetic="true"
           >
@@ -426,7 +428,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
           <button
             onClick={() => setIsAuthenticated(false)}
-            className="flex items-center gap-1.5 px-3.5 py-2 bg-red-50 border border-red-200 hover:bg-red-100 text-red-700 rounded-xl text-xs font-bold transition-colors magnetic-target"
+            className="flex items-center gap-1.5 px-4 py-2 bg-red-50 border border-red-200 hover:bg-red-100 text-red-700 rounded-xl text-xs font-extrabold transition-all magnetic-target active:scale-95"
             data-magnetic="true"
           >
             <LogOut className="w-3.5 h-3.5" />
@@ -436,12 +438,15 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       </div>
 
       {/* Admin Sub-navigation Tabs */}
-      <div className="flex flex-wrap items-center gap-2 p-1.5 bg-white border border-slate-200 rounded-2xl text-xs font-bold shadow-xs">
+      <div className="flex flex-wrap items-center gap-2 p-1.5 bg-white/90 backdrop-blur-md border border-slate-200/90 rounded-2xl text-xs font-black shadow-xs">
         <button
           onClick={() => setActiveTab('overview')}
-          className={`flex items-center gap-1.5 px-4 py-2 rounded-xl transition-colors ${
-            activeTab === 'overview' ? 'bg-[#0e0fed] text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
+          className={`flex items-center gap-1.5 px-4 py-2 rounded-xl transition-all magnetic-target ${
+            activeTab === 'overview'
+              ? 'bg-gradient-to-r from-[#0e0fed] to-[#2563eb] text-white shadow-md'
+              : 'text-slate-700 hover:text-slate-900 hover:bg-slate-100'
           }`}
+          data-magnetic="true"
         >
           <Layers className="w-4 h-4" />
           <span>Overview</span>
@@ -449,9 +454,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
         <button
           onClick={() => setActiveTab('departments')}
-          className={`flex items-center gap-1.5 px-4 py-2 rounded-xl transition-colors ${
-            activeTab === 'departments' ? 'bg-[#0e0fed] text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
+          className={`flex items-center gap-1.5 px-4 py-2 rounded-xl transition-all magnetic-target ${
+            activeTab === 'departments'
+              ? 'bg-gradient-to-r from-[#0e0fed] to-[#2563eb] text-white shadow-md'
+              : 'text-slate-700 hover:text-slate-900 hover:bg-slate-100'
           }`}
+          data-magnetic="true"
         >
           <GraduationCap className="w-4 h-4" />
           <span>Departments ({departments.length})</span>
@@ -459,9 +467,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
         <button
           onClick={() => setActiveTab('subjects')}
-          className={`flex items-center gap-1.5 px-4 py-2 rounded-xl transition-colors ${
-            activeTab === 'subjects' ? 'bg-[#0e0fed] text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
+          className={`flex items-center gap-1.5 px-4 py-2 rounded-xl transition-all magnetic-target ${
+            activeTab === 'subjects'
+              ? 'bg-gradient-to-r from-[#0e0fed] to-[#2563eb] text-white shadow-md'
+              : 'text-slate-700 hover:text-slate-900 hover:bg-slate-100'
           }`}
+          data-magnetic="true"
         >
           <BookOpen className="w-4 h-4" />
           <span>Subjects ({subjects.length})</span>
@@ -469,9 +480,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
         <button
           onClick={() => setActiveTab('papers')}
-          className={`flex items-center gap-1.5 px-4 py-2 rounded-xl transition-colors ${
-            activeTab === 'papers' ? 'bg-[#0e0fed] text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
+          className={`flex items-center gap-1.5 px-4 py-2 rounded-xl transition-all magnetic-target ${
+            activeTab === 'papers'
+              ? 'bg-gradient-to-r from-[#0e0fed] to-[#2563eb] text-white shadow-md'
+              : 'text-slate-700 hover:text-slate-900 hover:bg-slate-100'
           }`}
+          data-magnetic="true"
         >
           <UploadCloud className="w-4 h-4" />
           <span>Upload &amp; Manage Papers ({papers.length})</span>
@@ -479,9 +493,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
         <button
           onClick={() => setActiveTab('supabase')}
-          className={`flex items-center gap-1.5 px-4 py-2 rounded-xl transition-colors ${
-            activeTab === 'supabase' ? 'bg-[#0e0fed] text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
+          className={`flex items-center gap-1.5 px-4 py-2 rounded-xl transition-all magnetic-target ${
+            activeTab === 'supabase'
+              ? 'bg-gradient-to-r from-[#0e0fed] to-[#2563eb] text-white shadow-md'
+              : 'text-slate-700 hover:text-slate-900 hover:bg-slate-100'
           }`}
+          data-magnetic="true"
         >
           <Database className="w-4 h-4" />
           <span>Supabase &amp; SQL Setup</span>
@@ -494,30 +511,34 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       {activeTab === 'overview' && (
         <div className="space-y-8">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            <div className="p-6 bg-white border border-slate-200/90 rounded-2xl shadow-xs">
-              <div className="text-xs text-slate-500 font-bold uppercase">Departments</div>
-              <div className="text-3xl font-extrabold text-slate-900 mt-1 font-mono">{departments.length}</div>
-              <div className="text-xs text-emerald-600 font-semibold mt-2">Dynamic branches supported</div>
+            <div className="relative overflow-hidden p-6 bg-white/90 backdrop-blur-md border border-slate-200/90 rounded-2xl shadow-sm hover:shadow-md transition-all">
+              <div className="h-1.5 w-full bg-gradient-to-r from-[#8bf0ba] to-[#94f0f1] absolute top-0 left-0" />
+              <div className="text-xs text-slate-500 font-extrabold uppercase">Departments</div>
+              <div className="text-3xl font-black text-slate-900 mt-1 font-mono">{departments.length}</div>
+              <div className="text-xs text-emerald-700 font-bold mt-2">Dynamic branches supported</div>
             </div>
 
-            <div className="p-6 bg-white border border-slate-200/90 rounded-2xl shadow-xs">
-              <div className="text-xs text-slate-500 font-bold uppercase">Subjects</div>
-              <div className="text-3xl font-extrabold text-slate-900 mt-1 font-mono">{subjects.length}</div>
-              <div className="text-xs text-blue-600 font-semibold mt-2">Across Semesters 1 to 8</div>
+            <div className="relative overflow-hidden p-6 bg-white/90 backdrop-blur-md border border-slate-200/90 rounded-2xl shadow-sm hover:shadow-md transition-all">
+              <div className="h-1.5 w-full bg-gradient-to-r from-[#94f0f1] to-[#0e0fed] absolute top-0 left-0" />
+              <div className="text-xs text-slate-500 font-extrabold uppercase">Subjects</div>
+              <div className="text-3xl font-black text-slate-900 mt-1 font-mono">{subjects.length}</div>
+              <div className="text-xs text-[#0e0fed] font-bold mt-2">Across Semesters 1 to 8</div>
             </div>
 
-            <div className="p-6 bg-white border border-slate-200/90 rounded-2xl shadow-xs">
-              <div className="text-xs text-slate-500 font-bold uppercase">Question Papers</div>
-              <div className="text-3xl font-extrabold text-slate-900 mt-1 font-mono">{papers.length}</div>
-              <div className="text-xs text-pink-600 font-semibold mt-2">Active in digital catalog</div>
+            <div className="relative overflow-hidden p-6 bg-white/90 backdrop-blur-md border border-slate-200/90 rounded-2xl shadow-sm hover:shadow-md transition-all">
+              <div className="h-1.5 w-full bg-gradient-to-r from-[#f2b1d8] to-[#ffdc6a] absolute top-0 left-0" />
+              <div className="text-xs text-slate-500 font-extrabold uppercase">Question Papers</div>
+              <div className="text-3xl font-black text-slate-900 mt-1 font-mono">{papers.length}</div>
+              <div className="text-xs text-pink-700 font-bold mt-2">Active in digital catalog</div>
             </div>
 
-            <div className="p-6 bg-white border border-slate-200/90 rounded-2xl shadow-xs">
-              <div className="text-xs text-slate-500 font-bold uppercase">Total Downloads</div>
-              <div className="text-3xl font-extrabold text-slate-900 mt-1 font-mono">
+            <div className="relative overflow-hidden p-6 bg-white/90 backdrop-blur-md border border-slate-200/90 rounded-2xl shadow-sm hover:shadow-md transition-all">
+              <div className="h-1.5 w-full bg-gradient-to-r from-[#8bf0ba] to-[#ffdc6a] absolute top-0 left-0" />
+              <div className="text-xs text-slate-500 font-extrabold uppercase">Total Downloads</div>
+              <div className="text-3xl font-black text-slate-900 mt-1 font-mono">
                 {papers.reduce((sum, p) => sum + p.downloadCount, 0)}
               </div>
-              <div className="text-xs text-amber-600 font-semibold mt-2">Student paper retrievals</div>
+              <div className="text-xs text-amber-700 font-bold mt-2">Student paper retrievals</div>
             </div>
           </div>
 

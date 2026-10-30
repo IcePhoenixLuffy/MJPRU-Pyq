@@ -70,21 +70,23 @@ export const PdfViewerModal: React.FC<PdfViewerModalProps> = ({
       aria-labelledby="pdf-modal-title"
     >
       <div className="relative w-full max-w-5xl h-[92vh] flex flex-col bg-slate-100 border border-slate-200 rounded-3xl shadow-2xl overflow-hidden">
+        {/* Top 5-color accent ribbon */}
+        <div className="h-1.5 w-full bg-gradient-to-r from-[#8bf0ba] via-[#94f0f1] via-[#0e0fed] via-[#f2b1d8] to-[#ffdc6a]" />
         
         {/* Top Control Bar */}
         <header className="flex flex-wrap items-center justify-between gap-3 px-5 py-3.5 bg-white border-b border-slate-200 text-slate-800 shadow-2xs">
           <div className="flex items-center gap-3 min-w-0">
-            <div className="p-2.5 rounded-xl bg-blue-50 text-[#0e0fed]">
-              <FileText className="w-5 h-5" />
+            <div className="p-2.5 rounded-xl bg-gradient-to-tr from-[#94f0f1]/30 to-[#8bf0ba]/30 text-[#0e0fed] border border-blue-100 shadow-2xs">
+              <FileText className="w-5 h-5 text-[#0e0fed]" />
             </div>
             <div className="truncate">
-              <h2 id="pdf-modal-title" className="text-sm font-bold text-slate-900 truncate">
+              <h2 id="pdf-modal-title" className="text-sm font-black text-slate-900 truncate">
                 {paper.subjectCode} &bull; {paper.subjectName}
               </h2>
-              <div className="flex items-center gap-2 text-xs text-slate-500 font-medium">
+              <div className="flex items-center gap-2 text-xs text-slate-600 font-semibold">
                 <span>{paper.departmentName}</span>
                 <span>&bull;</span>
-                <span>{paper.examinationYear} ({paper.examinationType})</span>
+                <span className="font-mono text-[#0e0fed]">{paper.examinationYear} ({paper.examinationType})</span>
               </div>
             </div>
           </div>
@@ -92,48 +94,53 @@ export const PdfViewerModal: React.FC<PdfViewerModalProps> = ({
           {/* Viewer Toolbar */}
           <div className="flex items-center gap-1 sm:gap-2">
             {/* Page Navigation */}
-            <div className="flex items-center bg-slate-50 border border-slate-200 rounded-xl p-0.5 text-xs text-slate-700">
+            <div className="flex items-center bg-slate-50 border border-slate-200 rounded-xl p-0.5 text-xs text-slate-700 shadow-2xs">
               <button
                 onClick={handlePrevPage}
                 disabled={currentPage <= 1}
                 aria-label="Previous Page"
-                className="p-1.5 rounded-lg hover:bg-white disabled:opacity-40 transition-colors"
+                className="p-1.5 rounded-lg hover:bg-white disabled:opacity-40 transition-colors magnetic-target"
+                data-magnetic="true"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
-              <span className="px-2 font-mono text-xs font-bold">
+              <span className="px-2 font-mono text-xs font-black text-slate-800">
                 Page {currentPage} of {totalPages}
               </span>
               <button
                 onClick={handleNextPage}
                 disabled={currentPage >= totalPages}
                 aria-label="Next Page"
-                className="p-1.5 rounded-lg hover:bg-white disabled:opacity-40 transition-colors"
+                className="p-1.5 rounded-lg hover:bg-white disabled:opacity-40 transition-colors magnetic-target"
+                data-magnetic="true"
               >
                 <ChevronRight className="w-4 h-4" />
               </button>
             </div>
 
             {/* Zoom Controls */}
-            <div className="hidden sm:flex items-center bg-slate-50 border border-slate-200 rounded-xl p-0.5 text-xs text-slate-700">
+            <div className="hidden sm:flex items-center bg-slate-50 border border-slate-200 rounded-xl p-0.5 text-xs text-slate-700 shadow-2xs">
               <button
                 onClick={handleZoomOut}
                 aria-label="Zoom Out"
-                className="p-1.5 rounded-lg hover:bg-white transition-colors"
+                className="p-1.5 rounded-lg hover:bg-white transition-colors magnetic-target"
+                data-magnetic="true"
               >
                 <ZoomOut className="w-4 h-4" />
               </button>
               <button
                 onClick={handleResetZoom}
-                className="px-2 font-mono text-xs font-bold hover:text-[#0e0fed] transition-colors"
+                className="px-2 font-mono text-xs font-black hover:text-[#0e0fed] transition-colors magnetic-target"
                 title="Reset zoom"
+                data-magnetic="true"
               >
                 {zoomLevel}%
               </button>
               <button
                 onClick={handleZoomIn}
                 aria-label="Zoom In"
-                className="p-1.5 rounded-lg hover:bg-white transition-colors"
+                className="p-1.5 rounded-lg hover:bg-white transition-colors magnetic-target"
+                data-magnetic="true"
               >
                 <ZoomIn className="w-4 h-4" />
               </button>
@@ -144,7 +151,8 @@ export const PdfViewerModal: React.FC<PdfViewerModalProps> = ({
               onClick={handleRotate}
               aria-label="Rotate Page"
               title="Rotate 90 degrees"
-              className="p-2 rounded-xl bg-slate-50 border border-slate-200 hover:bg-white text-slate-700 transition-colors"
+              className="p-2 rounded-xl bg-slate-50 border border-slate-200 hover:bg-white text-slate-700 transition-colors shadow-2xs magnetic-target"
+              data-magnetic="true"
             >
               <RotateCw className="w-4 h-4" />
             </button>
@@ -152,7 +160,8 @@ export const PdfViewerModal: React.FC<PdfViewerModalProps> = ({
             {/* Download Button */}
             <button
               onClick={handleDownload}
-              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold text-white bg-[#0e0fed] hover:bg-blue-700 transition-all shadow-sm active:scale-95"
+              className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-black text-white bg-gradient-to-r from-[#0e0fed] to-[#2563eb] hover:opacity-95 transition-all shadow-md active:scale-95 magnetic-target"
+              data-magnetic="true"
             >
               <Download className="w-3.5 h-3.5 text-[#8bf0ba]" />
               <span>Download PDF</span>
@@ -162,7 +171,8 @@ export const PdfViewerModal: React.FC<PdfViewerModalProps> = ({
             <button
               onClick={onClose}
               aria-label="Close PDF Viewer"
-              className="p-2 rounded-xl text-slate-400 hover:text-slate-900 hover:bg-slate-100 transition-colors ml-1"
+              className="p-2 rounded-xl text-slate-400 hover:text-slate-900 hover:bg-slate-100 transition-colors ml-1 magnetic-target"
+              data-magnetic="true"
             >
               <X className="w-5 h-5" />
             </button>
@@ -222,7 +232,8 @@ export const PdfViewerModal: React.FC<PdfViewerModalProps> = ({
           <div className="flex items-center gap-3 font-semibold">
             <button
               onClick={handlePrint}
-              className="flex items-center gap-1 hover:text-[#0e0fed] transition-colors"
+              className="flex items-center gap-1 hover:text-[#0e0fed] transition-colors magnetic-target"
+              data-magnetic="true"
             >
               <Printer className="w-3.5 h-3.5" />
               <span>Print</span>
@@ -230,7 +241,8 @@ export const PdfViewerModal: React.FC<PdfViewerModalProps> = ({
             <span>&bull;</span>
             <button
               onClick={onClose}
-              className="hover:text-[#0e0fed] transition-colors"
+              className="hover:text-[#0e0fed] transition-colors magnetic-target"
+              data-magnetic="true"
             >
               Back to Library
             </button>

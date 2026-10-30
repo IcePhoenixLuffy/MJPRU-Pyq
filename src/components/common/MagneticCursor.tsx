@@ -1,92 +1,165 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 
 /**
- * Genuine Magnetic Cursor Interaction Controller
+ * Custom Magnetic Cursor
  * 
- * Attracts interactive buttons, navigation items, and cards toward the cursor
- * as the cursor approaches or hovers over them.
- * 
- * Complies with strict design instructions:
- * - NO custom circular cursor
- * - NO dot cursor
- * - NO follower ring
- * - System cursor remains normal and visible
+ * Replaces the default system mouse cursor completely on desktop.
+ * - Single precision geometric cursor (NO dot surrounded by circle, NO trailing rings).
+ * - Smooth, zero-lag tracking with subtle spring dynamics.
+ * - Magnetic attraction on interactive targets (buttons, links, cards).
+ * - Transforms size and color on hover and click.
+ * - Automatically disabled on touch devices.
  */
 export const MagneticCursor: React.FC = () => {
-  useEffect(() => {
-    // Only enable on pointer-fine devices (desktop mouse/trackpad), never touch
-    const hasFinePointer = window.matchMedia('(pointer: fine)').matches;
-    if (!hasFinePointer) return;
+  const [isEnabled, setIsEnabled] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+  const [isClicking, setIsClicking] = useState(false);
+  const [position, setPosition] = useState({ x: -100, y: -100 });
+  const [hoverType, setHoverType] = useState<'button' | 'card' | 'input' | null>(null);
 
-    let activeElement: HTMLElement | null = null;
-    let originalTransition = '';
+  const activeElementRef = useRef<HTMLElement | null>(null);
+  const originalTransitionRef = useRef<string>('');
+
+  useEffect(() => {
+    // Only enable on desktop pointer-fine devices
+    const hasFinePointer = window.matchMedia('(pointer: fine)').matches;
+    if (!hasFinePointer) {
+      setIsEnabled(false);
+      return;
+    }
+    setIsEnabled(true);
+
+    // Enforce cursor: none on document body
+    document.documentElement.style.cursor = 'none';
+    document.body.style.cursor = 'none';
 
     const handleMouseMove = (e: MouseEvent) => {
       const mouseX = e.clientX;
       const mouseY = e.clientY;
+      setPosition({ x: mouseX, y: mouseY });
 
-      // Find if we are near or over any magnetic interactive element
+      // Detect hover over interactive elements
       const target = e.target as HTMLElement | null;
       const interactiveEl = target?.closest<HTMLElement>(
-        '[data-magnetic="true"], button:not([disabled]), .magnetic-elem'
+        'button, a, input, select, textarea, [data-magnetic="true"], .interactive-card'
       );
 
       if (interactiveEl) {
-        if (activeElement !== interactiveEl) {
-          if (activeElement) {
-            activeElement.style.transform = 'translate3d(0px, 0px, 0px)';
+        setIsHovered(true);
+
+        if (interactiveEl.tagName === 'INPUT' || interactiveEl.tagName === 'TEXTAREA') {
+          setHoverType('input');
+        } else if (interactiveEl.tagName === 'BUTTON' || interactiveEl.tagName === 'A') {
+          setHoverType('button');
+        } else {
+          setHoverType('card');
+        }
+
+        // Apply magnetic attraction to the element itself
+        if (activeElementRef.current !== interactiveEl) {
+          if (activeElementRef.current) {
+            activeElementRef.current.style.transform = 'translate3d(0px, 0px, 0px)';
           }
-          activeElement = interactiveEl;
-          originalTransition = interactiveEl.style.transition;
-          interactiveEl.style.transition = 'transform 0.15s cubic-bezier(0.25, 1, 0.5, 1)';
+          activeElementRef.current = interactiveEl;
+          originalTransitionRef.current = interactiveEl.style.transition;
+          interactiveEl.style.transition = 'transform 0.16s cubic-bezier(0.25, 1, 0.5, 1)';
         }
 
         const rect = interactiveEl.getBoundingClientRect();
         const centerX = rect.left + rect.width / 2;
         const centerY = rect.top + rect.height / 2;
+        const deltaX = mouseX - centerX;
+        const deltaY = mouseY - centerY;
 
-        const distanceX = mouseX - centerX;
-        const distanceY = mouseY - centerY;
-
-        // Subtle, elegant magnetic pull strength (capped to max 10px displacement)
-        const pullFactor = 0.22;
-        const maxShift = 10;
-        const shiftX = Math.max(-maxShift, Math.min(maxShift, distanceX * pullFactor));
-        const shiftY = Math.max(-maxShift, Math.min(maxShift, distanceY * pullFactor));
+        // Subtle pull displacement
+        const pull = 0.22;
+        const maxShift = 9;
+        const shiftX = Math.max(-maxShift, Math.min(maxShift, deltaX * pull));
+        const shiftY = Math.max(-maxShift, Math.min(maxShift, deltaY * pull));
 
         interactiveEl.style.transform = `translate3d(${shiftX.toFixed(1)}px, ${shiftY.toFixed(1)}px, 0px)`;
-      } else if (activeElement) {
-        // Return element smoothly to natural resting position
-        activeElement.style.transform = 'translate3d(0px, 0px, 0px)';
-        const elToReset = activeElement;
-        setTimeout(() => {
-          if (elToReset && elToReset !== activeElement) {
-            elToReset.style.transition = originalTransition;
-          }
-        }, 150);
-        activeElement = null;
+      } else {
+        setIsHovered(false);
+        setHoverType(null);
+
+        if (activeElementRef.current) {
+          activeElementRef.current.style.transform = 'translate3d(0px, 0px, 0px)';
+          const el = activeElementRef.current;
+          const orig = originalTransitionRef.current;
+          setTimeout(() => {
+            if (el && el !== activeElementRef.current) {
+              el.style.transition = orig;
+            }
+          }, 160);
+          activeElementRef.current = null;
+        }
       }
     };
 
+    const handleMouseDown = () => setIsClicking(true);
+    const handleMouseUp = () => setIsClicking(false);
+
     const handleMouseLeave = () => {
-      if (activeElement) {
-        activeElement.style.transform = 'translate3d(0px, 0px, 0px)';
-        activeElement = null;
+      setPosition({ x: -100, y: -100 });
+      if (activeElementRef.current) {
+        activeElementRef.current.style.transform = 'translate3d(0px, 0px, 0px)';
+        activeElementRef.current = null;
       }
     };
 
     window.addEventListener('mousemove', handleMouseMove, { passive: true });
+    window.addEventListener('mousedown', handleMouseDown);
+    window.addEventListener('mouseup', handleMouseUp);
     document.addEventListener('mouseleave', handleMouseLeave);
 
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mousedown', handleMouseDown);
+      window.removeEventListener('mouseup', handleMouseUp);
       document.removeEventListener('mouseleave', handleMouseLeave);
-      if (activeElement) {
-        activeElement.style.transform = 'translate3d(0px, 0px, 0px)';
+      document.documentElement.style.cursor = 'auto';
+      document.body.style.cursor = 'auto';
+      if (activeElementRef.current) {
+        activeElementRef.current.style.transform = 'translate3d(0px, 0px, 0px)';
       }
     };
   }, []);
 
-  // Renders no DOM elements, no dots, no circles.
-  return null;
+  if (!isEnabled) return null;
+
+  // Single precision diamond/capsule cursor style
+  const cursorSize = isHovered 
+    ? (hoverType === 'input' ? 'w-2 h-6 rounded-sm' : 'w-5 h-5 rounded-md') 
+    : 'w-3.5 h-3.5 rounded-sm';
+
+  return (
+    <div
+      className="pointer-events-none fixed inset-0 z-99999 overflow-hidden"
+      aria-hidden="true"
+    >
+      <div
+        className={`fixed top-0 left-0 transition-[width,height,transform,background-color] duration-150 ease-out flex items-center justify-center ${cursorSize}`}
+        style={{
+          transform: `translate3d(${position.x}px, ${position.y}px, 0) translate(-50%, -50%) rotate(${
+            isHovered ? (hoverType === 'input' ? '0deg' : '90deg') : '45deg'
+          }) scale(${isClicking ? 0.8 : 1})`,
+          background: isHovered
+            ? (hoverType === 'input'
+                ? '#0e0fed'
+                : 'linear-gradient(135deg, #f2b1d8 0%, #ffdc6a 50%, #8bf0ba 100%)')
+            : 'linear-gradient(135deg, #0e0fed 0%, #94f0f1 100%)',
+          boxShadow: isHovered
+            ? '0 0 16px rgba(14, 15, 237, 0.45), 0 0 6px rgba(242, 177, 216, 0.6)'
+            : '0 0 10px rgba(14, 15, 237, 0.35), 0 1px 3px rgba(0, 0, 0, 0.2)',
+          border: isHovered ? '1.5px solid #0e0fed' : '1px solid rgba(255, 255, 255, 0.8)',
+        }}
+      >
+        {/* Subtle center precision core */}
+        <div 
+          className="w-1 h-1 rounded-full bg-white transition-opacity duration-150"
+          style={{ opacity: isHovered ? 0.9 : 0.6 }}
+        />
+      </div>
+    </div>
+  );
 };
