@@ -191,6 +191,7 @@ export default function App() {
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
             onViewPaper={handleViewPaper}
+            onDownloadPaper={handleDownloadPaper}
           />
         )}
 

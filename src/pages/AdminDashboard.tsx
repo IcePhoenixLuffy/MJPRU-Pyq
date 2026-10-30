@@ -85,6 +85,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const [subjectDeptId, setSubjectDeptId] = useState(departments[0]?.id || '');
   const [subjectSemId, setSubjectSemId] = useState(semesters[0]?.id || '');
   const [subjectCredits, setSubjectCredits] = useState(4);
+  const [subjectCategory, setSubjectCategory] = useState<'Theory' | 'Elective' | 'Practical' | 'Project' | 'Seminar' | 'Training'>('Theory');
+  const [subjectElectiveGroup, setSubjectElectiveGroup] = useState('');
+  const [subjectNote, setSubjectNote] = useState('');
 
   // PYQ Upload Form
   const [paperDeptId, setPaperDeptId] = useState(departments[0]?.id || '');
@@ -182,6 +185,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           departmentId: subjectDeptId,
           semesterId: subjectSemId,
           credits: Number(subjectCredits),
+          category: subjectCategory,
+          electiveGroup: subjectElectiveGroup || undefined,
+          note: subjectNote || undefined,
         });
         showToast(`Subject "${subjectCode}" updated successfully.`);
       } else {
@@ -191,6 +197,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           departmentId: subjectDeptId,
           semesterId: subjectSemId,
           credits: Number(subjectCredits),
+          category: subjectCategory,
+          electiveGroup: subjectElectiveGroup || undefined,
+          note: subjectNote || undefined,
         });
         showToast(`New subject "${subjectCode}" added successfully.`);
       }
@@ -198,6 +207,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       setEditingSubjectId(null);
       setSubjectName('');
       setSubjectCode('');
+      setSubjectElectiveGroup('');
+      setSubjectNote('');
     } catch {
       showToast('Failed to save subject.', 'error');
     }
@@ -210,6 +221,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     setSubjectDeptId(sub.departmentId);
     setSubjectSemId(sub.semesterId);
     setSubjectCredits(sub.credits || 4);
+    setSubjectCategory(sub.category || 'Theory');
+    setSubjectElectiveGroup(sub.electiveGroup || '');
+    setSubjectNote(sub.note || '');
     window.scrollTo({ top: 300, behavior: 'smooth' });
   };
 
@@ -805,21 +819,61 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 />
               </div>
 
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-700">Category</label>
+                  <select
+                    value={subjectCategory}
+                    onChange={(e) => setSubjectCategory(e.target.value as any)}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:border-[#0e0fed]"
+                  >
+                    <option value="Theory">Theory Course</option>
+                    <option value="Elective">Elective Option</option>
+                    <option value="Practical">Practical / Lab</option>
+                    <option value="Project">Major Project</option>
+                    <option value="Training">Industrial Training</option>
+                    <option value="Seminar">Seminar</option>
+                  </select>
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-700">Credits</label>
+                  <input
+                    type="number"
+                    min={1}
+                    max={12}
+                    value={subjectCredits}
+                    onChange={(e) => setSubjectCredits(Number(e.target.value))}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:border-[#0e0fed]"
+                  />
+                </div>
+              </div>
+
               <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-700">Credits</label>
+                <label className="text-xs font-bold text-slate-700">Elective Group (Optional)</label>
                 <input
-                  type="number"
-                  min={1}
-                  max={6}
-                  value={subjectCredits}
-                  onChange={(e) => setSubjectCredits(Number(e.target.value))}
+                  type="text"
+                  value={subjectElectiveGroup}
+                  onChange={(e) => setSubjectElectiveGroup(e.target.value)}
+                  placeholder="e.g. Department Elective-I, Department Elective-II, Open Elective"
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:border-[#0e0fed]"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-slate-700">Guidance / Note (Optional)</label>
+                <input
+                  type="text"
+                  value={subjectNote}
+                  onChange={(e) => setSubjectNote(e.target.value)}
+                  placeholder="e.g. Decided in consultation with faculty member"
                   className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:border-[#0e0fed]"
                 />
               </div>
 
               <button
                 type="submit"
-                className="w-full py-2.5 bg-[#0e0fed] text-white font-bold text-xs rounded-xl hover:bg-blue-700 transition-all shadow-sm magnetic-target"
+                className="w-full py-2.5 bg-gradient-to-r from-[#0e0fed] to-[#2563eb] text-white font-bold text-xs rounded-xl hover:opacity-95 transition-all shadow-sm magnetic-target"
                 data-magnetic="true"
               >
                 {editingSubjectId ? 'Save Subject Changes' : 'Create Subject'}
@@ -843,14 +897,23 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                     className="p-3.5 bg-white border border-slate-200/90 rounded-2xl flex items-center justify-between gap-3 shadow-2xs"
                   >
                     <div className="min-w-0 space-y-0.5">
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 flex-wrap">
                         <span className="font-mono text-xs font-bold px-2 py-0.5 rounded bg-blue-50 text-[#0e0fed] border border-blue-100">
                           {sub.subjectCode}
                         </span>
                         <h4 className="text-xs font-bold text-slate-900 truncate">{sub.subjectName}</h4>
+                        <span className="text-[10px] font-bold px-1.5 py-0.2 rounded bg-slate-100 text-slate-600">
+                          {sub.category || 'Theory'}
+                        </span>
+                        {sub.electiveGroup && (
+                          <span className="text-[10px] font-bold px-1.5 py-0.2 rounded bg-purple-50 text-purple-700 border border-purple-100">
+                            {sub.electiveGroup}
+                          </span>
+                        )}
                       </div>
                       <div className="text-[11px] text-slate-500 font-medium">
                         {dept?.code} &bull; Sem {sem?.semesterNumber} &bull; {sub.credits || 4} Credits
+                        {sub.note && ` • Note: ${sub.note}`}
                       </div>
                     </div>
 

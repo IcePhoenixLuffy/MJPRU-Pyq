@@ -29,6 +29,9 @@ export interface Subject {
   subjectName: string;
   subjectCode: string;
   credits?: number;
+  category?: 'Theory' | 'Elective' | 'Practical' | 'Project' | 'Seminar' | 'Training';
+  electiveGroup?: string;
+  note?: string;
   createdAt: string;
 }
 

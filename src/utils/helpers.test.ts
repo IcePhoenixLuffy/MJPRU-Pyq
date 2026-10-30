@@ -103,3 +103,26 @@ test('filterQuestionPapers filters by department and search query', () => {
   assert.equal(nameResults.length, 1);
   assert.equal(nameResults[0].id, 'p1');
 });
+
+test('INITIAL_SUBJECTS contains official Electrical Engineering 8-semester structure', async () => {
+  const { INITIAL_SUBJECTS } = await import('../lib/dataStore');
+  const eeSubjects = INITIAL_SUBJECTS.filter((s) => s.departmentId === 'dept-ee');
+  
+  // Total subjects in EE across Sem 1-8 (7+7+6+6+9+9+6+3 = 53)
+  assert.equal(eeSubjects.length, 53);
+
+  // Check key subject codes from user request
+  const codes = new Set(eeSubjects.map((s) => s.subjectCode));
+  assert.ok(codes.has('PH-101T'));
+  assert.ok(codes.has('EE-103N')); // Circuit Theory
+  assert.ok(codes.has('EL-102T')); // Basic Electronics Engineering
+  assert.ok(codes.has('EE-201N')); // Network Analysis & Synthesis
+  assert.ok(codes.has('EE-204N')); // Electrical Machines-II
+  assert.ok(codes.has('EE-307N')); // Introduction to Electrical Vehicles
+  assert.ok(codes.has('EE-314N')); // SCADA & Energy Management
+  assert.ok(codes.has('EE-401N')); // Protection & Switchgear
+  assert.ok(codes.has('EE-410P')); // Major Project
+  assert.ok(codes.has('EE-412P')); // Internship
+  assert.ok(codes.has('EE-420N')); // MOOC-I
+});
+

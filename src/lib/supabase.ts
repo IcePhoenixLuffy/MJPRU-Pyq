@@ -1,8 +1,9 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
-// Environment variables
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
+// Environment variables with SSR / test runner safe check
+const env = typeof import.meta !== 'undefined' && import.meta.env ? import.meta.env : {};
+const supabaseUrl = env.VITE_SUPABASE_URL || '';
+const supabaseAnonKey = env.VITE_SUPABASE_ANON_KEY || '';
 
 // Config state
 export const isSupabaseConfigured = (): boolean => {
@@ -71,9 +72,17 @@ CREATE TABLE IF NOT EXISTS public.subjects (
   subject_name TEXT NOT NULL,
   subject_code TEXT NOT NULL,
   credits INT DEFAULT 4,
+  category TEXT DEFAULT 'Theory' CHECK (category IN ('Theory', 'Elective', 'Practical', 'Project', 'Seminar', 'Training')),
+  elective_group TEXT,
+  note TEXT,
   created_at TIMESTAMPTZ DEFAULT TIMEZONE('utc', NOW()),
   CONSTRAINT unique_dept_subject UNIQUE (department_id, subject_code)
 );
+
+-- Upgrade existing tables if already created
+ALTER TABLE public.subjects ADD COLUMN IF NOT EXISTS category TEXT DEFAULT 'Theory';
+ALTER TABLE public.subjects ADD COLUMN IF NOT EXISTS elective_group TEXT;
+ALTER TABLE public.subjects ADD COLUMN IF NOT EXISTS note TEXT;
 
 -- 6. Question Papers Table
 CREATE TABLE IF NOT EXISTS public.question_papers (
