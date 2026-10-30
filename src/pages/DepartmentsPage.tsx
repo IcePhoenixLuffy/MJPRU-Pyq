@@ -77,7 +77,7 @@ export const DepartmentsPage: React.FC<DepartmentsPageProps> = ({
   });
 
   const activeDept = departments.find((d) => d.id === selectedDeptId) || departments[0];
-  const isElectrical = activeDept?.code === 'EE' || activeDept?.slug?.includes('electrical');
+  const isSemesterWiseDept = activeDept?.code === 'EE' || activeDept?.code === 'ECE';
 
   const activeDeptSubjects = subjects.filter((s) => s.departmentId === activeDept?.id);
   const activeDeptPapers = papers.filter((p) => p.departmentId === activeDept?.id);
@@ -252,17 +252,18 @@ export const DepartmentsPage: React.FC<DepartmentsPageProps> = ({
               </div>
 
               {/* ========================================================================= */}
-              {/* ELECTRICAL ENGINEERING: SEMESTER-WISE BROWSING STRUCTURE */}
               {/* ========================================================================= */}
-              {isElectrical ? (
+              {/* SEMESTER-WISE BROWSING STRUCTURE (FOR ECE AND EE) */}
+              {/* ========================================================================= */}
+              {isSemesterWiseDept ? (
                 <div className="space-y-6">
                   
                   {/* Step Navigation Breadcrumb Bar */}
                   <div className="bg-gradient-to-r from-blue-50/80 via-indigo-50/60 to-purple-50/80 border border-blue-200/80 rounded-2xl p-3 sm:p-4 shadow-2xs">
                     <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 text-xs font-bold text-slate-600">
-                      <span className="flex items-center gap-1 text-[#0e0fed] font-extrabold">
-                        <Zap className="w-3.5 h-3.5" />
-                        <span>Electrical Engineering</span>
+                      <span className="flex items-center gap-1.5 text-[#0e0fed] font-extrabold">
+                        {getDeptIcon(activeDept.iconName)}
+                        <span>{activeDept.name}</span>
                       </span>
                       <ChevronRight className="w-3 h-3 text-slate-400" />
                       <span className={selectedYearId !== 'all' ? 'text-[#0e0fed] font-extrabold' : 'text-slate-600'}>
@@ -274,7 +275,7 @@ export const DepartmentsPage: React.FC<DepartmentsPageProps> = ({
                       </span>
                       <ChevronRight className="w-3 h-3 text-slate-400" />
                       <span className="text-slate-500">
-                        Theory &amp; Electives
+                        Theory Courses / Electives / Projects
                       </span>
                     </div>
                   </div>
@@ -358,6 +359,8 @@ export const DepartmentsPage: React.FC<DepartmentsPageProps> = ({
                         const semSubs = getSubjectsForSemester(sem.id);
                         const semPapers = getPapersForSemester(sem.id);
                         const theoryCount = semSubs.filter((s) => s.category === 'Theory' || !s.category).length;
+                        const electiveCount = semSubs.filter((s) => s.category === 'Elective' || Boolean(s.electiveGroup)).length;
+                        const projectCount = semSubs.filter((s) => s.category === 'Project' || s.category === 'Training' || s.category === 'Seminar').length;
                         const yr = academicYears.find((y) => y.id === sem.academicYearId);
 
                         return (
@@ -386,8 +389,14 @@ export const DepartmentsPage: React.FC<DepartmentsPageProps> = ({
                               </h4>
                             </div>
 
-                            <div className="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] font-semibold text-slate-600">
+                            <div className="mt-3 pt-2 border-t border-slate-100 flex flex-wrap items-center justify-between text-[11px] font-semibold text-slate-600 gap-1">
                               <span>{theoryCount} Theory</span>
+                              {electiveCount > 0 && (
+                                <span className="text-purple-700 font-bold">{electiveCount} Electives</span>
+                              )}
+                              {electiveCount === 0 && projectCount > 0 && (
+                                <span className="text-emerald-700 font-bold">{projectCount} Projects</span>
+                              )}
                               <span className={semPapers.length > 0 ? 'text-[#0e0fed] font-extrabold font-mono' : 'text-slate-400'}>
                                 {semPapers.length} PYQs
                               </span>
@@ -404,12 +413,20 @@ export const DepartmentsPage: React.FC<DepartmentsPageProps> = ({
                       .filter((sem) => selectedSemesterId === 'all' || sem.id === selectedSemesterId)
                       .map((sem) => {
                         const semSubs = getSubjectsForSemester(sem.id);
-                        const theoryCourses = semSubs.filter((s) => s.category === 'Theory' || !s.category);
-                        const electiveI = semSubs.filter((s) => s.electiveGroup === 'Department Elective-I');
-                        const electiveII = semSubs.filter((s) => s.electiveGroup === 'Department Elective-II');
-                        const electiveIII = semSubs.filter((s) => s.electiveGroup === 'Department Elective-III');
-                        const openElective = semSubs.filter((s) => s.electiveGroup === 'Open Elective');
-                        const practicalsAndProjects = semSubs.filter((s) => s.category === 'Practical' || s.category === 'Project' || s.category === 'Training' || s.category === 'Seminar');
+                        const theoryCourses = semSubs.filter((s) => s.category === 'Theory' || (!s.category && !s.electiveGroup));
+                        
+                        // Extract distinct elective groups present in this semester
+                        const distinctElectiveGroups = Array.from(
+                          new Set(
+                            semSubs
+                              .filter((s) => s.category === 'Elective' || Boolean(s.electiveGroup))
+                              .map((s) => s.electiveGroup || 'Elective Options')
+                          )
+                        );
+
+                        const academicComponents = semSubs.filter(
+                          (s) => s.category === 'Practical' || s.category === 'Project' || s.category === 'Training' || s.category === 'Seminar'
+                        );
 
                         const yr = academicYears.find((y) => y.id === sem.academicYearId);
 
@@ -455,21 +472,54 @@ export const DepartmentsPage: React.FC<DepartmentsPageProps> = ({
                               </div>
                             )}
 
-                            {/* Section: Semester 5 - Department Elective-I */}
-                            {electiveI.length > 0 && (
+                            {/* Section: Electives Grouped By Group (Pool Elective, Open Elective, Department Electives) */}
+                            {distinctElectiveGroups.map((groupName) => {
+                              const groupSubjects = semSubs.filter(
+                                (s) => (s.electiveGroup || 'Elective Options') === groupName
+                              );
+
+                              return (
+                                <div key={groupName} className="space-y-3 pt-3 border-t border-slate-200">
+                                  <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-purple-800">
+                                      <Layers className="w-4 h-4 text-purple-600" />
+                                      <span>{groupName} — Available Options ({groupSubjects.length})</span>
+                                    </div>
+                                    <span className="text-[11px] font-bold text-purple-800 bg-purple-50 px-2.5 py-0.5 rounded-full border border-purple-200 shadow-2xs">
+                                      Selectable Options
+                                    </span>
+                                  </div>
+
+                                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                                    {groupSubjects.map((subject) => (
+                                      <SubjectCardItem
+                                        key={subject.id}
+                                        subject={subject}
+                                        semNumber={sem.semesterNumber}
+                                        paperCount={getPapersForSubject(subject.id).length}
+                                        onOpenSubjectPapers={() => setActiveSubjectModal(subject)}
+                                      />
+                                    ))}
+                                  </div>
+                                </div>
+                              );
+                            })}
+
+                            {/* Section: Projects, Training, Seminar & Academic Components */}
+                            {academicComponents.length > 0 && (
                               <div className="space-y-3 pt-3 border-t border-slate-200">
                                 <div className="flex items-center justify-between">
-                                  <div className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-purple-700">
-                                    <Layers className="w-4 h-4 text-purple-600" />
-                                    <span>Department Elective-I — Available Options ({electiveI.length})</span>
+                                  <div className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-emerald-800">
+                                    <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                                    <span>Project, Seminar &amp; Experiential Components ({academicComponents.length})</span>
                                   </div>
-                                  <span className="text-[11px] font-semibold text-purple-800 bg-purple-50 px-2 py-0.5 rounded border border-purple-200">
-                                    Elective Choices
+                                  <span className="text-[11px] font-bold text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200 shadow-2xs">
+                                    Academic Components
                                   </span>
                                 </div>
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
-                                  {electiveI.map((subject) => (
+                                  {academicComponents.map((subject) => (
                                     <SubjectCardItem
                                       key={subject.id}
                                       subject={subject}
@@ -482,102 +532,8 @@ export const DepartmentsPage: React.FC<DepartmentsPageProps> = ({
                               </div>
                             )}
 
-                            {/* Section: Semester 6 - Department Elective-II */}
-                            {electiveII.length > 0 && (
-                              <div className="space-y-3 pt-3 border-t border-slate-200">
-                                <div className="flex items-center justify-between">
-                                  <div className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-cyan-800">
-                                    <Layers className="w-4 h-4 text-cyan-600" />
-                                    <span>Department Elective-II — Available Options ({electiveII.length})</span>
-                                  </div>
-                                  <span className="text-[11px] font-semibold text-cyan-800 bg-cyan-50 px-2 py-0.5 rounded border border-cyan-200">
-                                    Elective Choices
-                                  </span>
-                                </div>
-
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
-                                  {electiveII.map((subject) => (
-                                    <SubjectCardItem
-                                      key={subject.id}
-                                      subject={subject}
-                                      semNumber={sem.semesterNumber}
-                                      paperCount={getPapersForSubject(subject.id).length}
-                                      onOpenSubjectPapers={() => setActiveSubjectModal(subject)}
-                                    />
-                                  ))}
-                                </div>
-                              </div>
-                            )}
-
-                            {/* Section: Semester 7 - Department Elective-III and Open Elective */}
-                            {(electiveIII.length > 0 || openElective.length > 0) && (
-                              <div className="space-y-4 pt-3 border-t border-slate-200">
-                                {electiveIII.length > 0 && (
-                                  <div className="space-y-2.5">
-                                    <div className="text-xs font-black uppercase tracking-wider text-indigo-700 flex items-center gap-2">
-                                      <Layers className="w-4 h-4 text-indigo-600" />
-                                      <span>Department Elective-III</span>
-                                    </div>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
-                                      {electiveIII.map((subject) => (
-                                        <SubjectCardItem
-                                          key={subject.id}
-                                          subject={subject}
-                                          semNumber={sem.semesterNumber}
-                                          paperCount={getPapersForSubject(subject.id).length}
-                                          onOpenSubjectPapers={() => setActiveSubjectModal(subject)}
-                                        />
-                                      ))}
-                                    </div>
-                                  </div>
-                                )}
-
-                                {openElective.length > 0 && (
-                                  <div className="space-y-2.5 pt-2">
-                                    <div className="text-xs font-black uppercase tracking-wider text-pink-700 flex items-center gap-2">
-                                      <Layers className="w-4 h-4 text-pink-600" />
-                                      <span>Open Elective</span>
-                                    </div>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
-                                      {openElective.map((subject) => (
-                                        <SubjectCardItem
-                                          key={subject.id}
-                                          subject={subject}
-                                          semNumber={sem.semesterNumber}
-                                          paperCount={getPapersForSubject(subject.id).length}
-                                          onOpenSubjectPapers={() => setActiveSubjectModal(subject)}
-                                        />
-                                      ))}
-                                    </div>
-                                  </div>
-                                )}
-                              </div>
-                            )}
-
-                            {/* Section: Practical, Project, Training & Seminar components */}
-                            {practicalsAndProjects.length > 0 && (
-                              <div className="space-y-3 pt-3 border-t border-slate-200">
-                                <div className="text-xs font-black uppercase tracking-wider text-emerald-800 flex items-center gap-2">
-                                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                                  <span>Practical, Project &amp; Experiential Components</span>
-                                </div>
-
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
-                                  {practicalsAndProjects.map((subject) => (
-                                    <SubjectCardItem
-                                      key={subject.id}
-                                      subject={subject}
-                                      semNumber={sem.semesterNumber}
-                                      paperCount={getPapersForSubject(subject.id).length}
-                                      onOpenSubjectPapers={() => setActiveSubjectModal(subject)}
-                                    />
-                                  ))}
-                                </div>
-                              </div>
-                            )}
-
-                            {/* Mandatory Official Note for Semester 8 */}
-                            {sem.semesterNumber === 8 && (
+                            {/* Mandatory Official Note for Semester 8 in Electrical Engineering */}
+                            {activeDept.code === 'EE' && sem.semesterNumber === 8 && (
                               <div className="p-4 rounded-2xl bg-gradient-to-r from-amber-50 to-yellow-50 border border-amber-200 flex items-start gap-3 shadow-2xs">
                                 <Info className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
                                 <div className="space-y-1">
@@ -738,7 +694,7 @@ export const DepartmentsPage: React.FC<DepartmentsPageProps> = ({
                   {activeSubjectModal.subjectName}
                 </h3>
                 <div className="text-xs text-slate-600 font-semibold flex items-center gap-2">
-                  <span>Electrical Engineering</span>
+                  <span>{departments.find((d) => d.id === activeSubjectModal.departmentId)?.name || activeDept?.name}</span>
                   <span>&bull;</span>
                   <span>{semesters.find((s) => s.id === activeSubjectModal.semesterId)?.name}</span>
                 </div>

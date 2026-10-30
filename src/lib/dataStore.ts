@@ -103,10 +103,93 @@ export const INITIAL_SUBJECTS: Subject[] = [
   { id: 'sub-ai-3', departmentId: 'dept-csai', semesterId: 'sem-5', subjectName: 'Machine Learning Algorithms', subjectCode: 'BAI-501', credits: 4, createdAt: '2024-01-01' },
   { id: 'sub-ai-4', departmentId: 'dept-csai', semesterId: 'sem-6', subjectName: 'Deep Learning & Neural Networks', subjectCode: 'BAI-601', credits: 4, createdAt: '2024-01-01' },
 
-  // ECE Subjects
-  { id: 'sub-ec-1', departmentId: 'dept-ece', semesterId: 'sem-3', subjectName: 'Electronic Devices & Circuits', subjectCode: 'BEC-301', credits: 4, createdAt: '2024-01-01' },
-  { id: 'sub-ec-2', departmentId: 'dept-ece', semesterId: 'sem-4', subjectName: 'Digital System Design & VHDL', subjectCode: 'BEC-402', credits: 4, createdAt: '2024-01-01' },
-  { id: 'sub-ec-3', departmentId: 'dept-ece', semesterId: 'sem-5', subjectName: 'Microprocessors & Microcontrollers', subjectCode: 'BEC-501', credits: 4, createdAt: '2024-01-01' },
+  // ECE Subjects (Official M.J.P. Rohilkhand University Course Scheme)
+  // Semester 1 (Theory Courses)
+  { id: 'sub-ece-sem1-1', departmentId: 'dept-ece', semesterId: 'sem-1', subjectName: 'Engineering Physics-I', subjectCode: 'PH-101T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ece-sem1-2', departmentId: 'dept-ece', semesterId: 'sem-1', subjectName: 'Engineering Chemistry', subjectCode: 'CY-101T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ece-sem1-3', departmentId: 'dept-ece', semesterId: 'sem-1', subjectName: 'Engineering Mathematics-I', subjectCode: 'MA-101T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ece-sem1-4', departmentId: 'dept-ece', semesterId: 'sem-1', subjectName: 'Communicative English', subjectCode: 'HU-101T', category: 'Theory', credits: 3, createdAt: '2024-01-01' },
+  { id: 'sub-ece-sem1-5', departmentId: 'dept-ece', semesterId: 'sem-1', subjectName: 'Computer Fundamentals & Programming', subjectCode: 'CS-101T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ece-sem1-6', departmentId: 'dept-ece', semesterId: 'sem-1', subjectName: 'Basic Electrical Engineering', subjectCode: 'EE-101T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ece-sem1-7', departmentId: 'dept-ece', semesterId: 'sem-1', subjectName: 'Environments Studies', subjectCode: 'CY-103T', category: 'Theory', credits: 3, createdAt: '2024-01-01' },
+
+  // Semester 2 (Theory Courses)
+  { id: 'sub-ece-sem2-1', departmentId: 'dept-ece', semesterId: 'sem-2', subjectName: 'Engineering Physics-II', subjectCode: 'PH-102T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ece-sem2-2', departmentId: 'dept-ece', semesterId: 'sem-2', subjectName: 'Engineering Mathematics-II', subjectCode: 'MA-102T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ece-sem2-3', departmentId: 'dept-ece', semesterId: 'sem-2', subjectName: 'Basic Electronics Engineering', subjectCode: 'EL-101T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ece-sem2-4', departmentId: 'dept-ece', semesterId: 'sem-2', subjectName: 'Communicative English', subjectCode: 'HU-101T', category: 'Theory', credits: 3, createdAt: '2024-01-01' },
+  { id: 'sub-ece-sem2-5', departmentId: 'dept-ece', semesterId: 'sem-2', subjectName: 'Computer Fundamentals & Programming', subjectCode: 'CS-101T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ece-sem2-6', departmentId: 'dept-ece', semesterId: 'sem-2', subjectName: 'Engineering Economics', subjectCode: 'HU-103T', category: 'Theory', credits: 3, createdAt: '2024-01-01' },
+
+  // Semester 3 (Theory Courses)
+  { id: 'sub-ece-sem3-1', departmentId: 'dept-ece', semesterId: 'sem-3', subjectName: 'Electronics engineering materials', subjectCode: 'EC-201T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ece-sem3-2', departmentId: 'dept-ece', semesterId: 'sem-3', subjectName: 'Electromagnetic theory', subjectCode: 'EC-203T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ece-sem3-3', departmentId: 'dept-ece', semesterId: 'sem-3', subjectName: 'Analog electronics', subjectCode: 'EI-201T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ece-sem3-4', departmentId: 'dept-ece', semesterId: 'sem-3', subjectName: 'Electronic measurement and instrumentation', subjectCode: 'EI-203T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ece-sem3-5', departmentId: 'dept-ece', semesterId: 'sem-3', subjectName: 'Network analysis & Synthesis', subjectCode: 'EE-203T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ece-sem3-6', departmentId: 'dept-ece', semesterId: 'sem-3', subjectName: 'Engineering Mathematics-III', subjectCode: 'MA-201T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+
+  // Semester 4 (Theory Courses)
+  { id: 'sub-ece-sem4-1', departmentId: 'dept-ece', semesterId: 'sem-4', subjectName: 'Signal and System', subjectCode: 'EC-202T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ece-sem4-2', departmentId: 'dept-ece', semesterId: 'sem-4', subjectName: 'Digital Electronic', subjectCode: 'EC-204T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ece-sem4-3', departmentId: 'dept-ece', semesterId: 'sem-4', subjectName: 'Leaner Integrated Circuits', subjectCode: 'EI-202T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ece-sem4-4', departmentId: 'dept-ece', semesterId: 'sem-4', subjectName: 'Industrial Management', subjectCode: 'ME-212T', category: 'Theory', credits: 3, createdAt: '2024-01-01' },
+  { id: 'sub-ece-sem4-5', departmentId: 'dept-ece', semesterId: 'sem-4', subjectName: 'Computer Organization', subjectCode: 'CS-204T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ece-sem4-6', departmentId: 'dept-ece', semesterId: 'sem-4', subjectName: 'Element of Electrical Machines', subjectCode: 'EE-202T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+
+  // Semester 5 (Theory Courses)
+  { id: 'sub-ece-sem5-1', departmentId: 'dept-ece', semesterId: 'sem-5', subjectName: 'Analog Communication Systems', subjectCode: 'EC-301T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ece-sem5-2', departmentId: 'dept-ece', semesterId: 'sem-5', subjectName: 'Antenna And Wave Propagation', subjectCode: 'EC-303T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ece-sem5-3', departmentId: 'dept-ece', semesterId: 'sem-5', subjectName: 'Consumer Electronics', subjectCode: 'EC-315T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ece-sem5-4', departmentId: 'dept-ece', semesterId: 'sem-5', subjectName: 'Microprocessor and Their Applications', subjectCode: 'EI-301T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ece-sem5-5', departmentId: 'dept-ece', semesterId: 'sem-5', subjectName: 'Control System', subjectCode: 'EE-301T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ece-sem5-6', departmentId: 'dept-ece', semesterId: 'sem-5', subjectName: 'Power Electronics', subjectCode: 'EE-303T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+
+  // Semester 6 (Theory Courses)
+  { id: 'sub-ece-sem6-1', departmentId: 'dept-ece', semesterId: 'sem-6', subjectName: 'Digital Signal Processing', subjectCode: 'EC-302T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ece-sem6-2', departmentId: 'dept-ece', semesterId: 'sem-6', subjectName: 'Digital Communication System', subjectCode: 'EC-304T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ece-sem6-3', departmentId: 'dept-ece', semesterId: 'sem-6', subjectName: 'Microelectronics', subjectCode: 'EC-308T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ece-sem6-4', departmentId: 'dept-ece', semesterId: 'sem-6', subjectName: 'RADAR And Navigational Aids', subjectCode: 'EC-306T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ece-sem6-5', departmentId: 'dept-ece', semesterId: 'sem-6', subjectName: 'Data Network & Computer Network', subjectCode: 'CS-302T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ece-sem6-6', departmentId: 'dept-ece', semesterId: 'sem-6', subjectName: 'Microcontroller & Embedded System', subjectCode: 'EI-302T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+
+  // Semester 7 (Theory Courses and Academic Components)
+  { id: 'sub-ece-sem7-1', departmentId: 'dept-ece', semesterId: 'sem-7', subjectName: 'Mobile communication', subjectCode: 'EC-415T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ece-sem7-2', departmentId: 'dept-ece', semesterId: 'sem-7', subjectName: 'VLSI design & circuit', subjectCode: 'EC-403T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ece-sem7-3', departmentId: 'dept-ece', semesterId: 'sem-7', subjectName: 'Microwave engineering', subjectCode: 'EE-405T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ece-sem7-4', departmentId: 'dept-ece', semesterId: 'sem-7', subjectName: 'Industrial training', subjectCode: 'EC-407T', category: 'Training', credits: 2, createdAt: '2024-01-01' },
+  { id: 'sub-ece-sem7-5', departmentId: 'dept-ece', semesterId: 'sem-7', subjectName: 'Seminar', subjectCode: 'EC-409T', category: 'Seminar', credits: 2, createdAt: '2024-01-01' },
+  { id: 'sub-ece-sem7-6', departmentId: 'dept-ece', semesterId: 'sem-7', subjectName: 'Project-I', subjectCode: 'EC-405P', category: 'Project', credits: 4, createdAt: '2024-01-01' },
+
+  // Semester 7 Pool Elective Options
+  { id: 'sub-ece-sem7-pool-1', departmentId: 'dept-ece', semesterId: 'sem-7', subjectName: 'Digital system design', subjectCode: 'EC-433', category: 'Elective', electiveGroup: 'Pool Elective', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ece-sem7-pool-2', departmentId: 'dept-ece', semesterId: 'sem-7', subjectName: 'PC Interfacing', subjectCode: 'EC-452T', category: 'Elective', electiveGroup: 'Pool Elective', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ece-sem7-pool-3', departmentId: 'dept-ece', semesterId: 'sem-7', subjectName: 'Work Study', subjectCode: 'ME-473T', category: 'Elective', electiveGroup: 'Pool Elective', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ece-sem7-pool-4', departmentId: 'dept-ece', semesterId: 'sem-7', subjectName: 'Multimedia', subjectCode: 'CS-402T', category: 'Elective', electiveGroup: 'Pool Elective', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ece-sem7-pool-5', departmentId: 'dept-ece', semesterId: 'sem-7', subjectName: 'PCB Design & Technology', subjectCode: 'EI-451T', category: 'Elective', electiveGroup: 'Pool Elective', credits: 4, createdAt: '2024-01-01' },
+
+  // Semester 7 Open Elective Options
+  { id: 'sub-ece-sem7-open-1', departmentId: 'dept-ece', semesterId: 'sem-7', subjectName: 'Futuristic material', subjectCode: 'PH-419T', category: 'Elective', electiveGroup: 'Open Elective', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ece-sem7-open-2', departmentId: 'dept-ece', semesterId: 'sem-7', subjectName: 'Operation research', subjectCode: 'MA-491T', category: 'Elective', electiveGroup: 'Open Elective', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ece-sem7-open-3', departmentId: 'dept-ece', semesterId: 'sem-7', subjectName: 'Polymeric Materials and their Applications', subjectCode: 'CY-401T', category: 'Elective', electiveGroup: 'Open Elective', credits: 4, createdAt: '2024-01-01' },
+
+  // Semester 8 (Theory and Project Courses)
+  { id: 'sub-ece-sem8-1', departmentId: 'dept-ece', semesterId: 'sem-8', subjectName: 'Optical fibre communication', subjectCode: 'EC-436T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ece-sem8-2', departmentId: 'dept-ece', semesterId: 'sem-8', subjectName: 'Satellite communication', subjectCode: 'EC-456T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ece-sem8-3', departmentId: 'dept-ece', semesterId: 'sem-8', subjectName: 'Project-II', subjectCode: 'EC-402P', category: 'Project', credits: 8, createdAt: '2024-01-01' },
+
+  // Semester 8 Pool Elective Options
+  { id: 'sub-ece-sem8-pool-1', departmentId: 'dept-ece', semesterId: 'sem-8', subjectName: 'Digital Image Processing', subjectCode: 'EC-458T', category: 'Elective', electiveGroup: 'Pool Elective', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ece-sem8-pool-2', departmentId: 'dept-ece', semesterId: 'sem-8', subjectName: 'Microwave Communication', subjectCode: 'EC-450T', category: 'Elective', electiveGroup: 'Pool Elective', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ece-sem8-pool-3', departmentId: 'dept-ece', semesterId: 'sem-8', subjectName: 'DSP Processors and Architecture', subjectCode: 'EC-462T', category: 'Elective', electiveGroup: 'Pool Elective', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ece-sem8-pool-4', departmentId: 'dept-ece', semesterId: 'sem-8', subjectName: 'Fuzzy Logic and Neural Networks', subjectCode: 'EI-412T', category: 'Elective', electiveGroup: 'Pool Elective', credits: 4, createdAt: '2024-01-01' },
+
+  // Semester 8 Open Elective Options
+  { id: 'sub-ece-sem8-open-1', departmentId: 'dept-ece', semesterId: 'sem-8', subjectName: 'Engineering economics', subjectCode: 'HU-402T', category: 'Elective', electiveGroup: 'Open Elective', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ece-sem8-open-2', departmentId: 'dept-ece', semesterId: 'sem-8', subjectName: 'Principle of Management', subjectCode: 'HU-449T', category: 'Elective', electiveGroup: 'Open Elective', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ece-sem8-open-3', departmentId: 'dept-ece', semesterId: 'sem-8', subjectName: 'Material Imperfection and Applications', subjectCode: 'PH-429T', category: 'Elective', electiveGroup: 'Open Elective', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ece-sem8-open-4', departmentId: 'dept-ece', semesterId: 'sem-8', subjectName: 'Quantitative Methods in Economics', subjectCode: 'HU-409T', category: 'Elective', electiveGroup: 'Open Elective', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ece-sem8-open-5', departmentId: 'dept-ece', semesterId: 'sem-8', subjectName: 'Foreign Trade', subjectCode: 'HU-407T', category: 'Elective', electiveGroup: 'Open Elective', credits: 4, createdAt: '2024-01-01' },
 
   // EE Subjects (Official M.J.P. Rohilkhand University Course Scheme)
   // Semester 1 (Theory Courses)
@@ -278,16 +361,16 @@ export const INITIAL_PAPERS: QuestionPaper[] = [
   {
     id: 'paper-6',
     departmentId: 'dept-ece',
-    subjectId: 'sub-ec-1',
+    subjectId: 'sub-ece-sem3-1',
     academicYearId: 'year-2',
     semesterId: 'sem-3',
     examinationYear: 2023,
     examinationType: 'Regular',
-    filePath: '/papers/mjpru_bec301_2023.pdf',
-    fileName: 'MJPRU_BEC301_EDC_2023.pdf',
+    filePath: '/papers/mjpru_ec201t_2023.pdf',
+    fileName: 'MJPRU_EC201T_ElectronicsEngineeringMaterials_2023.pdf',
     fileSizeBytes: 265000,
     pageCount: 2,
-    description: 'PN junction diode breakdown, BJT hybrid parameters, and MOSFET amplifier characteristics.',
+    description: 'Official Semester 3 Paper covering Dielectric Properties, Magnetic Materials, Semiconductor band theory, and Hall Effect.',
     uploadedAt: '2024-07-04T12:00:00.000Z',
     downloadCount: 195,
   },
@@ -357,7 +440,7 @@ export const INITIAL_PAPERS: QuestionPaper[] = [
   },
 ];
 
-const LOCAL_STORAGE_KEY = 'mjpru_pyq_platform_data_v3';
+const LOCAL_STORAGE_KEY = 'mjpru_pyq_platform_data_v4';
 
 interface StoredData {
   departments: Department[];
@@ -381,22 +464,23 @@ export class DataStore {
     if (this.isInitialized) return;
 
     try {
-      // Check v3 or migrate from v2
+      // Check v4 or migrate from v3/v2
       let stored = localStorage.getItem(LOCAL_STORAGE_KEY);
       if (!stored) {
-        stored = localStorage.getItem('mjpru_pyq_platform_data_v2');
+        stored = localStorage.getItem('mjpru_pyq_platform_data_v3') || localStorage.getItem('mjpru_pyq_platform_data_v2');
       }
 
       if (stored) {
         const parsed: StoredData = JSON.parse(stored);
         this.departments = parsed.departments || INITIAL_DEPARTMENTS;
         
-        // Ensure Electrical Engineering has the complete official scheme
-        const nonEeSubjects = (parsed.subjects || []).filter((s) => s.departmentId !== 'dept-ee');
+        // Ensure both Electrical Engineering and Electronics & Communication Engineering have complete official schemes
+        const otherSubjects = (parsed.subjects || []).filter((s) => s.departmentId !== 'dept-ee' && s.departmentId !== 'dept-ece');
         const eeOfficialSubjects = INITIAL_SUBJECTS.filter((s) => s.departmentId === 'dept-ee');
-        this.subjects = [...nonEeSubjects, ...eeOfficialSubjects];
+        const eceOfficialSubjects = INITIAL_SUBJECTS.filter((s) => s.departmentId === 'dept-ece');
+        this.subjects = [...otherSubjects, ...eeOfficialSubjects, ...eceOfficialSubjects];
 
-        // Migrate any papers that referenced the old EE placeholder subject id
+        // Migrate any papers that referenced the old EE or ECE placeholder subject ids
         this.papers = (parsed.papers || INITIAL_PAPERS).map((p) => {
           if (p.subjectId === 'sub-ee-1' || p.subjectId === 'sub-ee-3') {
             return {
@@ -404,6 +488,16 @@ export class DataStore {
               subjectId: 'sub-ee-sem3-3',
               subjectCode: 'EE-201N',
               subjectName: 'Network Analysis & Synthesis',
+            };
+          }
+          if (p.subjectId === 'sub-ec-1' || p.subjectId === 'sub-ec-2' || p.subjectId === 'sub-ec-3') {
+            return {
+              ...p,
+              subjectId: 'sub-ece-sem3-1',
+              subjectCode: 'EC-201T',
+              subjectName: 'Electronics engineering materials',
+              fileName: 'MJPRU_EC201T_ElectronicsEngineeringMaterials_2023.pdf',
+              filePath: '/papers/mjpru_ec201t_2023.pdf',
             };
           }
           return p;

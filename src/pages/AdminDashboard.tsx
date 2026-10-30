@@ -850,14 +850,44 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-700">Elective Group (Optional)</label>
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-bold text-slate-700">Elective Group (Optional)</label>
+                  {subjectElectiveGroup && (
+                    <button
+                      type="button"
+                      onClick={() => setSubjectElectiveGroup('')}
+                      className="text-[10px] text-slate-400 hover:text-slate-600"
+                    >
+                      Clear
+                    </button>
+                  )}
+                </div>
                 <input
                   type="text"
                   value={subjectElectiveGroup}
                   onChange={(e) => setSubjectElectiveGroup(e.target.value)}
-                  placeholder="e.g. Department Elective-I, Department Elective-II, Open Elective"
+                  placeholder="e.g. Pool Elective, Open Elective, Department Elective-I"
                   className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:border-[#0e0fed]"
                 />
+                <div className="flex flex-wrap gap-1.5 pt-1">
+                  {['Pool Elective', 'Open Elective', 'Department Elective-I', 'Department Elective-II', 'Department Elective-III'].map((group) => (
+                    <button
+                      key={group}
+                      type="button"
+                      onClick={() => {
+                        setSubjectElectiveGroup(group);
+                        if (subjectCategory === 'Theory') setSubjectCategory('Elective');
+                      }}
+                      className={`text-[10px] font-bold px-2 py-0.5 rounded-md border transition-colors ${
+                        subjectElectiveGroup === group
+                          ? 'bg-[#0e0fed] text-white border-[#0e0fed]'
+                          : 'bg-purple-50 text-purple-700 hover:bg-purple-100 border-purple-200'
+                      }`}
+                    >
+                      + {group}
+                    </button>
+                  ))}
+                </div>
               </div>
 
               <div className="space-y-1">

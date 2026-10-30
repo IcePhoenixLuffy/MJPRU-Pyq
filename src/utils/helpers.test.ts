@@ -126,3 +126,82 @@ test('INITIAL_SUBJECTS contains official Electrical Engineering 8-semester struc
   assert.ok(codes.has('EE-420N')); // MOOC-I
 });
 
+test('INITIAL_SUBJECTS contains official Electronics & Communication Engineering 8-semester structure with no lab courses', async () => {
+  const { INITIAL_SUBJECTS } = await import('../lib/dataStore');
+  const eceSubjects = INITIAL_SUBJECTS.filter((s) => s.departmentId === 'dept-ece');
+
+  // Total subjects in ECE across Sem 1-8: 7 + 6 + 6 + 6 + 6 + 6 + 14 + 12 = 63
+  assert.equal(eceSubjects.length, 63);
+
+  // Check semester-wise distribution
+  const sem1 = eceSubjects.filter((s) => s.semesterId === 'sem-1');
+  const sem2 = eceSubjects.filter((s) => s.semesterId === 'sem-2');
+  const sem3 = eceSubjects.filter((s) => s.semesterId === 'sem-3');
+  const sem4 = eceSubjects.filter((s) => s.semesterId === 'sem-4');
+  const sem5 = eceSubjects.filter((s) => s.semesterId === 'sem-5');
+  const sem6 = eceSubjects.filter((s) => s.semesterId === 'sem-6');
+  const sem7 = eceSubjects.filter((s) => s.semesterId === 'sem-7');
+  const sem8 = eceSubjects.filter((s) => s.semesterId === 'sem-8');
+
+  assert.equal(sem1.length, 7);
+  assert.equal(sem2.length, 6);
+  assert.equal(sem3.length, 6);
+  assert.equal(sem4.length, 6);
+  assert.equal(sem5.length, 6);
+  assert.equal(sem6.length, 6);
+  assert.equal(sem7.length, 14);
+  assert.equal(sem8.length, 12);
+
+  // Verify completely NO laboratory courses
+  for (const sub of eceSubjects) {
+    assert.notEqual(sub.category, 'Practical');
+    assert.ok(!sub.subjectName.toLowerCase().includes(' lab'), `Subject ${sub.subjectName} appears to be a lab`);
+    assert.ok(!sub.subjectName.toLowerCase().includes('laboratory'), `Subject ${sub.subjectName} appears to be a lab`);
+  }
+
+  // Check key codes from user request
+  const codes = new Set(eceSubjects.map((s) => s.subjectCode));
+  assert.ok(codes.has('PH-101T'));
+  assert.ok(codes.has('EE-101T'));
+  assert.ok(codes.has('CY-103T'));
+  assert.ok(codes.has('EL-101T'));
+  assert.ok(codes.has('HU-103T'));
+  assert.ok(codes.has('EC-201T'));
+  assert.ok(codes.has('EC-202T'));
+  assert.ok(codes.has('EC-204T'));
+  assert.ok(codes.has('EI-202T'));
+  assert.ok(codes.has('EC-301T'));
+  assert.ok(codes.has('EC-302T'));
+  assert.ok(codes.has('EC-415T'));
+  assert.ok(codes.has('EC-403T'));
+  assert.ok(codes.has('EE-405T'));
+  assert.ok(codes.has('EC-407T')); // Industrial training
+  assert.ok(codes.has('EC-409T')); // Seminar
+  assert.ok(codes.has('EC-405P')); // Project-I
+  assert.ok(codes.has('EC-436T')); // Optical fibre communication
+  assert.ok(codes.has('EC-456T')); // Satellite communication
+  assert.ok(codes.has('EC-402P')); // Project-II
+
+  // Pool Electives (Sem 7 and Sem 8)
+  assert.ok(codes.has('EC-433'));
+  assert.ok(codes.has('EC-452T'));
+  assert.ok(codes.has('ME-473T'));
+  assert.ok(codes.has('CS-402T'));
+  assert.ok(codes.has('EI-451T'));
+  assert.ok(codes.has('EC-458T'));
+  assert.ok(codes.has('EC-450T'));
+  assert.ok(codes.has('EC-462T'));
+  assert.ok(codes.has('EI-412T'));
+
+  // Open Electives (Sem 7 and Sem 8)
+  assert.ok(codes.has('PH-419T'));
+  assert.ok(codes.has('MA-491T'));
+  assert.ok(codes.has('CY-401T'));
+  assert.ok(codes.has('HU-402T'));
+  assert.ok(codes.has('HU-449T'));
+  assert.ok(codes.has('PH-429T'));
+  assert.ok(codes.has('HU-409T'));
+  assert.ok(codes.has('HU-407T'));
+});
+
+
