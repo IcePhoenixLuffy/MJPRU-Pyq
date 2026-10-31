@@ -88,6 +88,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const [subjectCategory, setSubjectCategory] = useState<'Theory' | 'Elective' | 'Practical' | 'Project' | 'Seminar' | 'Training'>('Theory');
   const [subjectElectiveGroup, setSubjectElectiveGroup] = useState('');
   const [subjectNote, setSubjectNote] = useState('');
+  const [subjectFilterDeptId, setSubjectFilterDeptId] = useState('all');
+  const [subjectFilterQuery, setSubjectFilterQuery] = useState('');
 
   // PYQ Upload Form
   const [paperDeptId, setPaperDeptId] = useState(departments[0]?.id || '');
@@ -870,7 +872,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:border-[#0e0fed]"
                 />
                 <div className="flex flex-wrap gap-1.5 pt-1">
-                  {['Pool Elective', 'Open Elective', 'Department Elective-I', 'Department Elective-II', 'Department Elective-III'].map((group) => (
+                  {['Elective-I', 'Elective-II', 'Elective-III', 'Elective-IV', 'Elective-V', 'Departmental Elective-I', 'Departmental Elective-II', 'Departmental Elective-III', 'Departmental Elective-IV', 'Pool Elective', 'Open Elective'].map((group) => (
                     <button
                       key={group}
                       type="button"
@@ -912,12 +914,44 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           </div>
 
           <div className="lg:col-span-7 space-y-3">
-            <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500">
-              Active Subjects ({subjects.length})
-            </h2>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500">
+                Active Subjects ({subjects.length})
+              </h2>
+
+              <div className="flex items-center gap-2">
+                <select
+                  value={subjectFilterDeptId}
+                  onChange={(e) => setSubjectFilterDeptId(e.target.value)}
+                  className="px-2 py-1 bg-white border border-slate-200 rounded-lg text-xs font-medium text-slate-700 focus:outline-none"
+                >
+                  <option value="all">All Departments</option>
+                  {departments.map((d) => (
+                    <option key={d.id} value={d.id}>{d.code}</option>
+                  ))}
+                </select>
+
+                <input
+                  type="text"
+                  value={subjectFilterQuery}
+                  onChange={(e) => setSubjectFilterQuery(e.target.value)}
+                  placeholder="Search code or name..."
+                  className="px-2.5 py-1 bg-white border border-slate-200 rounded-lg text-xs font-medium text-slate-700 focus:outline-none w-36"
+                />
+              </div>
+            </div>
 
             <div className="max-h-[600px] overflow-y-auto space-y-2.5 pr-1">
-              {subjects.map((sub) => {
+              {subjects
+                .filter((sub) => {
+                  if (subjectFilterDeptId !== 'all' && sub.departmentId !== subjectFilterDeptId) return false;
+                  if (subjectFilterQuery) {
+                    const q = subjectFilterQuery.toLowerCase();
+                    return sub.subjectCode.toLowerCase().includes(q) || sub.subjectName.toLowerCase().includes(q);
+                  }
+                  return true;
+                })
+                .map((sub) => {
                 const dept = departments.find((d) => d.id === sub.departmentId);
                 const sem = semesters.find((s) => s.id === sub.semesterId);
 

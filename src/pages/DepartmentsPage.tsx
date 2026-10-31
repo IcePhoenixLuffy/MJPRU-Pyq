@@ -65,11 +65,15 @@ export const DepartmentsPage: React.FC<DepartmentsPageProps> = ({
     departments.find((d) => d.code === 'EE')?.id || departments[0]?.id || null
   );
 
-  // Electrical Engineering specific navigation states
+  // Semester-wise navigation states
   const [selectedYearId, setSelectedYearId] = useState<string>('all'); // 'all', 'year-1', 'year-2', 'year-3', 'year-4'
   const [selectedSemesterId, setSelectedSemesterId] = useState<string>('all'); // 'all', 'sem-1' ... 'sem-8'
   const [activeSubjectModal, setActiveSubjectModal] = useState<Subject | null>(null);
   const [subjectExamYearFilter, setSubjectExamYearFilter] = useState<string>('all');
+  const [showCsitCatalogueModal, setShowCsitCatalogueModal] = useState<boolean>(false);
+  const [csitCatalogueSearch, setCsitCatalogueSearch] = useState<string>('');
+  const [showMeCatalogueModal, setShowMeCatalogueModal] = useState<boolean>(false);
+  const [meCatalogueSearch, setMeCatalogueSearch] = useState<string>('');
 
   const filteredDepts = departments.filter((d) => {
     const q = searchQuery.toLowerCase();
@@ -77,19 +81,36 @@ export const DepartmentsPage: React.FC<DepartmentsPageProps> = ({
   });
 
   const activeDept = departments.find((d) => d.id === selectedDeptId) || departments[0];
-  const isSemesterWiseDept = activeDept?.code === 'EE' || activeDept?.code === 'ECE';
+  const isSemesterWiseDept = activeDept?.code === 'EE' || activeDept?.code === 'ECE' || activeDept?.code === 'CSIT' || activeDept?.code === 'CH' || activeDept?.code === 'CHE' || activeDept?.code === 'ME' || activeDept?.code === 'BME';
 
   const activeDeptSubjects = subjects.filter((s) => s.departmentId === activeDept?.id);
   const activeDeptPapers = papers.filter((p) => p.departmentId === activeDept?.id);
 
-  // Electrical Engineering semester-wise filtering
+  // CSIT 16-Course Elective Catalogue (all electives belonging to CSIT)
+  const csitElectives = activeDept?.code === 'CSIT'
+    ? activeDeptSubjects.filter((s) => s.category === 'Elective' || s.id.startsWith('sub-csit-elec-') || s.subjectCode.startsWith('CS-43') || s.subjectCode.startsWith('CS-44') || s.subjectCode.startsWith('CS-45') || s.subjectCode === 'EC-403T' || s.subjectCode === 'EE-458T')
+    : [];
+
+  // Mechanical Engineering 12-Course Departmental Elective Catalogue
+  const meElectives = (activeDept?.code === 'ME' || activeDept?.code === 'BME')
+    ? activeDeptSubjects.filter((s) => s.id.startsWith('sub-me-elec-') || (s.category === 'Elective' && s.note?.includes('Catalogue')))
+    : [];
+
+  // Semester-wise filtering
   const visibleSemesters = semesters.filter((sem) => {
     if (selectedYearId === 'all') return true;
     return sem.academicYearId === selectedYearId;
   });
 
   const getSubjectsForSemester = (semId: string) => {
-    return activeDeptSubjects.filter((s) => s.semesterId === semId);
+    return activeDeptSubjects.filter((s) => {
+      if (s.semesterId !== semId) return false;
+      // In CSIT and ME, electives appear under a semester ONLY once assigned to an elective group
+      if ((activeDept?.code === 'CSIT' || activeDept?.code === 'ME' || activeDept?.code === 'BME') && s.category === 'Elective' && !s.electiveGroup) {
+        return false;
+      }
+      return true;
+    });
   };
 
   const getPapersForSemester = (semId: string) => {
@@ -279,6 +300,66 @@ export const DepartmentsPage: React.FC<DepartmentsPageProps> = ({
                       </span>
                     </div>
                   </div>
+
+                  {/* CSIT 16-Course Elective Catalogue Banner */}
+                  {activeDept?.code === 'CSIT' && (
+                    <div className="p-4 rounded-2xl bg-gradient-to-r from-purple-50/90 via-pink-50/70 to-blue-50/80 border border-purple-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs">
+                      <div className="flex items-center gap-3">
+                        <div className="p-2.5 rounded-xl bg-gradient-to-tr from-[#0e0fed] to-purple-600 text-white shadow-2xs shrink-0">
+                          <Layers className="w-5 h-5" />
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <h4 className="text-xs sm:text-sm font-black text-slate-900">CSIT 16-Course Elective Catalogue</h4>
+                            <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-purple-100 text-purple-700 border border-purple-200">
+                              16 Advanced Electives
+                            </span>
+                          </div>
+                          <p className="text-[11px] text-slate-600 font-medium">
+                            Explore Neural Networks, Parallel Computing, Fault Tolerance, AI, VLSI, and Real-Time Systems with archived PYQs.
+                          </p>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => setShowCsitCatalogueModal(true)}
+                        className="px-3.5 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-black shadow-xs transition-all flex items-center gap-1.5 shrink-0 self-start sm:self-center magnetic-target"
+                        data-magnetic="true"
+                      >
+                        <span>Browse 16 Electives</span>
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Mechanical Engineering 12-Course Departmental Elective Catalogue Banner */}
+                  {(activeDept?.code === 'ME' || activeDept?.code === 'BME') && (
+                    <div className="p-4 rounded-2xl bg-gradient-to-r from-blue-50/90 via-indigo-50/70 to-cyan-50/80 border border-blue-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs">
+                      <div className="flex items-center gap-3">
+                        <div className="p-2.5 rounded-xl bg-gradient-to-tr from-[#0e0fed] to-[#2563eb] text-white shadow-2xs shrink-0">
+                          <Layers className="w-5 h-5" />
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <h4 className="text-xs sm:text-sm font-black text-slate-900">ME 12-Course Departmental Elective Catalogue</h4>
+                            <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-blue-100 text-[#0e0fed] border border-blue-200">
+                              12 Official Electives
+                            </span>
+                          </div>
+                          <p className="text-[11px] text-slate-600 font-medium">
+                            Automotive Mechanics, Statistical QC, Power Plant, Composite Materials, Tribology, Robotics, etc. Manageable via Admin Dashboard.
+                          </p>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => setShowMeCatalogueModal(true)}
+                        className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-[#0e0fed] to-[#2563eb] hover:opacity-90 text-white text-xs font-black shadow-xs transition-all flex items-center gap-1.5 shrink-0 self-start sm:self-center magnetic-target"
+                        data-magnetic="true"
+                      >
+                        <span>Browse 12 Electives</span>
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  )}
 
                   {/* Academic Year Filter Selector */}
                   <div className="space-y-2">
@@ -505,6 +586,87 @@ export const DepartmentsPage: React.FC<DepartmentsPageProps> = ({
                               );
                             })}
 
+                            {/* CSIT Semester 7: Official Curriculum Elective Slots (if not assigned yet) */}
+                            {activeDept.code === 'CSIT' && sem.semesterNumber === 7 && (
+                              ['Departmental Elective-I', 'Pool Elective', 'Open Elective']
+                                .filter((slot) => !distinctElectiveGroups.some((g) => g.toLowerCase() === slot.toLowerCase()))
+                                .map((slot) => (
+                                  <div key={slot} className="space-y-3 pt-3 border-t border-slate-200">
+                                    <div className="flex items-center justify-between">
+                                      <div className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-purple-800">
+                                        <Layers className="w-4 h-4 text-purple-600" />
+                                        <span>{slot} (4 Credits)</span>
+                                      </div>
+                                      <span className="text-[11px] font-bold text-amber-800 bg-amber-50 px-2.5 py-0.5 rounded-full border border-amber-200 shadow-2xs">
+                                        Curriculum Slot
+                                      </span>
+                                    </div>
+                                    <div className="p-4 rounded-2xl bg-gradient-to-r from-purple-50/60 via-indigo-50/40 to-white border border-purple-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs">
+                                      <div className="space-y-1">
+                                        <div className="text-xs font-black text-slate-800">
+                                          {slot === 'Open Elective' ? 'University Open Elective Option' : `${slot} — Unassigned Catalogue Slot`}
+                                        </div>
+                                        <p className="text-xs text-slate-600 font-medium leading-relaxed max-w-xl">
+                                          {slot === 'Open Elective' 
+                                            ? 'Inter-departmental open elective chosen across university disciplines. Assign or manage via Admin Dashboard.'
+                                            : 'Selectable from the official 16-Course CSIT Elective Catalogue. Assign an elective to this slot via the Admin Dashboard.'}
+                                        </p>
+                                      </div>
+                                      <button
+                                        onClick={() => setShowCsitCatalogueModal(true)}
+                                        className="px-3.5 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-black shrink-0 transition-all shadow-xs magnetic-target flex items-center gap-1.5 self-start sm:self-center"
+                                        data-magnetic="true"
+                                      >
+                                        <span>Browse 16 Electives</span>
+                                        <ArrowRight className="w-3 h-3" />
+                                      </button>
+                                    </div>
+                                  </div>
+                                ))
+                            )}
+
+                            {/* CSIT Semester 8: Official Curriculum Elective Slots (if not assigned yet) */}
+                            {activeDept.code === 'CSIT' && sem.semesterNumber === 8 && (
+                              ['Departmental Elective-II', 'Departmental Elective-III', 'Open Elective']
+                                .filter((slot) => !distinctElectiveGroups.some((g) => 
+                                  g.toLowerCase() === slot.toLowerCase() || 
+                                  g.toLowerCase() === slot.replace('Elective-II', 'Electives-II').toLowerCase()
+                                ))
+                                .map((slot) => (
+                                  <div key={slot} className="space-y-3 pt-3 border-t border-slate-200">
+                                    <div className="flex items-center justify-between">
+                                      <div className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-purple-800">
+                                        <Layers className="w-4 h-4 text-purple-600" />
+                                        <span>{slot} (4 Credits)</span>
+                                      </div>
+                                      <span className="text-[11px] font-bold text-amber-800 bg-amber-50 px-2.5 py-0.5 rounded-full border border-amber-200 shadow-2xs">
+                                        Curriculum Slot
+                                      </span>
+                                    </div>
+                                    <div className="p-4 rounded-2xl bg-gradient-to-r from-purple-50/60 via-indigo-50/40 to-white border border-purple-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs">
+                                      <div className="space-y-1">
+                                        <div className="text-xs font-black text-slate-800">
+                                          {slot === 'Open Elective' ? 'University Open Elective Option' : `${slot} — Unassigned Catalogue Slot`}
+                                        </div>
+                                        <p className="text-xs text-slate-600 font-medium leading-relaxed max-w-xl">
+                                          {slot === 'Open Elective' 
+                                            ? 'Inter-departmental open elective chosen across university disciplines. Assign or manage via Admin Dashboard.'
+                                            : 'Selectable from the official 16-Course CSIT Elective Catalogue. Assign an elective to this slot via the Admin Dashboard.'}
+                                        </p>
+                                      </div>
+                                      <button
+                                        onClick={() => setShowCsitCatalogueModal(true)}
+                                        className="px-3.5 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-black shrink-0 transition-all shadow-xs magnetic-target flex items-center gap-1.5 self-start sm:self-center"
+                                        data-magnetic="true"
+                                      >
+                                        <span>Browse 16 Electives</span>
+                                        <ArrowRight className="w-3 h-3" />
+                                      </button>
+                                    </div>
+                                  </div>
+                                ))
+                            )}
+
                             {/* Section: Projects, Training, Seminar & Academic Components */}
                             {academicComponents.length > 0 && (
                               <div className="space-y-3 pt-3 border-t border-slate-200">
@@ -542,6 +704,24 @@ export const DepartmentsPage: React.FC<DepartmentsPageProps> = ({
                                   </div>
                                   <p className="text-xs text-amber-800 font-semibold leading-relaxed">
                                     &ldquo;The student shall decide the MOOC course in consultation with the department faculty member and approved by Head of the Department.&rdquo;
+                                  </p>
+                                </div>
+                              </div>
+                            )}
+
+                            {/* Mandatory Summer Training Note for Semester 6 in Mechanical Engineering */}
+                            {(activeDept.code === 'ME' || activeDept.code === 'BME') && sem.semesterNumber === 6 && (
+                              <div className="p-4 rounded-2xl bg-gradient-to-r from-blue-50/90 via-cyan-50/70 to-emerald-50/80 border border-cyan-200 flex items-start gap-3 shadow-2xs">
+                                <Info className="w-5 h-5 text-[#0e0fed] shrink-0 mt-0.5" />
+                                <div className="space-y-1">
+                                  <div className="text-xs font-black text-slate-900 uppercase tracking-wide flex items-center gap-2">
+                                    <span>Summer Training Requirement</span>
+                                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-100 text-[#0e0fed] border border-blue-200">
+                                      45 Days Mandatory
+                                    </span>
+                                  </div>
+                                  <p className="text-xs text-slate-700 font-medium leading-relaxed">
+                                    Students must undergo <strong>45 days of practical summer training</strong> at the end of Semester 6 in an approved industrial organization or engineering facility. Evaluation and viva-voce colloquium take place in Semester 7 under course code <code>ME-401 Industrial Training (Viva)</code>.
                                   </p>
                                 </div>
                               </div>
@@ -822,6 +1002,313 @@ export const DepartmentsPage: React.FC<DepartmentsPageProps> = ({
               </button>
             </div>
 
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* CSIT 16-COURSE ELECTIVE CATALOGUE MODAL */}
+      {/* ========================================================================= */}
+      {showCsitCatalogueModal && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200"
+          role="dialog"
+          aria-modal="true"
+        >
+          <div className="relative w-full max-w-4xl bg-white border border-slate-200 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+            {/* Top gradient ribbon */}
+            <div className="h-1.5 w-full bg-gradient-to-r from-[#8bf0ba] via-[#94f0f1] via-[#0e0fed] via-[#f2b1d8] to-[#ffdc6a]" />
+
+            {/* Modal Header */}
+            <div className="p-6 border-b border-slate-100 flex items-start justify-between gap-4 bg-gradient-to-r from-purple-50/40 via-white to-blue-50/40">
+              <div className="space-y-1">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="font-mono text-xs font-black px-2.5 py-0.5 rounded-lg bg-purple-100 text-purple-800 border border-purple-200">
+                    CSIT Department
+                  </span>
+                  <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-blue-50 text-[#0e0fed] border border-blue-200">
+                    16 Advanced Curriculum Electives
+                  </span>
+                </div>
+                <h3 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+                  Official CSIT Elective Catalogue
+                </h3>
+                <p className="text-xs text-slate-600 font-medium max-w-2xl leading-relaxed">
+                  Official approved elective syllabus pool. All 16 subjects start in this catalogue and can be assigned to Departmental Elective-I, II, III, Pool Elective, or Open Elective via Admin Portal. Click any course to view archived question papers.
+                </p>
+              </div>
+
+              <button
+                onClick={() => {
+                  setShowCsitCatalogueModal(false);
+                  setCsitCatalogueSearch('');
+                }}
+                className="p-2 rounded-xl text-slate-400 hover:text-slate-800 hover:bg-slate-100 transition-colors magnetic-target shrink-0"
+                data-magnetic="true"
+                aria-label="Close modal"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Search & Filter Bar */}
+            <div className="px-6 py-3 bg-slate-50 border-b border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3">
+              <div className="relative w-full sm:w-80">
+                <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                <input
+                  type="text"
+                  value={csitCatalogueSearch}
+                  onChange={(e) => setCsitCatalogueSearch(e.target.value)}
+                  placeholder="Filter by code or title (e.g. AI, VLSI, Networks)..."
+                  className="w-full pl-9 pr-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs font-medium text-slate-800 focus:outline-none focus:border-[#0e0fed]"
+                />
+              </div>
+
+              <div className="text-xs font-mono font-bold text-slate-600">
+                Showing {csitElectives.filter((s) => {
+                  const q = csitCatalogueSearch.toLowerCase();
+                  return s.subjectCode.toLowerCase().includes(q) || s.subjectName.toLowerCase().includes(q);
+                }).length} of 16 Electives
+              </div>
+            </div>
+
+            {/* Electives Grid */}
+            <div className="p-6 overflow-y-auto max-h-[60vh] space-y-3">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                {csitElectives
+                  .filter((s) => {
+                    const q = csitCatalogueSearch.toLowerCase();
+                    return s.subjectCode.toLowerCase().includes(q) || s.subjectName.toLowerCase().includes(q);
+                  })
+                  .map((subject, idx) => {
+                    const subPapers = getPapersForSubject(subject.id);
+                    const sem = semesters.find((sm) => sm.id === subject.semesterId);
+
+                    return (
+                      <div
+                        key={subject.id}
+                        onClick={() => {
+                          setActiveSubjectModal(subject);
+                          setShowCsitCatalogueModal(false);
+                        }}
+                        className="p-4 rounded-2xl bg-white border border-slate-200 hover:border-[#0e0fed] hover:shadow-md transition-all cursor-pointer group magnetic-target flex flex-col justify-between"
+                        data-magnetic="true"
+                      >
+                        <div className="space-y-2">
+                          <div className="flex items-center justify-between gap-2">
+                            <div className="flex items-center gap-1.5">
+                              <span className="font-mono text-xs font-black px-2 py-0.5 rounded-lg bg-blue-50 text-[#0e0fed] border border-blue-200">
+                                {subject.subjectCode}
+                              </span>
+                              <span className="text-[10px] font-bold text-slate-600 bg-slate-100 px-1.5 py-0.5 rounded">
+                                #{idx + 1}
+                              </span>
+                            </div>
+                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-purple-50 text-purple-700 border border-purple-200">
+                              4 Credits
+                            </span>
+                          </div>
+
+                          <h4 className="text-sm font-black text-slate-900 group-hover:text-[#0e0fed] transition-colors leading-snug line-clamp-2">
+                            {subject.subjectName}
+                          </h4>
+
+                          {/* Allocation Status */}
+                          <div className="pt-1">
+                            {subject.electiveGroup ? (
+                              <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-md bg-emerald-50 text-emerald-800 border border-emerald-200 inline-flex items-center gap-1">
+                                <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                                <span>Assigned: {subject.electiveGroup} ({sem?.name || 'Sem 7'})</span>
+                              </span>
+                            ) : (
+                              <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-md bg-slate-100 text-slate-600 border border-slate-200 inline-flex items-center gap-1">
+                                <span>Unassigned in Catalogue Pool</span>
+                              </span>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
+                          <span className={`font-mono font-bold ${subPapers.length > 0 ? 'text-[#0e0fed]' : 'text-slate-400'}`}>
+                            {subPapers.length} {subPapers.length === 1 ? 'Paper' : 'Papers'}
+                          </span>
+
+                          <button
+                            type="button"
+                            className="flex items-center gap-1 font-black text-xs text-[#0e0fed] group-hover:translate-x-1 transition-transform"
+                          >
+                            <span>View Question Papers</span>
+                            <ChevronRight className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="p-4 bg-slate-50 border-t border-slate-200 flex items-center justify-between text-xs text-slate-600">
+              <span className="font-semibold text-slate-700">
+                M.J.P. Rohilkhand University &bull; B.Tech Computer Science and Information Technology
+              </span>
+              <button
+                onClick={() => {
+                  setShowCsitCatalogueModal(false);
+                  setCsitCatalogueSearch('');
+                }}
+                className="font-black text-[#0e0fed] hover:underline"
+              >
+                Done
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Mechanical Engineering 12-Course Departmental Elective Catalogue Modal */}
+      {showMeCatalogueModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fadeIn">
+          <div className="bg-white border border-slate-200 rounded-3xl max-w-4xl w-full overflow-hidden shadow-2xl space-y-0 flex flex-col max-h-[90vh]">
+            
+            {/* Modal Header */}
+            <div className="p-6 bg-gradient-to-r from-blue-50/90 via-indigo-50/70 to-cyan-50/80 border-b border-blue-200 flex items-start justify-between gap-4">
+              <div className="space-y-1">
+                <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-blue-100 text-[#0e0fed] text-[10px] font-black uppercase tracking-wider">
+                  Official Syllabus Catalogue
+                </div>
+                <h3 className="text-xl font-black text-slate-900">
+                  ME 12-Course Departmental Elective Catalogue
+                </h3>
+                <p className="text-xs text-slate-600 font-medium max-w-2xl leading-relaxed">
+                  Official approved Departmental Elective pool for Mechanical Engineering. All 12 subjects are preserved in this catalogue and can be configured to Elective-I, II, III, IV, or V via the Admin Dashboard. Click any course to view archived question papers.
+                </p>
+              </div>
+
+              <button
+                onClick={() => {
+                  setShowMeCatalogueModal(false);
+                  setMeCatalogueSearch('');
+                }}
+                className="p-2 rounded-xl text-slate-400 hover:text-slate-800 hover:bg-slate-100 transition-colors magnetic-target shrink-0"
+                data-magnetic="true"
+                aria-label="Close modal"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Search & Filter Bar */}
+            <div className="px-6 py-3 bg-slate-50 border-b border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3">
+              <div className="relative w-full sm:w-80">
+                <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                <input
+                  type="text"
+                  value={meCatalogueSearch}
+                  onChange={(e) => setMeCatalogueSearch(e.target.value)}
+                  placeholder="Filter by code or title (e.g. Robotics, Power Plant, Tribology)..."
+                  className="w-full pl-9 pr-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs font-medium text-slate-800 focus:outline-none focus:border-[#0e0fed]"
+                />
+              </div>
+
+              <div className="text-xs font-mono font-bold text-slate-600">
+                Showing {meElectives.filter((s) => {
+                  const q = meCatalogueSearch.toLowerCase();
+                  return s.subjectCode.toLowerCase().includes(q) || s.subjectName.toLowerCase().includes(q);
+                }).length} of {meElectives.length} Electives
+              </div>
+            </div>
+
+            {/* Electives Grid */}
+            <div className="p-6 overflow-y-auto max-h-[60vh] space-y-3">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                {meElectives
+                  .filter((s) => {
+                    const q = meCatalogueSearch.toLowerCase();
+                    return s.subjectCode.toLowerCase().includes(q) || s.subjectName.toLowerCase().includes(q);
+                  })
+                  .map((subject, idx) => {
+                    const subPapers = getPapersForSubject(subject.id);
+                    const sem = semesters.find((sm) => sm.id === subject.semesterId);
+
+                    return (
+                      <div
+                        key={subject.id}
+                        onClick={() => {
+                          setShowMeCatalogueModal(false);
+                          setActiveSubjectModal(subject);
+                        }}
+                        className="p-4 rounded-2xl bg-white border border-slate-200 hover:border-[#0e0fed] hover:shadow-md transition-all cursor-pointer group magnetic-target flex flex-col justify-between"
+                        data-magnetic="true"
+                      >
+                        <div className="space-y-2">
+                          <div className="flex items-center justify-between gap-2">
+                            <div className="flex items-center gap-1.5">
+                              <span className="font-mono text-xs font-black px-2 py-0.5 rounded-lg bg-blue-50 text-[#0e0fed] border border-blue-200">
+                                {subject.subjectCode}
+                              </span>
+                              <span className="text-[10px] font-bold text-slate-600 bg-slate-100 px-1.5 py-0.5 rounded">
+                                #{idx + 1}
+                              </span>
+                            </div>
+                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-50 text-[#0e0fed] border border-blue-200">
+                              4 Credits
+                            </span>
+                          </div>
+
+                          <h4 className="text-sm font-black text-slate-900 group-hover:text-[#0e0fed] transition-colors leading-snug line-clamp-2">
+                            {subject.subjectName}
+                          </h4>
+
+                          {/* Allocation Status */}
+                          <div className="pt-1">
+                            {subject.electiveGroup ? (
+                              <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-md bg-emerald-50 text-emerald-800 border border-emerald-200 inline-flex items-center gap-1">
+                                <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                                <span>Assigned: {subject.electiveGroup} ({sem?.name || 'Sem 6'})</span>
+                              </span>
+                            ) : (
+                              <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-md bg-slate-100 text-slate-600 border border-slate-200 inline-flex items-center gap-1">
+                                <span>Departmental Catalogue Pool</span>
+                              </span>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
+                          <span className={`font-mono font-bold ${subPapers.length > 0 ? 'text-[#0e0fed]' : 'text-slate-400'}`}>
+                            {subPapers.length} {subPapers.length === 1 ? 'Paper' : 'Papers'}
+                          </span>
+
+                          <button
+                            type="button"
+                            className="flex items-center gap-1 font-black text-xs text-[#0e0fed] group-hover:translate-x-1 transition-transform"
+                          >
+                            <span>View Question Papers</span>
+                            <ChevronRight className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="p-4 bg-slate-50 border-t border-slate-200 flex items-center justify-between text-xs text-slate-600">
+              <span className="font-semibold text-slate-700">
+                M.J.P. Rohilkhand University &bull; B.Tech Mechanical Engineering
+              </span>
+              <button
+                onClick={() => {
+                  setShowMeCatalogueModal(false);
+                  setMeCatalogueSearch('');
+                }}
+                className="font-black text-[#0e0fed] hover:underline"
+              >
+                Done
+              </button>
+            </div>
           </div>
         </div>
       )}

@@ -23,10 +23,10 @@ export const INITIAL_SEMESTERS: Semester[] = [
 export const INITIAL_DEPARTMENTS: Department[] = [
   {
     id: 'dept-csit',
-    name: 'Computer Science & Information Technology',
+    name: 'Computer Science and Information Technology',
     slug: 'computer-science-and-information-technology',
     code: 'CSIT',
-    description: 'Foundations of computing, software engineering, databases, algorithms, and networked systems.',
+    description: 'Foundations of computing, software systems, algorithms, database architectures, networks, and advanced theoretical computer science.',
     iconName: 'Laptop',
     createdAt: '2024-01-01T00:00:00.000Z',
   },
@@ -70,8 +70,8 @@ export const INITIAL_DEPARTMENTS: Department[] = [
     id: 'dept-ce',
     name: 'Chemical Engineering',
     slug: 'chemical-engineering',
-    code: 'CHE',
-    description: 'Reaction engineering, transport phenomena, refinery processes, and polymer chemistry.',
+    code: 'CH',
+    description: 'Reaction engineering, transport phenomena, chemical process equipment design, thermodynamics, and polymer technology.',
     iconName: 'FlaskConical',
     createdAt: '2024-01-01T00:00:00.000Z',
   },
@@ -87,15 +87,85 @@ export const INITIAL_DEPARTMENTS: Department[] = [
 ];
 
 export const INITIAL_SUBJECTS: Subject[] = [
-  // CSIT Subjects
-  { id: 'sub-cs-1', departmentId: 'dept-csit', semesterId: 'sem-1', subjectName: 'Engineering Mathematics-I', subjectCode: 'BAS-103', credits: 4, createdAt: '2024-01-01' },
-  { id: 'sub-cs-2', departmentId: 'dept-csit', semesterId: 'sem-1', subjectName: 'Programming for Problem Solving (C)', subjectCode: 'BCS-101', credits: 4, createdAt: '2024-01-01' },
-  { id: 'sub-cs-3', departmentId: 'dept-csit', semesterId: 'sem-3', subjectName: 'Data Structures using C', subjectCode: 'BCS-301', credits: 4, createdAt: '2024-01-01' },
-  { id: 'sub-cs-4', departmentId: 'dept-csit', semesterId: 'sem-3', subjectName: 'Discrete Structures & Graph Theory', subjectCode: 'BCS-303', credits: 4, createdAt: '2024-01-01' },
-  { id: 'sub-cs-5', departmentId: 'dept-csit', semesterId: 'sem-4', subjectName: 'Operating Systems', subjectCode: 'BCS-401', credits: 4, createdAt: '2024-01-01' },
-  { id: 'sub-cs-6', departmentId: 'dept-csit', semesterId: 'sem-5', subjectName: 'Database Management Systems', subjectCode: 'BCS-501', credits: 4, createdAt: '2024-01-01' },
-  { id: 'sub-cs-7', departmentId: 'dept-csit', semesterId: 'sem-6', subjectName: 'Computer Networks', subjectCode: 'BCS-602', credits: 4, createdAt: '2024-01-01' },
-  { id: 'sub-cs-8', departmentId: 'dept-csit', semesterId: 'sem-7', subjectName: 'Cloud Computing & Distributed Systems', subjectCode: 'BCS-701', credits: 3, createdAt: '2024-01-01' },
+  // CSIT Subjects (Official M.J.P. Rohilkhand University Course Scheme)
+  // Semester 1 (Theory Courses)
+  { id: 'sub-csit-sem1-1', departmentId: 'dept-csit', semesterId: 'sem-1', subjectName: 'Engineering Physics-I', subjectCode: 'PH-101T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-csit-sem1-2', departmentId: 'dept-csit', semesterId: 'sem-1', subjectName: 'Engineering Chemistry', subjectCode: 'CY-101T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-csit-sem1-3', departmentId: 'dept-csit', semesterId: 'sem-1', subjectName: 'Engineering Mathematics-I', subjectCode: 'MA-101T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-csit-sem1-4', departmentId: 'dept-csit', semesterId: 'sem-1', subjectName: 'Communicative English', subjectCode: 'HU-101T', category: 'Theory', credits: 3, createdAt: '2024-01-01' },
+  { id: 'sub-csit-sem1-5', departmentId: 'dept-csit', semesterId: 'sem-1', subjectName: 'Computer Programming and Fundamentals', subjectCode: 'CS-101T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-csit-sem1-6', departmentId: 'dept-csit', semesterId: 'sem-1', subjectName: 'Manufacturing Techniques', subjectCode: 'ME-101T', category: 'Theory', credits: 3, createdAt: '2024-01-01' },
+  { id: 'sub-csit-sem1-7', departmentId: 'dept-csit', semesterId: 'sem-1', subjectName: 'Engineering Graphics', subjectCode: 'ME-103T', category: 'Theory', credits: 3, createdAt: '2024-01-01' },
+
+  // Semester 2 (Theory Courses)
+  { id: 'sub-csit-sem2-1', departmentId: 'dept-csit', semesterId: 'sem-2', subjectName: 'Basic Electronics Engineering', subjectCode: 'EI-102T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-csit-sem2-2', departmentId: 'dept-csit', semesterId: 'sem-2', subjectName: 'Engineering Mathematics-II', subjectCode: 'MA-102T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-csit-sem2-3', departmentId: 'dept-csit', semesterId: 'sem-2', subjectName: 'Basic Electrical Engineering', subjectCode: 'EE-102T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-csit-sem2-4', departmentId: 'dept-csit', semesterId: 'sem-2', subjectName: 'Engineering Physics-II', subjectCode: 'PH-102T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-csit-sem2-5', departmentId: 'dept-csit', semesterId: 'sem-2', subjectName: 'Environmental Studies: Scientific & Engineering Aspects.', subjectCode: 'CY-102T', category: 'Theory', credits: 3, createdAt: '2024-01-01' },
+  { id: 'sub-csit-sem2-6', departmentId: 'dept-csit', semesterId: 'sem-2', subjectName: 'Fundamental of Economics', subjectCode: 'HU-102T', category: 'Theory', credits: 3, createdAt: '2024-01-01' },
+  { id: 'sub-csit-sem2-7', departmentId: 'dept-csit', semesterId: 'sem-2', subjectName: 'Basic Mechanical Engineering', subjectCode: 'ME-104T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+
+  // Semester 3 (Theory Courses)
+  { id: 'sub-csit-sem3-1', departmentId: 'dept-csit', semesterId: 'sem-3', subjectName: 'Data Base Management System', subjectCode: 'CS-201T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-csit-sem3-2', departmentId: 'dept-csit', semesterId: 'sem-3', subjectName: 'Discrete Mathematical Structure', subjectCode: 'CS-203T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-csit-sem3-3', departmentId: 'dept-csit', semesterId: 'sem-3', subjectName: 'Data Structure', subjectCode: 'CS-205T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-csit-sem3-4', departmentId: 'dept-csit', semesterId: 'sem-3', subjectName: 'Object Oriented Programming', subjectCode: 'CS-207T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-csit-sem3-5', departmentId: 'dept-csit', semesterId: 'sem-3', subjectName: 'Engineering Mathematics-III', subjectCode: 'MA-201T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-csit-sem3-6', departmentId: 'dept-csit', semesterId: 'sem-3', subjectName: 'Analog Electronic', subjectCode: 'EI-201T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+
+  // Semester 4 (Theory Courses)
+  { id: 'sub-csit-sem4-1', departmentId: 'dept-csit', semesterId: 'sem-4', subjectName: 'Analysis & Design of Algorithm', subjectCode: 'CS-202T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-csit-sem4-2', departmentId: 'dept-csit', semesterId: 'sem-4', subjectName: 'Computer Organisation', subjectCode: 'CS-204T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-csit-sem4-3', departmentId: 'dept-csit', semesterId: 'sem-4', subjectName: 'Data Communication', subjectCode: 'CS-206T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-csit-sem4-4', departmentId: 'dept-csit', semesterId: 'sem-4', subjectName: 'Industrial Management', subjectCode: 'ME-212T', category: 'Theory', credits: 3, createdAt: '2024-01-01' },
+  { id: 'sub-csit-sem4-5', departmentId: 'dept-csit', semesterId: 'sem-4', subjectName: 'Signal & Systems', subjectCode: 'EC-202T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-csit-sem4-6', departmentId: 'dept-csit', semesterId: 'sem-4', subjectName: 'Digital Electronic', subjectCode: 'EC-204T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+
+  // Semester 5 (Theory Courses)
+  { id: 'sub-csit-sem5-1', departmentId: 'dept-csit', semesterId: 'sem-5', subjectName: 'Computer Networks', subjectCode: 'CS-301T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-csit-sem5-2', departmentId: 'dept-csit', semesterId: 'sem-5', subjectName: 'Software Engineering', subjectCode: 'CS-303T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-csit-sem5-3', departmentId: 'dept-csit', semesterId: 'sem-5', subjectName: 'Principles of Programming Languages', subjectCode: 'CS-305T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-csit-sem5-4', departmentId: 'dept-csit', semesterId: 'sem-5', subjectName: 'Theory of Computation', subjectCode: 'CS-307T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-csit-sem5-5', departmentId: 'dept-csit', semesterId: 'sem-5', subjectName: 'Operating Systems', subjectCode: 'CS-309T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-csit-sem5-6', departmentId: 'dept-csit', semesterId: 'sem-5', subjectName: 'Microprocessor & Their applications', subjectCode: 'EI-309T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+
+  // Semester 6 (Theory Courses)
+  { id: 'sub-csit-sem6-1', departmentId: 'dept-csit', semesterId: 'sem-6', subjectName: 'Compiler Design', subjectCode: 'CS-304T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-csit-sem6-2', departmentId: 'dept-csit', semesterId: 'sem-6', subjectName: 'Interactive Computer Graphics', subjectCode: 'CS-306T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-csit-sem6-3', departmentId: 'dept-csit', semesterId: 'sem-6', subjectName: 'Distributed Systems', subjectCode: 'CS-308T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-csit-sem6-4', departmentId: 'dept-csit', semesterId: 'sem-6', subjectName: 'Programming with JAVA', subjectCode: 'CS-310T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-csit-sem6-5', departmentId: 'dept-csit', semesterId: 'sem-6', subjectName: 'Data Mining Techniques', subjectCode: 'CS-312T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-csit-sem6-6', departmentId: 'dept-csit', semesterId: 'sem-6', subjectName: 'Digital Signal Processing', subjectCode: 'EC-302T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+
+  // Semester 7 (Theory Courses and Academic Components)
+  { id: 'sub-csit-sem7-1', departmentId: 'dept-csit', semesterId: 'sem-7', subjectName: 'Advanced Computer Architecture', subjectCode: 'CS-401T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-csit-sem7-2', departmentId: 'dept-csit', semesterId: 'sem-7', subjectName: 'Modeling & Simulation', subjectCode: 'CS-403T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-csit-sem7-3', departmentId: 'dept-csit', semesterId: 'sem-7', subjectName: 'Seminar', subjectCode: 'CS-405', category: 'Seminar', credits: 2, createdAt: '2024-01-01' },
+  { id: 'sub-csit-sem7-4', departmentId: 'dept-csit', semesterId: 'sem-7', subjectName: 'Industrial Training', subjectCode: 'TRN-401', category: 'Training', credits: 2, createdAt: '2024-01-01' },
+
+  // Semester 8 (Theory Course and Major Project)
+  { id: 'sub-csit-sem8-1', departmentId: 'dept-csit', semesterId: 'sem-8', subjectName: 'Advanced Computer Networks', subjectCode: 'CS-402T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-csit-sem8-2', departmentId: 'dept-csit', semesterId: 'sem-8', subjectName: 'Major Project Lab', subjectCode: 'CS-406P', category: 'Project', credits: 8, createdAt: '2024-01-01' },
+
+  // CSIT Elective Catalogue (16 Curriculum Electives - Initially Unassigned to specific groups)
+  { id: 'sub-csit-elec-1', departmentId: 'dept-csit', semesterId: 'sem-7', subjectName: 'Network Management Systems', subjectCode: 'CS-431T', category: 'Elective', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-csit-elec-2', departmentId: 'dept-csit', semesterId: 'sem-7', subjectName: 'Object Oriented Analysis and Design', subjectCode: 'CS-432T', category: 'Elective', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-csit-elec-3', departmentId: 'dept-csit', semesterId: 'sem-7', subjectName: 'Artificial Neural Networks', subjectCode: 'CS-433T', category: 'Elective', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-csit-elec-4', departmentId: 'dept-csit', semesterId: 'sem-7', subjectName: 'Parallel Computing and Algorithm', subjectCode: 'CS-435T', category: 'Elective', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-csit-elec-5', departmentId: 'dept-csit', semesterId: 'sem-7', subjectName: 'Fault Tolerance Computing', subjectCode: 'CS-438T', category: 'Elective', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-csit-elec-6', departmentId: 'dept-csit', semesterId: 'sem-7', subjectName: 'Artificial Intelligence & Expert System', subjectCode: 'CS-439T', category: 'Elective', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-csit-elec-7', departmentId: 'dept-csit', semesterId: 'sem-7', subjectName: 'Advanced Data Base Management System', subjectCode: 'CS-441T', category: 'Elective', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-csit-elec-8', departmentId: 'dept-csit', semesterId: 'sem-7', subjectName: 'Network Security and Cryptography', subjectCode: 'CS-443T', category: 'Elective', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-csit-elec-9', departmentId: 'dept-csit', semesterId: 'sem-7', subjectName: 'VLSI Design & Circuit', subjectCode: 'EC-403T', category: 'Elective', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-csit-elec-10', departmentId: 'dept-csit', semesterId: 'sem-7', subjectName: 'Stochastic Models for Computer Applications', subjectCode: 'CS-445T', category: 'Elective', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-csit-elec-11', departmentId: 'dept-csit', semesterId: 'sem-7', subjectName: 'Digital Image Processing', subjectCode: 'EE-458T', category: 'Elective', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-csit-elec-12', departmentId: 'dept-csit', semesterId: 'sem-7', subjectName: 'Web Technology', subjectCode: 'CS-447T', category: 'Elective', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-csit-elec-13', departmentId: 'dept-csit', semesterId: 'sem-7', subjectName: 'Distributed database System', subjectCode: 'CS-448T', category: 'Elective', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-csit-elec-14', departmentId: 'dept-csit', semesterId: 'sem-8', subjectName: 'Internet Programming with .net framework', subjectCode: 'CS-450T', category: 'Elective', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-csit-elec-15', departmentId: 'dept-csit', semesterId: 'sem-8', subjectName: 'Wireless network and Mobile Computing', subjectCode: 'CS-451T', category: 'Elective', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-csit-elec-16', departmentId: 'dept-csit', semesterId: 'sem-8', subjectName: 'Real Time System', subjectCode: 'CS-452T', category: 'Elective', credits: 4, createdAt: '2024-01-01' },
+
 
   // CSAI Subjects
   { id: 'sub-ai-1', departmentId: 'dept-csai', semesterId: 'sem-3', subjectName: 'Python for Data Science & AI', subjectCode: 'BAI-301', credits: 4, createdAt: '2024-01-01' },
@@ -263,14 +333,188 @@ export const INITIAL_SUBJECTS: Subject[] = [
   { id: 'sub-ee-sem8-2', departmentId: 'dept-ee', semesterId: 'sem-8', subjectName: 'Internship', subjectCode: 'EE-412P', category: 'Practical', note: 'Internship / Practical component (Option with MOOC-I EE-420N)', credits: 4, createdAt: '2024-01-01' },
   { id: 'sub-ee-sem8-3', departmentId: 'dept-ee', semesterId: 'sem-8', subjectName: 'MOOC-I', subjectCode: 'EE-420N', category: 'Elective', note: 'MOOC-I online course component (Option with Internship EE-412P)', credits: 4, createdAt: '2024-01-01' },
 
-  // ME Subjects
-  { id: 'sub-me-1', departmentId: 'dept-me', semesterId: 'sem-3', subjectName: 'Engineering Thermodynamics', subjectCode: 'BME-301', credits: 4, createdAt: '2024-01-01' },
-  { id: 'sub-me-2', departmentId: 'dept-me', semesterId: 'sem-4', subjectName: 'Fluid Mechanics & Machinery', subjectCode: 'BME-401', credits: 4, createdAt: '2024-01-01' },
-  { id: 'sub-me-3', departmentId: 'dept-me', semesterId: 'sem-5', subjectName: 'Heat & Mass Transfer', subjectCode: 'BME-502', credits: 4, createdAt: '2024-01-01' },
+  // Chemical Engineering Subjects (Official M.J.P. Rohilkhand University Course Scheme)
+  // First Year — Semester 1 (Theory Courses)
+  { id: 'sub-che-sem1-1', departmentId: 'dept-ce', semesterId: 'sem-1', subjectName: 'Engineering Physics-I', subjectCode: 'PH-101T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-che-sem1-2', departmentId: 'dept-ce', semesterId: 'sem-1', subjectName: 'Engineering Chemistry', subjectCode: 'CY-101T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-che-sem1-3', departmentId: 'dept-ce', semesterId: 'sem-1', subjectName: 'Engineering Mathematics-I', subjectCode: 'MA-101T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-che-sem1-4', departmentId: 'dept-ce', semesterId: 'sem-1', subjectName: 'Communicative English', subjectCode: 'HU-101T', category: 'Theory', credits: 3, createdAt: '2024-01-01' },
+  { id: 'sub-che-sem1-5', departmentId: 'dept-ce', semesterId: 'sem-1', subjectName: 'Computer Fundamentals & Programming', subjectCode: 'CS-101T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-che-sem1-6', departmentId: 'dept-ce', semesterId: 'sem-1', subjectName: 'Engineering Graphics', subjectCode: 'ME-107T', category: 'Theory', credits: 3, createdAt: '2024-01-01' },
+  { id: 'sub-che-sem1-7', departmentId: 'dept-ce', semesterId: 'sem-1', subjectName: 'Basic Electrical Engineering (EE, EI & EC)', subjectCode: 'EE-101T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-che-sem1-8', departmentId: 'dept-ce', semesterId: 'sem-1', subjectName: 'Basic Electronics Engineering (ME, CS & CH)', subjectCode: 'EI-101T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-che-sem1-9', departmentId: 'dept-ce', semesterId: 'sem-1', subjectName: 'Environments Studies (EE, EI & EC)', subjectCode: 'CY-103T', category: 'Theory', credits: 3, createdAt: '2024-01-01' },
+  { id: 'sub-che-sem1-10', departmentId: 'dept-ce', semesterId: 'sem-1', subjectName: 'Engineering economics (ME, CS & CH)', subjectCode: 'HU-103T', category: 'Theory', credits: 3, createdAt: '2024-01-01' },
 
-  // CHE Subjects
-  { id: 'sub-che-1', departmentId: 'dept-ce', semesterId: 'sem-3', subjectName: 'Fluid Flow & Particle Mechanics', subjectCode: 'BCH-301', credits: 4, createdAt: '2024-01-01' },
-  { id: 'sub-che-2', departmentId: 'dept-ce', semesterId: 'sem-4', subjectName: 'Chemical Engineering Thermodynamics', subjectCode: 'BCH-401', credits: 4, createdAt: '2024-01-01' },
+  // First Year — Semester 2 (Theory Courses)
+  { id: 'sub-che-sem2-1', departmentId: 'dept-ce', semesterId: 'sem-2', subjectName: 'Engineering Physics-II (All Branches)', subjectCode: 'PH-102T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-che-sem2-2', departmentId: 'dept-ce', semesterId: 'sem-2', subjectName: 'Engineering Mathematics-II (All Branches)', subjectCode: 'MA-102T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-che-sem2-3', departmentId: 'dept-ce', semesterId: 'sem-2', subjectName: 'Basic Electrical Engineering (CS, CH & ME)', subjectCode: 'EE-102T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-che-sem2-4', departmentId: 'dept-ce', semesterId: 'sem-2', subjectName: 'Basic Electronics Engineering (EE, EI & EC)', subjectCode: 'EI-101T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-che-sem2-5', departmentId: 'dept-ce', semesterId: 'sem-2', subjectName: 'Engineering Chemistry (CS, CH & ME)', subjectCode: 'CY-101T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-che-sem2-6', departmentId: 'dept-ce', semesterId: 'sem-2', subjectName: 'Communicative English (EE, EI & EC)', subjectCode: 'HU-101T', category: 'Theory', credits: 3, createdAt: '2024-01-01' },
+  { id: 'sub-che-sem2-7', departmentId: 'dept-ce', semesterId: 'sem-2', subjectName: 'Computer Fundamentals & Programming (EE, EI & EC)', subjectCode: 'CS-101T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-che-sem2-8', departmentId: 'dept-ce', semesterId: 'sem-2', subjectName: 'Engineering Graphics (ME, CS & CH)', subjectCode: 'ME-107T', category: 'Theory', credits: 3, createdAt: '2024-01-01' },
+  { id: 'sub-che-sem2-9', departmentId: 'dept-ce', semesterId: 'sem-2', subjectName: 'Environmental Studies (ME, CS & CH)', subjectCode: 'CY-103T', category: 'Theory', credits: 3, createdAt: '2024-01-01' },
+  { id: 'sub-che-sem2-10', departmentId: 'dept-ce', semesterId: 'sem-2', subjectName: 'Engineering Economics (EE, EI & EC)', subjectCode: 'HU-103T', category: 'Theory', credits: 3, createdAt: '2024-01-01' },
+
+  // Second Year — Semester 3 (Theory Courses)
+  { id: 'sub-che-sem3-1', departmentId: 'dept-ce', semesterId: 'sem-3', subjectName: 'Applied Organic Chemistry', subjectCode: 'CY-201', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-che-sem3-2', departmentId: 'dept-ce', semesterId: 'sem-3', subjectName: 'Fluid and Particle Mechanics', subjectCode: 'CE-201', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-che-sem3-3', departmentId: 'dept-ce', semesterId: 'sem-3', subjectName: 'Material and Energy Balance', subjectCode: 'CE-203', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-che-sem3-4', departmentId: 'dept-ce', semesterId: 'sem-3', subjectName: 'Inorganic Chemical Technology', subjectCode: 'CE-205', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-che-sem3-5', departmentId: 'dept-ce', semesterId: 'sem-3', subjectName: 'Chemical Engineering Fluid Mechanics', subjectCode: 'CE-207', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-che-sem3-6', departmentId: 'dept-ce', semesterId: 'sem-3', subjectName: 'Mathematics II', subjectCode: 'MA-201', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+
+  // Second Year — Semester 4 (Theory Courses)
+  { id: 'sub-che-sem4-1', departmentId: 'dept-ce', semesterId: 'sem-4', subjectName: 'Heat Transfer', subjectCode: 'CE-202', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-che-sem4-2', departmentId: 'dept-ce', semesterId: 'sem-4', subjectName: 'Chemical Engg Thermodynamics-I', subjectCode: 'CE-204', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-che-sem4-3', departmentId: 'dept-ce', semesterId: 'sem-4', subjectName: 'Chemical Reaction Engg-I', subjectCode: 'CE-206', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-che-sem4-4', departmentId: 'dept-ce', semesterId: 'sem-4', subjectName: 'Organic Chemical Technology', subjectCode: 'CE-208', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-che-sem4-5', departmentId: 'dept-ce', semesterId: 'sem-4', subjectName: 'Material Science', subjectCode: 'ME-212', category: 'Theory', credits: 3, createdAt: '2024-01-01' },
+  { id: 'sub-che-sem4-6', departmentId: 'dept-ce', semesterId: 'sem-4', subjectName: 'Mathematics-III', subjectCode: 'MA-202', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+
+  // Third Year — Semester 5 (Theory Courses)
+  { id: 'sub-che-sem5-1', departmentId: 'dept-ce', semesterId: 'sem-5', subjectName: 'Chemical Reaction Engg.-II', subjectCode: 'CE-301', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-che-sem5-2', departmentId: 'dept-ce', semesterId: 'sem-5', subjectName: 'Chemical Engg. Thermodynamics-II', subjectCode: 'CE-303', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-che-sem5-3', departmentId: 'dept-ce', semesterId: 'sem-5', subjectName: 'Mass Transfer-I', subjectCode: 'CE-305', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-che-sem5-4', departmentId: 'dept-ce', semesterId: 'sem-5', subjectName: 'Transport Phenomena', subjectCode: 'CE-307', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-che-sem5-5', departmentId: 'dept-ce', semesterId: 'sem-5', subjectName: 'Energy Engg', subjectCode: 'CE-309', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-che-sem5-6', departmentId: 'dept-ce', semesterId: 'sem-5', subjectName: 'Process Instrumentation', subjectCode: 'CE-311', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+
+  // Third Year — Semester 6 (Theory Courses & Departmental Elective-I)
+  { id: 'sub-che-sem6-1', departmentId: 'dept-ce', semesterId: 'sem-6', subjectName: 'Process Dynamic & Control', subjectCode: 'CE-302', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-che-sem6-2', departmentId: 'dept-ce', semesterId: 'sem-6', subjectName: 'Process Engg & Economics', subjectCode: 'CE-304', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-che-sem6-3', departmentId: 'dept-ce', semesterId: 'sem-6', subjectName: 'Equipment Design', subjectCode: 'CE-306', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-che-sem6-4', departmentId: 'dept-ce', semesterId: 'sem-6', subjectName: 'Mass Transfer-II', subjectCode: 'CE-308', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-che-sem6-5', departmentId: 'dept-ce', semesterId: 'sem-6', subjectName: 'Industrial Pollution Control', subjectCode: 'CE-310', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-che-sem6-elec1-1', departmentId: 'dept-ce', semesterId: 'sem-6', subjectName: 'Computer Aided Design', subjectCode: 'CE-350', category: 'Elective', electiveGroup: 'Departmental Elective-I', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-che-sem6-elec1-2', departmentId: 'dept-ce', semesterId: 'sem-6', subjectName: 'Computer Application in Chemical Engineering', subjectCode: 'CE-352', category: 'Elective', electiveGroup: 'Departmental Elective-I', credits: 4, createdAt: '2024-01-01' },
+
+  // Fourth Year — Semester 7 (Theory Courses, Electives, Seminar & Industrial Training)
+  { id: 'sub-che-sem7-1', departmentId: 'dept-ce', semesterId: 'sem-7', subjectName: 'Process Equipment Design', subjectCode: 'CE-401', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-che-sem7-2', departmentId: 'dept-ce', semesterId: 'sem-7', subjectName: 'Process Utility & Safety', subjectCode: 'CE-403', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-che-sem7-elec2-1', departmentId: 'dept-ce', semesterId: 'sem-7', subjectName: 'Petroleum Refining and Petrochemical Technology', subjectCode: 'CE-451', category: 'Elective', electiveGroup: 'Departmental Elective-II', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-che-sem7-elec2-2', departmentId: 'dept-ce', semesterId: 'sem-7', subjectName: 'Fertilizer Technology', subjectCode: 'CE-453', category: 'Elective', electiveGroup: 'Departmental Elective-II', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-che-sem7-pool-1', departmentId: 'dept-ce', semesterId: 'sem-7', subjectName: 'Environmental Management', subjectCode: 'CE-461', category: 'Elective', electiveGroup: 'Pool Elective', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-che-sem7-pool-2', departmentId: 'dept-ce', semesterId: 'sem-7', subjectName: 'Polymer Science and Technology', subjectCode: 'CE-463', category: 'Elective', electiveGroup: 'Pool Elective', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-che-sem7-open-1', departmentId: 'dept-ce', semesterId: 'sem-7', subjectName: 'Polymer Technology (Chemistry)', subjectCode: 'CY***', category: 'Elective', electiveGroup: 'Open Elective', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-che-sem7-open-2', departmentId: 'dept-ce', semesterId: 'sem-7', subjectName: 'Futuristic Materials', subjectCode: 'PH***', category: 'Elective', electiveGroup: 'Open Elective', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-che-sem7-open-3', departmentId: 'dept-ce', semesterId: 'sem-7', subjectName: 'Principle of Management', subjectCode: 'HU**', category: 'Elective', electiveGroup: 'Open Elective', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-che-sem7-open-4', departmentId: 'dept-ce', semesterId: 'sem-7', subjectName: 'Foreign Trade', subjectCode: 'HU***', category: 'Elective', electiveGroup: 'Open Elective', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-che-sem7-sem-1', departmentId: 'dept-ce', semesterId: 'sem-7', subjectName: 'Report Writing, Seminar and Group Discussion', subjectCode: 'CE-405', category: 'Seminar', credits: 2, createdAt: '2024-01-01' },
+  { id: 'sub-che-sem7-trn-1', departmentId: 'dept-ce', semesterId: 'sem-7', subjectName: 'Industrial Training (Colloquium)', subjectCode: 'TRN-401', category: 'Training', credits: 2, createdAt: '2024-01-01' },
+
+  // Fourth Year — Semester 8 (Theory Courses, Electives & Major Project)
+  { id: 'sub-che-sem8-1', departmentId: 'dept-ce', semesterId: 'sem-8', subjectName: 'Modelling Simulation & Optimization', subjectCode: 'CE-402', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-che-sem8-2', departmentId: 'dept-ce', semesterId: 'sem-8', subjectName: 'Corrosion and Materials of construction', subjectCode: 'CE-404', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-che-sem8-elec3-1', departmentId: 'dept-ce', semesterId: 'sem-8', subjectName: 'Membrane Separation Processes', subjectCode: 'CE-450', category: 'Elective', electiveGroup: 'Departmental Elective-III', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-che-sem8-elec3-2', departmentId: 'dept-ce', semesterId: 'sem-8', subjectName: 'Fluidization Engineering', subjectCode: 'CE-452', category: 'Elective', electiveGroup: 'Departmental Elective-III', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-che-sem8-elec4-1', departmentId: 'dept-ce', semesterId: 'sem-8', subjectName: 'Solid Waste Management', subjectCode: 'CE-460', category: 'Elective', electiveGroup: 'Departmental Elective-IV', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-che-sem8-elec4-2', departmentId: 'dept-ce', semesterId: 'sem-8', subjectName: 'Safety and Hazard Analysis in Process Industry', subjectCode: 'CE-462', category: 'Elective', electiveGroup: 'Departmental Elective-IV', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-che-sem8-proj-1', departmentId: 'dept-ce', semesterId: 'sem-8', subjectName: 'Project Work and Viva Voce', subjectCode: 'CE-402P', category: 'Project', credits: 8, createdAt: '2024-01-01' },
+
+  // Mechanical Engineering (ME) Subjects (Official M.J.P. Rohilkhand University Course Scheme)
+  // First Year — Semester 1 (Theory Courses)
+  { id: 'sub-me-sem1-1', departmentId: 'dept-me', semesterId: 'sem-1', subjectName: 'Engineering Physics-I', subjectCode: 'PH-101T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-me-sem1-2', departmentId: 'dept-me', semesterId: 'sem-1', subjectName: 'Engineering Chemistry', subjectCode: 'CY-101T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-me-sem1-3', departmentId: 'dept-me', semesterId: 'sem-1', subjectName: 'Engineering Mathematics-I', subjectCode: 'MA-101T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-me-sem1-4', departmentId: 'dept-me', semesterId: 'sem-1', subjectName: 'Communicative English', subjectCode: 'HU-101T', category: 'Theory', credits: 3, createdAt: '2024-01-01' },
+  { id: 'sub-me-sem1-5', departmentId: 'dept-me', semesterId: 'sem-1', subjectName: 'Computer Programming and Fundamentals', subjectCode: 'CS-101T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-me-sem1-6', departmentId: 'dept-me', semesterId: 'sem-1', subjectName: 'Manufacturing Techniques', subjectCode: 'ME-101T', category: 'Theory', credits: 3, createdAt: '2024-01-01' },
+  { id: 'sub-me-sem1-7', departmentId: 'dept-me', semesterId: 'sem-1', subjectName: 'Engineering Graphics', subjectCode: 'ME-103T', category: 'Theory', credits: 3, createdAt: '2024-01-01' },
+
+  // First Year — Semester 2 (Theory Courses)
+  { id: 'sub-me-sem2-1', departmentId: 'dept-me', semesterId: 'sem-2', subjectName: 'Basic Electronics Engineering', subjectCode: 'EI-102T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-me-sem2-2', departmentId: 'dept-me', semesterId: 'sem-2', subjectName: 'Engineering Mathematics-II', subjectCode: 'MA-102T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-me-sem2-3', departmentId: 'dept-me', semesterId: 'sem-2', subjectName: 'Basic Electrical Engineering', subjectCode: 'EE-102T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-me-sem2-4', departmentId: 'dept-me', semesterId: 'sem-2', subjectName: 'Engineering Physics-II', subjectCode: 'PH-102T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-me-sem2-5', departmentId: 'dept-me', semesterId: 'sem-2', subjectName: 'Environmental Studies: Scientific & Engineering Aspects', subjectCode: 'CY-102T', category: 'Theory', credits: 3, createdAt: '2024-01-01' },
+  { id: 'sub-me-sem2-6', departmentId: 'dept-me', semesterId: 'sem-2', subjectName: 'Fundamental of Economics', subjectCode: 'HU-102T', category: 'Theory', credits: 3, createdAt: '2024-01-01' },
+  { id: 'sub-me-sem2-7', departmentId: 'dept-me', semesterId: 'sem-2', subjectName: 'Basic Mechanical Engineering', subjectCode: 'ME-104T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+
+  // Second Year — Semester 3 (Theory Courses)
+  { id: 'sub-me-sem3-1', departmentId: 'dept-me', semesterId: 'sem-3', subjectName: 'Kinematics of Machines', subjectCode: 'ME-201T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-me-sem3-2', departmentId: 'dept-me', semesterId: 'sem-3', subjectName: 'Production Processes-I', subjectCode: 'ME-203T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-me-sem3-3', departmentId: 'dept-me', semesterId: 'sem-3', subjectName: 'Fluid Mechanics', subjectCode: 'ME-205T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-me-sem3-4', departmentId: 'dept-me', semesterId: 'sem-3', subjectName: 'Engineering Mathematics-III', subjectCode: 'MA-201T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-me-sem3-5', departmentId: 'dept-me', semesterId: 'sem-3', subjectName: 'Material Science', subjectCode: 'ME-207T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-me-sem3-6', departmentId: 'dept-me', semesterId: 'sem-3', subjectName: 'Machines Drawing', subjectCode: 'ME-211T', category: 'Theory', credits: 3, createdAt: '2024-01-01' },
+
+  // Second Year — Semester 4 (Theory Courses)
+  { id: 'sub-me-sem4-1', departmentId: 'dept-me', semesterId: 'sem-4', subjectName: 'Dynamics of Machines', subjectCode: 'ME-202T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-me-sem4-2', departmentId: 'dept-me', semesterId: 'sem-4', subjectName: 'Mechanics of Solids-I', subjectCode: 'ME-204T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-me-sem4-3', departmentId: 'dept-me', semesterId: 'sem-4', subjectName: 'Internal Combustion Engines', subjectCode: 'ME-206T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-me-sem4-4', departmentId: 'dept-me', semesterId: 'sem-4', subjectName: 'Production Processes-II', subjectCode: 'ME-208T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-me-sem4-5', departmentId: 'dept-me', semesterId: 'sem-4', subjectName: 'Principal of Machine Tool Design', subjectCode: 'ME-210T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-me-sem4-6', departmentId: 'dept-me', semesterId: 'sem-4', subjectName: 'Elements of Electrical Machines', subjectCode: 'EE-202T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+
+  // Third Year — Semester 5 (Theory Courses)
+  { id: 'sub-me-sem5-1', departmentId: 'dept-me', semesterId: 'sem-5', subjectName: 'Mechanics of Solids-II', subjectCode: 'ME-301T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-me-sem5-2', departmentId: 'dept-me', semesterId: 'sem-5', subjectName: 'Mechanical Engineering Design-I', subjectCode: 'ME-303T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-me-sem5-3', departmentId: 'dept-me', semesterId: 'sem-5', subjectName: 'Energy Conversion', subjectCode: 'ME-305T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-me-sem5-4', departmentId: 'dept-me', semesterId: 'sem-5', subjectName: 'Heat Transfer', subjectCode: 'ME-307T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-me-sem5-5', departmentId: 'dept-me', semesterId: 'sem-5', subjectName: 'Mechanical Measurement and Metrology', subjectCode: 'ME-309T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-me-sem5-6', departmentId: 'dept-me', semesterId: 'sem-5', subjectName: 'Production Management', subjectCode: 'ME-311T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+
+  // Third Year — Semester 6 (Theory Courses, Elective-I Placeholder & Summer Training Note)
+  { id: 'sub-me-sem6-1', departmentId: 'dept-me', semesterId: 'sem-6', subjectName: 'Computer Aided Design', subjectCode: 'ME-302T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-me-sem6-2', departmentId: 'dept-me', semesterId: 'sem-6', subjectName: 'Mechanical Engineering Design-II', subjectCode: 'ME-304T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-me-sem6-3', departmentId: 'dept-me', semesterId: 'sem-6', subjectName: 'Production Planning & Control', subjectCode: 'ME-306T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-me-sem6-4', departmentId: 'dept-me', semesterId: 'sem-6', subjectName: 'Turbo & Fluid Machinery', subjectCode: 'ME-308T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-me-sem6-5', departmentId: 'dept-me', semesterId: 'sem-6', subjectName: 'Operation Research', subjectCode: 'ME-310T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-me-sem6-6', departmentId: 'dept-me', semesterId: 'sem-6', subjectName: 'Microprocessor and Applications', subjectCode: 'EI-301T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-me-sem6-elec1-holder', departmentId: 'dept-me', semesterId: 'sem-6', subjectName: 'Elective-I', subjectCode: 'ME-***', category: 'Elective', electiveGroup: 'Elective-I', credits: 4, note: 'Departmental Elective-I (Configurable from 12-Course ME Elective Catalogue)', createdAt: '2024-01-01' },
+
+  // Fourth Year — Semester 7 (Theory Courses, Elective-II, Pool Electives, Open Electives & Projects)
+  { id: 'sub-me-sem7-1', departmentId: 'dept-me', semesterId: 'sem-7', subjectName: 'Computer Aided Manufacturing', subjectCode: 'ME-403T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-me-sem7-2', departmentId: 'dept-me', semesterId: 'sem-7', subjectName: 'Value Engineering', subjectCode: 'ME-415T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-me-sem7-elec2-holder', departmentId: 'dept-me', semesterId: 'sem-7', subjectName: 'Elective-II', subjectCode: 'ME-***', category: 'Elective', electiveGroup: 'Elective-II', credits: 4, note: 'Departmental Elective-II (Configurable from ME Elective Catalogue)', createdAt: '2024-01-01' },
+
+  // Semester 7 — Pool Electives (Offered by Engineering Departments)
+  { id: 'sub-me-pool-1', departmentId: 'dept-me', semesterId: 'sem-7', subjectName: 'Work Study', subjectCode: 'ME-473T', category: 'Elective', electiveGroup: 'Pool Elective', note: 'Offered by Engineering Departments', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-me-pool-2', departmentId: 'dept-me', semesterId: 'sem-7', subjectName: 'Audio Engineering', subjectCode: 'EC-475T', category: 'Elective', electiveGroup: 'Pool Elective', note: 'Offered by Engineering Departments', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-me-pool-3', departmentId: 'dept-me', semesterId: 'sem-7', subjectName: 'Integrated Circuit Technology', subjectCode: 'EC-477T', category: 'Elective', electiveGroup: 'Pool Elective', note: 'Offered by Engineering Departments', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-me-pool-4', departmentId: 'dept-me', semesterId: 'sem-7', subjectName: 'Artificial Intelligence', subjectCode: 'CS-479T', category: 'Elective', electiveGroup: 'Pool Elective', note: 'Offered by Engineering Departments', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-me-pool-5', departmentId: 'dept-me', semesterId: 'sem-7', subjectName: 'Image Processing', subjectCode: 'CS-481T', category: 'Elective', electiveGroup: 'Pool Elective', note: 'Offered by Engineering Departments', credits: 4, createdAt: '2024-01-01' },
+
+  // Semester 7 — Open Electives (Offered by Science and Humanities Department)
+  { id: 'sub-me-open-1', departmentId: 'dept-me', semesterId: 'sem-7', subjectName: 'Principal of Management', subjectCode: 'HU-491T', category: 'Elective', electiveGroup: 'Open Elective', note: 'Offered by Science and Humanities Department', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-me-open-2', departmentId: 'dept-me', semesterId: 'sem-7', subjectName: 'Operations Research', subjectCode: 'MA-491T', category: 'Elective', electiveGroup: 'Open Elective', note: 'Offered by Science and Humanities Department', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-me-open-3', departmentId: 'dept-me', semesterId: 'sem-7', subjectName: 'Charge Transfer in Plasma', subjectCode: 'CY-491T', category: 'Elective', electiveGroup: 'Open Elective', note: 'Offered by Science and Humanities Department', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-me-open-4', departmentId: 'dept-me', semesterId: 'sem-7', subjectName: 'Introduction to Psychology', subjectCode: 'HU-493T', category: 'Elective', electiveGroup: 'Open Elective', note: 'Offered by Science and Humanities Department', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-me-open-5', departmentId: 'dept-me', semesterId: 'sem-7', subjectName: 'Polymeric Materials and their Applications', subjectCode: 'CY-401T', category: 'Elective', electiveGroup: 'Open Elective', note: 'Offered by Science and Humanities Department', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-me-open-6', departmentId: 'dept-me', semesterId: 'sem-7', subjectName: 'Futuristic Materials', subjectCode: 'PH-419T', category: 'Elective', electiveGroup: 'Open Elective', note: 'Offered by Science and Humanities Department', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-me-open-7', departmentId: 'dept-me', semesterId: 'sem-7', subjectName: 'Material Imperfection and Applications', subjectCode: 'PH-429T', category: 'Elective', electiveGroup: 'Open Elective', note: 'Offered by Science and Humanities Department', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-me-open-8', departmentId: 'dept-me', semesterId: 'sem-7', subjectName: 'Engineering Economics', subjectCode: 'HU-402T', category: 'Elective', electiveGroup: 'Open Elective', note: 'Offered by Science and Humanities Department', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-me-open-9', departmentId: 'dept-me', semesterId: 'sem-7', subjectName: 'Quantitative Methods in Economics', subjectCode: 'HU-409T', category: 'Elective', electiveGroup: 'Open Elective', note: 'Offered by Science and Humanities Department', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-me-open-10', departmentId: 'dept-me', semesterId: 'sem-7', subjectName: 'Foreign Trade', subjectCode: 'HU-407T', category: 'Elective', electiveGroup: 'Open Elective', note: 'Offered by Science and Humanities Department', credits: 4, createdAt: '2024-01-01' },
+
+  // Semester 7 — Other Courses & Project
+  { id: 'sub-me-sem7-sem', departmentId: 'dept-me', semesterId: 'sem-7', subjectName: 'Seminar', subjectCode: 'ME-405T', category: 'Seminar', credits: 2, createdAt: '2024-01-01' },
+  { id: 'sub-me-sem7-trn', departmentId: 'dept-me', semesterId: 'sem-7', subjectName: 'Industrial Training (Viva)', subjectCode: 'ME-401', category: 'Training', credits: 2, createdAt: '2024-01-01' },
+  { id: 'sub-me-sem7-proj1', departmentId: 'dept-me', semesterId: 'sem-7', subjectName: 'Project-I', subjectCode: 'ME-405P', category: 'Project', credits: 4, createdAt: '2024-01-01' },
+
+  // Fourth Year — Semester 8 (Theory Course, Electives III, IV, V & Project-II)
+  { id: 'sub-me-sem8-1', departmentId: 'dept-me', semesterId: 'sem-8', subjectName: 'Refrigeration & Air Conditioning', subjectCode: 'ME-406T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-me-sem8-elec3-holder', departmentId: 'dept-me', semesterId: 'sem-8', subjectName: 'Elective-III', subjectCode: 'ME-***', category: 'Elective', electiveGroup: 'Elective-III', credits: 4, note: 'Departmental Elective-III (Configurable from ME Elective Catalogue)', createdAt: '2024-01-01' },
+  { id: 'sub-me-sem8-elec4-holder', departmentId: 'dept-me', semesterId: 'sem-8', subjectName: 'Elective-IV', subjectCode: 'ME-***', category: 'Elective', electiveGroup: 'Elective-IV', credits: 4, note: 'Departmental Elective-IV (Configurable from ME Elective Catalogue)', createdAt: '2024-01-01' },
+  { id: 'sub-me-sem8-elec5-holder', departmentId: 'dept-me', semesterId: 'sem-8', subjectName: 'Elective-V', subjectCode: 'ME-***', category: 'Elective', electiveGroup: 'Elective-V', credits: 4, note: 'Departmental Elective-V (Configurable from ME Elective Catalogue)', createdAt: '2024-01-01' },
+  { id: 'sub-me-sem8-proj2', departmentId: 'dept-me', semesterId: 'sem-8', subjectName: 'Project-II', subjectCode: 'ME-404P', category: 'Project', credits: 8, createdAt: '2024-01-01' },
+
+  // Mechanical Engineering Departmental Elective Catalogue (12 Official Subjects)
+  { id: 'sub-me-elec-1', departmentId: 'dept-me', semesterId: 'sem-6', subjectName: 'Automotive Mechanics', subjectCode: 'ME-316T', category: 'Elective', note: 'Departmental Elective Catalogue', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-me-elec-2', departmentId: 'dept-me', semesterId: 'sem-6', subjectName: 'Statistical Quality Control', subjectCode: 'ME-318T', category: 'Elective', note: 'Departmental Elective Catalogue', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-me-elec-3', departmentId: 'dept-me', semesterId: 'sem-6', subjectName: 'Power Plant Engineering', subjectCode: 'ME-407T', category: 'Elective', note: 'Departmental Elective Catalogue', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-me-elec-4', departmentId: 'dept-me', semesterId: 'sem-6', subjectName: 'Composite Materials', subjectCode: 'ME-409T', category: 'Elective', note: 'Departmental Elective Catalogue', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-me-elec-5', departmentId: 'dept-me', semesterId: 'sem-6', subjectName: 'Tribology', subjectCode: 'ME-413T', category: 'Elective', note: 'Departmental Elective Catalogue', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-me-elec-6', departmentId: 'dept-me', semesterId: 'sem-6', subjectName: 'Advanced Manufacturing Systems', subjectCode: 'ME-417T', category: 'Elective', note: 'Departmental Elective Catalogue', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-me-elec-7', departmentId: 'dept-me', semesterId: 'sem-6', subjectName: 'Advance Precision Machining Processes', subjectCode: 'ME-408T', category: 'Elective', note: 'Departmental Elective Catalogue', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-me-elec-8', departmentId: 'dept-me', semesterId: 'sem-6', subjectName: 'Non Conventional Energy Sources', subjectCode: 'ME-414T', category: 'Elective', note: 'Departmental Elective Catalogue', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-me-elec-9', departmentId: 'dept-me', semesterId: 'sem-6', subjectName: 'Mechanical Vibration', subjectCode: 'ME-412T', category: 'Elective', note: 'Departmental Elective Catalogue', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-me-elec-10', departmentId: 'dept-me', semesterId: 'sem-6', subjectName: 'Gas Dynamics', subjectCode: 'ME-416T', category: 'Elective', note: 'Departmental Elective Catalogue', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-me-elec-11', departmentId: 'dept-me', semesterId: 'sem-6', subjectName: 'Maintenance Management', subjectCode: 'ME-418T', category: 'Elective', note: 'Departmental Elective Catalogue', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-me-elec-12', departmentId: 'dept-me', semesterId: 'sem-6', subjectName: 'Principles of Robotics', subjectCode: 'ME-422T', category: 'Elective', note: 'Departmental Elective Catalogue', credits: 4, createdAt: '2024-01-01' },
 
   // EIE Subjects
   { id: 'sub-eie-1', departmentId: 'dept-eie', semesterId: 'sem-3', subjectName: 'Transducers & Sensors Engineering', subjectCode: 'BEI-301', credits: 4, createdAt: '2024-01-01' },
@@ -281,48 +525,48 @@ export const INITIAL_PAPERS: QuestionPaper[] = [
   {
     id: 'paper-1',
     departmentId: 'dept-csit',
-    subjectId: 'sub-cs-3',
+    subjectId: 'sub-csit-sem3-3',
     academicYearId: 'year-2',
     semesterId: 'sem-3',
     examinationYear: 2024,
     examinationType: 'Regular',
-    filePath: '/papers/mjpru_bcs301_2024.pdf',
-    fileName: 'MJPRU_BCS301_DataStructures_2024.pdf',
+    filePath: '/papers/mjpru_cs205t_2024.pdf',
+    fileName: 'MJPRU_CS205T_DataStructure_2024.pdf',
     fileSizeBytes: 245000,
     pageCount: 2,
-    description: 'End Semester Regular Examination 2024 with AVL Trees, Graphs, and B-Trees questions.',
+    description: 'End Semester Regular Examination 2024 covering AVL Trees, Graphs, B-Trees, and recursion.',
     uploadedAt: '2024-10-15T09:30:00.000Z',
     downloadCount: 342,
   },
   {
     id: 'paper-2',
     departmentId: 'dept-csit',
-    subjectId: 'sub-cs-5',
-    academicYearId: 'year-2',
-    semesterId: 'sem-4',
+    subjectId: 'sub-csit-sem5-5',
+    academicYearId: 'year-3',
+    semesterId: 'sem-5',
     examinationYear: 2023,
     examinationType: 'Regular',
-    filePath: '/papers/mjpru_bcs401_2023.pdf',
-    fileName: 'MJPRU_BCS401_OperatingSystems_2023.pdf',
+    filePath: '/papers/mjpru_cs309t_2023.pdf',
+    fileName: 'MJPRU_CS309T_OperatingSystems_2023.pdf',
     fileSizeBytes: 210000,
     pageCount: 2,
-    description: 'Semester 4 Official Paper covering Process Scheduling, Deadlock Avoidance, and Paging.',
+    description: 'Semester 5 Official Paper covering Process Scheduling, Deadlock Avoidance, Semaphores, and Paging.',
     uploadedAt: '2024-09-20T11:00:00.000Z',
     downloadCount: 289,
   },
   {
     id: 'paper-3',
     departmentId: 'dept-csit',
-    subjectId: 'sub-cs-6',
-    academicYearId: 'year-3',
-    semesterId: 'sem-5',
+    subjectId: 'sub-csit-sem3-1',
+    academicYearId: 'year-2',
+    semesterId: 'sem-3',
     examinationYear: 2024,
     examinationType: 'Regular',
-    filePath: '/papers/mjpru_bcs501_2024.pdf',
-    fileName: 'MJPRU_BCS501_DBMS_2024.pdf',
+    filePath: '/papers/mjpru_cs201t_2024.pdf',
+    fileName: 'MJPRU_CS201T_DBMS_2024.pdf',
     fileSizeBytes: 198000,
     pageCount: 2,
-    description: 'Normalization (BCNF, 4NF), Relational Algebra queries, and ACID recovery protocols.',
+    description: 'Normalization (BCNF, 4NF), Relational Algebra queries, and ACID transaction recovery.',
     uploadedAt: '2024-10-02T14:15:00.000Z',
     downloadCount: 412,
   },
@@ -393,32 +637,32 @@ export const INITIAL_PAPERS: QuestionPaper[] = [
   {
     id: 'paper-8',
     departmentId: 'dept-me',
-    subjectId: 'sub-me-1',
+    subjectId: 'sub-me-sem3-3',
     academicYearId: 'year-2',
     semesterId: 'sem-3',
     examinationYear: 2024,
     examinationType: 'Regular',
-    filePath: '/papers/mjpru_bme301_2024.pdf',
-    fileName: 'MJPRU_BME301_Thermodynamics_2024.pdf',
+    filePath: '/papers/mjpru_me205t_2024.pdf',
+    fileName: 'MJPRU_ME205T_FluidMechanics_2024.pdf',
     fileSizeBytes: 275000,
     pageCount: 2,
-    description: 'First & Second Laws, Carnot & Rankine Cycles, Entropy generation, and Exergy analysis.',
+    description: 'First & Second Laws, Fluid Kinematics, Bernoulli theorem, Navier-Stokes, and boundary layer analysis.',
     uploadedAt: '2024-10-22T13:10:00.000Z',
     downloadCount: 278,
   },
   {
     id: 'paper-9',
     departmentId: 'dept-ce',
-    subjectId: 'sub-che-1',
+    subjectId: 'sub-che-sem3-2',
     academicYearId: 'year-2',
     semesterId: 'sem-3',
     examinationYear: 2023,
     examinationType: 'Regular',
-    filePath: '/papers/mjpru_bch301_2023.pdf',
-    fileName: 'MJPRU_BCH301_FluidFlow_2023.pdf',
+    filePath: '/papers/mjpru_ce201_2023.pdf',
+    fileName: 'MJPRU_CE201_FluidParticleMechanics_2023.pdf',
     fileSizeBytes: 235000,
     pageCount: 2,
-    description: 'Bernoulli equation, Navier-Stokes, Boundary layer thickness, and packed bed pressure drops.',
+    description: 'Dimensional analysis, Bernoulli equation, boundary layer, packed and fluidized beds.',
     uploadedAt: '2024-06-19T10:30:00.000Z',
     downloadCount: 140,
   },
@@ -440,7 +684,7 @@ export const INITIAL_PAPERS: QuestionPaper[] = [
   },
 ];
 
-const LOCAL_STORAGE_KEY = 'mjpru_pyq_platform_data_v4';
+const LOCAL_STORAGE_KEY = 'mjpru_pyq_platform_data_v7';
 
 interface StoredData {
   departments: Department[];
@@ -464,24 +708,143 @@ export class DataStore {
     if (this.isInitialized) return;
 
     try {
-      // Check v4 or migrate from v3/v2
+      // Check v7 or migrate from v6/v5/v4/v3/v2
       let stored = localStorage.getItem(LOCAL_STORAGE_KEY);
       if (!stored) {
-        stored = localStorage.getItem('mjpru_pyq_platform_data_v3') || localStorage.getItem('mjpru_pyq_platform_data_v2');
+        stored = localStorage.getItem('mjpru_pyq_platform_data_v6') || localStorage.getItem('mjpru_pyq_platform_data_v5') || localStorage.getItem('mjpru_pyq_platform_data_v4') || localStorage.getItem('mjpru_pyq_platform_data_v3') || localStorage.getItem('mjpru_pyq_platform_data_v2');
       }
 
       if (stored) {
         const parsed: StoredData = JSON.parse(stored);
-        this.departments = parsed.departments || INITIAL_DEPARTMENTS;
+        this.departments = (parsed.departments || INITIAL_DEPARTMENTS).map((d) => {
+          if (d.id === 'dept-csit') {
+            return {
+              ...d,
+              name: 'Computer Science and Information Technology',
+              code: 'CSIT',
+            };
+          }
+          if (d.id === 'dept-ce') {
+            return {
+              ...d,
+              name: 'Chemical Engineering',
+              code: 'CH',
+            };
+          }
+          if (d.id === 'dept-me') {
+            return {
+              ...d,
+              name: 'Mechanical Engineering',
+              code: 'ME',
+            };
+          }
+          return d;
+        });
         
-        // Ensure both Electrical Engineering and Electronics & Communication Engineering have complete official schemes
-        const otherSubjects = (parsed.subjects || []).filter((s) => s.departmentId !== 'dept-ee' && s.departmentId !== 'dept-ece');
+        // Ensure CSIT, Electrical Engineering, Electronics & Communication Engineering, Chemical Engineering, and Mechanical Engineering have complete official schemes
+        const otherSubjects = (parsed.subjects || []).filter(
+          (s) => s.departmentId !== 'dept-csit' && s.departmentId !== 'dept-ee' && s.departmentId !== 'dept-ece' && s.departmentId !== 'dept-ce' && s.departmentId !== 'dept-me'
+        );
+        const csitOfficialSubjects = INITIAL_SUBJECTS.filter((s) => s.departmentId === 'dept-csit');
         const eeOfficialSubjects = INITIAL_SUBJECTS.filter((s) => s.departmentId === 'dept-ee');
         const eceOfficialSubjects = INITIAL_SUBJECTS.filter((s) => s.departmentId === 'dept-ece');
-        this.subjects = [...otherSubjects, ...eeOfficialSubjects, ...eceOfficialSubjects];
+        const cheOfficialSubjects = INITIAL_SUBJECTS.filter((s) => s.departmentId === 'dept-ce');
+        const meOfficialSubjects = INITIAL_SUBJECTS.filter((s) => s.departmentId === 'dept-me');
 
-        // Migrate any papers that referenced the old EE or ECE placeholder subject ids
+        // Preserve any custom elective group assignments made by admin in previous sessions for CSIT
+        const existingCsitSubMap = new Map(
+          (parsed.subjects || []).filter((s) => s.departmentId === 'dept-csit').map((s) => [s.subjectCode, s])
+        );
+        const mergedCsitSubjects = csitOfficialSubjects.map((sub) => {
+          const userSub = existingCsitSubMap.get(sub.subjectCode);
+          if (userSub && userSub.electiveGroup) {
+            return {
+              ...sub,
+              electiveGroup: userSub.electiveGroup,
+              semesterId: userSub.semesterId || sub.semesterId,
+              category: userSub.category || sub.category,
+              note: userSub.note || sub.note,
+            };
+          }
+          return sub;
+        });
+
+        // Preserve any custom elective group assignments made by admin in previous sessions for Chemical Engineering
+        const existingCheSubMap = new Map(
+          (parsed.subjects || []).filter((s) => s.departmentId === 'dept-ce').map((s) => [s.subjectCode, s])
+        );
+        const mergedCheSubjects = cheOfficialSubjects.map((sub) => {
+          const userSub = existingCheSubMap.get(sub.subjectCode);
+          if (userSub && userSub.electiveGroup) {
+            return {
+              ...sub,
+              electiveGroup: userSub.electiveGroup,
+              semesterId: userSub.semesterId || sub.semesterId,
+              category: userSub.category || sub.category,
+              note: userSub.note || sub.note,
+            };
+          }
+          return sub;
+        });
+
+        // Preserve any custom elective group assignments made by admin in previous sessions for Mechanical Engineering
+        const existingMeSubMap = new Map(
+          (parsed.subjects || []).filter((s) => s.departmentId === 'dept-me').map((s) => [s.subjectCode, s])
+        );
+        const mergedMeSubjects = meOfficialSubjects.map((sub) => {
+          const userSub = existingMeSubMap.get(sub.subjectCode);
+          if (userSub && userSub.electiveGroup) {
+            return {
+              ...sub,
+              electiveGroup: userSub.electiveGroup,
+              semesterId: userSub.semesterId || sub.semesterId,
+              category: userSub.category || sub.category,
+              note: userSub.note || sub.note,
+            };
+          }
+          return sub;
+        });
+
+        this.subjects = [...otherSubjects, ...mergedCsitSubjects, ...eeOfficialSubjects, ...eceOfficialSubjects, ...mergedCheSubjects, ...mergedMeSubjects];
+
+        // Migrate any papers that referenced the old placeholder subject ids
         this.papers = (parsed.papers || INITIAL_PAPERS).map((p) => {
+          if (p.subjectId === 'sub-cs-1' || p.subjectId === 'sub-cs-3') {
+            return {
+              ...p,
+              subjectId: 'sub-csit-sem3-3',
+              subjectCode: 'CS-205T',
+              subjectName: 'Data Structure',
+              academicYearId: 'year-2',
+              semesterId: 'sem-3',
+              fileName: 'MJPRU_CS205T_DataStructure_2024.pdf',
+              filePath: '/papers/mjpru_cs205t_2024.pdf',
+            };
+          }
+          if (p.subjectId === 'sub-cs-5') {
+            return {
+              ...p,
+              subjectId: 'sub-csit-sem5-5',
+              subjectCode: 'CS-309T',
+              subjectName: 'Operating Systems',
+              academicYearId: 'year-3',
+              semesterId: 'sem-5',
+              fileName: 'MJPRU_CS309T_OperatingSystems_2023.pdf',
+              filePath: '/papers/mjpru_cs309t_2023.pdf',
+            };
+          }
+          if (p.subjectId === 'sub-cs-6') {
+            return {
+              ...p,
+              subjectId: 'sub-csit-sem3-1',
+              subjectCode: 'CS-201T',
+              subjectName: 'Data Base Management System',
+              academicYearId: 'year-2',
+              semesterId: 'sem-3',
+              fileName: 'MJPRU_CS201T_DBMS_2024.pdf',
+              filePath: '/papers/mjpru_cs201t_2024.pdf',
+            };
+          }
           if (p.subjectId === 'sub-ee-1' || p.subjectId === 'sub-ee-3') {
             return {
               ...p,
@@ -498,6 +861,30 @@ export class DataStore {
               subjectName: 'Electronics engineering materials',
               fileName: 'MJPRU_EC201T_ElectronicsEngineeringMaterials_2023.pdf',
               filePath: '/papers/mjpru_ec201t_2023.pdf',
+            };
+          }
+          if (p.subjectId === 'sub-che-1' || p.subjectId === 'sub-che-2') {
+            return {
+              ...p,
+              subjectId: 'sub-che-sem3-2',
+              subjectCode: 'CE-201',
+              subjectName: 'Fluid and Particle Mechanics',
+              academicYearId: 'year-2',
+              semesterId: 'sem-3',
+              fileName: 'MJPRU_CE201_FluidParticleMechanics_2023.pdf',
+              filePath: '/papers/mjpru_ce201_2023.pdf',
+            };
+          }
+          if (p.subjectId === 'sub-me-1' || p.subjectId === 'sub-me-2') {
+            return {
+              ...p,
+              subjectId: 'sub-me-sem3-3',
+              subjectCode: 'ME-205T',
+              subjectName: 'Fluid Mechanics',
+              academicYearId: 'year-2',
+              semesterId: 'sem-3',
+              fileName: 'MJPRU_ME205T_FluidMechanics_2024.pdf',
+              filePath: '/papers/mjpru_me205t_2024.pdf',
             };
           }
           return p;
