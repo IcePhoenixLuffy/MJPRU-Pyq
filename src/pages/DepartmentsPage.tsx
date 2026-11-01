@@ -81,7 +81,7 @@ export const DepartmentsPage: React.FC<DepartmentsPageProps> = ({
   });
 
   const activeDept = departments.find((d) => d.id === selectedDeptId) || departments[0];
-  const isSemesterWiseDept = activeDept?.code === 'EE' || activeDept?.code === 'ECE' || activeDept?.code === 'CSIT' || activeDept?.code === 'CH' || activeDept?.code === 'CHE' || activeDept?.code === 'ME' || activeDept?.code === 'BME';
+  const isSemesterWiseDept = activeDept?.code === 'EE' || activeDept?.code === 'ECE' || activeDept?.code === 'CSIT' || activeDept?.code === 'CH' || activeDept?.code === 'CHE' || activeDept?.code === 'ME' || activeDept?.code === 'BME' || activeDept?.code === 'EI' || activeDept?.code === 'EIE';
 
   const activeDeptSubjects = subjects.filter((s) => s.departmentId === activeDept?.id);
   const activeDeptPapers = papers.filter((p) => p.departmentId === activeDept?.id);
@@ -861,6 +861,11 @@ export const DepartmentsPage: React.FC<DepartmentsPageProps> = ({
                   <span className="font-mono text-xs font-black px-2 py-0.5 rounded-lg bg-blue-50 text-[#0e0fed] border border-blue-200">
                     {activeSubjectModal.subjectCode}
                   </span>
+                  {activeSubjectModal.paperCode && (
+                    <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-lg bg-amber-50 text-amber-900 border border-amber-200">
+                      Paper Code: {activeSubjectModal.paperCode}
+                    </span>
+                  )}
                   <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-700">
                     {activeSubjectModal.category || 'Theory'}
                   </span>
@@ -1353,9 +1358,16 @@ const SubjectCardItem: React.FC<SubjectCardItemProps> = ({
     >
       <div className="space-y-2">
         <div className="flex items-center justify-between gap-2">
-          <span className="font-mono text-xs font-black px-2 py-0.5 rounded-lg bg-blue-50 text-[#0e0fed] border border-blue-200 shadow-2xs">
-            {subject.subjectCode}
-          </span>
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <span className="font-mono text-xs font-black px-2 py-0.5 rounded-lg bg-blue-50 text-[#0e0fed] border border-blue-200 shadow-2xs">
+              {subject.subjectCode}
+            </span>
+            {subject.paperCode && (
+              <span className="font-mono text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-amber-50 text-amber-900 border border-amber-200" title="University Paper Code">
+                Paper: {subject.paperCode}
+              </span>
+            )}
+          </div>
           <div className="flex items-center gap-1.5">
             <span className={`text-[10px] font-black px-2 py-0.5 rounded-full border ${getCategoryBadgeClass(subject.category)}`}>
               {subject.category || 'Theory'}

@@ -28,6 +28,7 @@ export interface Subject {
   academicYearId?: string;
   subjectName: string;
   subjectCode: string;
+  paperCode?: string;
   credits?: number;
   category?: 'Theory' | 'Elective' | 'Practical' | 'Project' | 'Seminar' | 'Training';
   electiveGroup?: string;
@@ -58,6 +59,7 @@ export interface QuestionPaper {
   description?: string;
   uploadedAt: string;
   downloadCount: number;
+  paperCode?: string;
   // Joined / Denormalized fields for UI convenience
   departmentName?: string;
   subjectName?: string;

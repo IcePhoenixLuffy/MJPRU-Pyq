@@ -509,4 +509,148 @@ test('INITIAL_SUBJECTS contains official Mechanical Engineering 8-semester struc
   }
 });
 
+test('INITIAL_SUBJECTS contains official Electronics & Instrumentation Engineering (EI) 2025-26 curriculum structure', async () => {
+  const { INITIAL_SUBJECTS, INITIAL_DEPARTMENTS } = await import('../lib/dataStore');
+
+  // Verify EI department metadata
+  const eiDept = INITIAL_DEPARTMENTS.find((d) => d.id === 'dept-eie');
+  assert.ok(eiDept, 'Electronics & Instrumentation Engineering department exists');
+  assert.equal(eiDept?.name, 'Electronics & Instrumentation Engineering');
+  assert.equal(eiDept?.code, 'EI');
+
+  const eiSubjects = INITIAL_SUBJECTS.filter((s) => s.departmentId === 'dept-eie');
+
+  // Total EI official non-lab subjects across 8 semesters: 8 + 7 + 6 + 6 + 8 + 9 + 18 + 1 = 63
+  assert.equal(eiSubjects.length, 63);
+
+  // Check semester distribution
+  const sem1 = eiSubjects.filter((s) => s.semesterId === 'sem-1');
+  const sem2 = eiSubjects.filter((s) => s.semesterId === 'sem-2');
+  const sem3 = eiSubjects.filter((s) => s.semesterId === 'sem-3');
+  const sem4 = eiSubjects.filter((s) => s.semesterId === 'sem-4');
+  const sem5 = eiSubjects.filter((s) => s.semesterId === 'sem-5');
+  const sem6 = eiSubjects.filter((s) => s.semesterId === 'sem-6');
+  const sem7 = eiSubjects.filter((s) => s.semesterId === 'sem-7');
+  const sem8 = eiSubjects.filter((s) => s.semesterId === 'sem-8');
+
+  assert.equal(sem1.length, 8, 'Semester 1 has 8 theory courses');
+  assert.equal(sem2.length, 7, 'Semester 2 has 7 theory courses');
+  assert.equal(sem3.length, 6, 'Semester 3 has 6 theory courses');
+  assert.equal(sem4.length, 6, 'Semester 4 has 6 theory courses');
+  assert.equal(sem5.length, 8, 'Semester 5 has 5 core theory courses + 3 Pool Elective 1 courses');
+  assert.equal(sem6.length, 9, 'Semester 6 has 6 core theory courses + 3 Pool Elective 2 courses');
+  assert.equal(sem7.length, 18, 'Semester 7 has 2 theory + 5 Open Electives + 9 Pool Electives (3/4/5) + 1 Training + 1 Seminar');
+  assert.equal(sem8.length, 1, 'Semester 8 has 1 Major Project / Internship');
+
+  // Verify Paper Code coverage: all 63 subjects must have valid paperCode
+  for (const s of eiSubjects) {
+    assert.ok(s.paperCode, `Subject ${s.subjectCode} must have an official university paper code`);
+    assert.match(s.paperCode, /^\d{5}$/, `Paper code ${s.paperCode} for ${s.subjectCode} must be a 5-digit code`);
+  }
+
+  // Spot-check key subject & paper codes
+  const ph101 = eiSubjects.find((s) => s.subjectCode === 'PH-101T');
+  assert.equal(ph101?.paperCode, '23031');
+  assert.equal(ph101?.subjectName, 'Engineering Physics-I');
+
+  const bme505 = eiSubjects.find((s) => s.subjectCode === 'BME-505C');
+  assert.equal(bme505?.paperCode, '23602');
+
+  const ee301t = eiSubjects.find((s) => s.subjectCode === 'EE-301T');
+  assert.equal(ee301t?.paperCode, '23441');
+  assert.equal(ee301t?.subjectName, 'Control Systems');
+
+  // Verify Pool Elective 1 (Semester 5: 3 options)
+  const pool1 = eiSubjects.filter((s) => s.electiveGroup === 'Pool Elective 1');
+  assert.equal(pool1.length, 3);
+  const pool1Codes = new Set(pool1.map((s) => s.subjectCode));
+  assert.ok(pool1Codes.has('EL-307T')); // Computer Architecture and Organization (25344)
+  assert.ok(pool1Codes.has('EL-309T')); // Principles of Communication (25345)
+  assert.ok(pool1Codes.has('EL-311T')); // Telemetry and SCADA (25346)
+
+  // Verify Pool Elective 2 (Semester 6: 3 options)
+  const pool2 = eiSubjects.filter((s) => s.electiveGroup === 'Pool Elective 2');
+  assert.equal(pool2.length, 3);
+  const pool2Codes = new Set(pool2.map((s) => s.subjectCode));
+  assert.ok(pool2Codes.has('EL-310T')); // Artificial Neural Networks and Fuzzy Logic (25355)
+  assert.ok(pool2Codes.has('EL-312T')); // Intelligent Instrumentation (25356)
+  assert.ok(pool2Codes.has('EL-314T')); // Industrial Automation and Robotics (25357)
+
+  // Verify Pool Elective 3 (Semester 7: 3 options)
+  const pool3 = eiSubjects.filter((s) => s.electiveGroup === 'Pool Elective 3');
+  assert.equal(pool3.length, 3);
+  const pool3Codes = new Set(pool3.map((s) => s.subjectCode));
+  assert.ok(pool3Codes.has('EL-407T')); // Biomedical Signal Processing (25365)
+  assert.ok(pool3Codes.has('EL-409T')); // Analytical Instrumentation (25366)
+  assert.ok(pool3Codes.has('EL-411T')); // Power Plant Instrumentation (25367)
+
+  // Verify Pool Elective 4 (Semester 7: 3 options)
+  const pool4 = eiSubjects.filter((s) => s.electiveGroup === 'Pool Elective 4');
+  assert.equal(pool4.length, 3);
+  const pool4Codes = new Set(pool4.map((s) => s.subjectCode));
+  assert.ok(pool4Codes.has('EL-413T')); // Micro Electro Mechanical Systems (25371)
+  assert.ok(pool4Codes.has('EL-415T')); // Optoelectronics and Fiber Optics (25372)
+  assert.ok(pool4Codes.has('EL-417T')); // Optimal Control Systems (25373)
+
+  // Verify Pool Elective 5 (Semester 7: 3 options)
+  const pool5 = eiSubjects.filter((s) => s.electiveGroup === 'Pool Elective 5');
+  assert.equal(pool5.length, 3);
+  const pool5Codes = new Set(pool5.map((s) => s.subjectCode));
+  assert.ok(pool5Codes.has('EL-419T')); // Distributed Control System (25375)
+  assert.ok(pool5Codes.has('EL-421T')); // Digital Image Processing (25376)
+  assert.ok(pool5Codes.has('EL-423T')); // Virtual Instrumentation (25377)
+
+  // Verify Open Electives in Semester 7 (5 options)
+  const openElectives = eiSubjects.filter((s) => s.electiveGroup === 'Open Elective');
+  assert.equal(openElectives.length, 5);
+  const openCodes = new Set(openElectives.map((s) => s.subjectCode));
+  assert.ok(openCodes.has('MA-491T')); // Operations Research (23033)
+  assert.ok(openCodes.has('CY-401T')); // Polymeric Materials and their Applications (23052)
+  assert.ok(openCodes.has('PH-419T')); // Futuristic Materials (23024)
+  assert.ok(openCodes.has('HU-449T')); // Principles of Management (23017)
+  assert.ok(openCodes.has('HU-409T')); // Quantitative Methods in Economics (23016)
+
+  // Verify Academic & Training Components
+  const project = eiSubjects.find((s) => s.subjectCode === 'EL-402P');
+  assert.ok(project, 'EL-402P Major Project/Internship exists');
+  assert.equal(project?.subjectName, 'Major Project/Internship');
+  assert.equal(project?.category, 'Project');
+  assert.equal(project?.credits, 12);
+  assert.equal(project?.paperCode, '26326');
+  assert.equal(project?.semesterId, 'sem-8');
+
+  const training = eiSubjects.find((s) => s.subjectCode === 'EL-407');
+  assert.ok(training, 'EL-407 Industrial Training exists');
+  assert.equal(training?.category, 'Training');
+  assert.equal(training?.credits, 2);
+  assert.equal(training?.paperCode, '26324');
+  assert.equal(training?.semesterId, 'sem-7');
+
+  const seminar = eiSubjects.find((s) => s.subjectCode === 'EL-409');
+  assert.ok(seminar, 'EL-409 Seminar exists');
+  assert.equal(seminar?.category, 'Seminar');
+  assert.equal(seminar?.credits, 2);
+  assert.equal(seminar?.paperCode, '26325');
+  assert.equal(seminar?.semesterId, 'sem-7');
+
+  // Verify complete absence of laboratory courses
+  const excludedLabs = [
+    'CY-101P', 'CS-101P', 'EE-101P', 'EL-101P', 'PH-101P', 'EL-102P',
+    'BME-501P', 'EL-201P', 'EL-203P', 'EL-204P', 'EL-206P', 'EL-208P',
+    'EC-301P', 'EL-301P', 'EL-303P', 'EL-307P', 'EL-302P', 'EC-304P',
+    'EL-304P', 'EL-401P', 'EL-405P'
+  ];
+  const allCodes = new Set(eiSubjects.map((s) => s.subjectCode));
+  for (const lab of excludedLabs) {
+    assert.ok(!allCodes.has(lab), `Practical lab ${lab} must not be in EI curriculum`);
+  }
+  for (const s of eiSubjects) {
+    assert.notEqual(s.category, 'Practical');
+    if (s.subjectCode !== 'EL-402P') {
+      assert.ok(!s.subjectName.toLowerCase().includes('lab'), `Course ${s.subjectCode} must not be a lab`);
+      assert.ok(!s.subjectName.toLowerCase().includes('laboratory'), `Course ${s.subjectCode} must not be a lab`);
+    }
+  }
+});
+
 

@@ -82,6 +82,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const [editingSubjectId, setEditingSubjectId] = useState<string | null>(null);
   const [subjectName, setSubjectName] = useState('');
   const [subjectCode, setSubjectCode] = useState('');
+  const [subjectPaperCode, setSubjectPaperCode] = useState('');
   const [subjectDeptId, setSubjectDeptId] = useState(departments[0]?.id || '');
   const [subjectSemId, setSubjectSemId] = useState(semesters[0]?.id || '');
   const [subjectCredits, setSubjectCredits] = useState(4);
@@ -184,6 +185,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         await onUpdateSubject(editingSubjectId, {
           subjectName,
           subjectCode,
+          paperCode: subjectPaperCode || undefined,
           departmentId: subjectDeptId,
           semesterId: subjectSemId,
           credits: Number(subjectCredits),
@@ -196,6 +198,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         await onAddSubject({
           subjectName,
           subjectCode,
+          paperCode: subjectPaperCode || undefined,
           departmentId: subjectDeptId,
           semesterId: subjectSemId,
           credits: Number(subjectCredits),
@@ -209,6 +212,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       setEditingSubjectId(null);
       setSubjectName('');
       setSubjectCode('');
+      setSubjectPaperCode('');
       setSubjectElectiveGroup('');
       setSubjectNote('');
     } catch {
@@ -220,6 +224,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     setEditingSubjectId(sub.id);
     setSubjectName(sub.subjectName);
     setSubjectCode(sub.subjectCode);
+    setSubjectPaperCode(sub.paperCode || '');
     setSubjectDeptId(sub.departmentId);
     setSubjectSemId(sub.semesterId);
     setSubjectCredits(sub.credits || 4);
@@ -758,6 +763,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                     setEditingSubjectId(null);
                     setSubjectName('');
                     setSubjectCode('');
+                    setSubjectPaperCode('');
                   }}
                   className="text-xs text-slate-500 hover:text-slate-800"
                 >
@@ -809,16 +815,28 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 />
               </div>
 
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-700">Course / Subject Code</label>
-                <input
-                  type="text"
-                  required
-                  value={subjectCode}
-                  onChange={(e) => setSubjectCode(e.target.value.toUpperCase())}
-                  placeholder="e.g. BCS-501"
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 font-mono focus:outline-none focus:border-[#0e0fed]"
-                />
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-700">Course / Subject Code</label>
+                  <input
+                    type="text"
+                    required
+                    value={subjectCode}
+                    onChange={(e) => setSubjectCode(e.target.value.toUpperCase())}
+                    placeholder="e.g. EL-301T"
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 font-mono focus:outline-none focus:border-[#0e0fed]"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-700">Paper Code (Optional)</label>
+                  <input
+                    type="text"
+                    value={subjectPaperCode}
+                    onChange={(e) => setSubjectPaperCode(e.target.value)}
+                    placeholder="e.g. 23541"
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 font-mono focus:outline-none focus:border-[#0e0fed]"
+                  />
+                </div>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
@@ -868,11 +886,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   type="text"
                   value={subjectElectiveGroup}
                   onChange={(e) => setSubjectElectiveGroup(e.target.value)}
-                  placeholder="e.g. Pool Elective, Open Elective, Department Elective-I"
+                  placeholder="e.g. Pool Elective 1, Open Elective, Department Elective-I"
                   className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:border-[#0e0fed]"
                 />
                 <div className="flex flex-wrap gap-1.5 pt-1">
-                  {['Elective-I', 'Elective-II', 'Elective-III', 'Elective-IV', 'Elective-V', 'Departmental Elective-I', 'Departmental Elective-II', 'Departmental Elective-III', 'Departmental Elective-IV', 'Pool Elective', 'Open Elective'].map((group) => (
+                  {['Elective-I', 'Elective-II', 'Elective-III', 'Elective-IV', 'Elective-V', 'Departmental Elective-I', 'Departmental Elective-II', 'Departmental Elective-III', 'Departmental Elective-IV', 'Pool Elective', 'Pool Elective 1', 'Pool Elective 2', 'Pool Elective 3', 'Pool Elective 4', 'Pool Elective 5', 'Open Elective'].map((group) => (
                     <button
                       key={group}
                       type="button"
@@ -965,6 +983,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                         <span className="font-mono text-xs font-bold px-2 py-0.5 rounded bg-blue-50 text-[#0e0fed] border border-blue-100">
                           {sub.subjectCode}
                         </span>
+                        {sub.paperCode && (
+                          <span className="font-mono text-[10px] font-bold px-1.5 py-0.2 rounded bg-amber-50 text-amber-900 border border-amber-200">
+                            Paper: {sub.paperCode}
+                          </span>
+                        )}
                         <h4 className="text-xs font-bold text-slate-900 truncate">{sub.subjectName}</h4>
                         <span className="text-[10px] font-bold px-1.5 py-0.2 rounded bg-slate-100 text-slate-600">
                           {sub.category || 'Theory'}

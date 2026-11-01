@@ -79,8 +79,8 @@ export const INITIAL_DEPARTMENTS: Department[] = [
     id: 'dept-eie',
     name: 'Electronics & Instrumentation Engineering',
     slug: 'electronics-and-instrumentation-engineering',
-    code: 'EIE',
-    description: 'Process instrumentation, sensors & transducers, biomedical systems, and PLC automation.',
+    code: 'EI',
+    description: 'Process instrumentation, sensors & transducers, biomedical systems, industrial automation, and control systems.',
     iconName: 'Gauge',
     createdAt: '2024-01-01T00:00:00.000Z',
   },
@@ -516,9 +516,95 @@ export const INITIAL_SUBJECTS: Subject[] = [
   { id: 'sub-me-elec-11', departmentId: 'dept-me', semesterId: 'sem-6', subjectName: 'Maintenance Management', subjectCode: 'ME-418T', category: 'Elective', note: 'Departmental Elective Catalogue', credits: 4, createdAt: '2024-01-01' },
   { id: 'sub-me-elec-12', departmentId: 'dept-me', semesterId: 'sem-6', subjectName: 'Principles of Robotics', subjectCode: 'ME-422T', category: 'Elective', note: 'Departmental Elective Catalogue', credits: 4, createdAt: '2024-01-01' },
 
-  // EIE Subjects
-  { id: 'sub-eie-1', departmentId: 'dept-eie', semesterId: 'sem-3', subjectName: 'Transducers & Sensors Engineering', subjectCode: 'BEI-301', credits: 4, createdAt: '2024-01-01' },
-  { id: 'sub-eie-2', departmentId: 'dept-eie', semesterId: 'sem-4', subjectName: 'Control Systems Engineering', subjectCode: 'BEI-401', credits: 4, createdAt: '2024-01-01' },
+  // Electronics & Instrumentation Engineering (EI) Subjects (Official M.J.P. Rohilkhand University Course Scheme 2025–26)
+  // Semester 1 — 1st Year (Theory Courses)
+  { id: 'sub-ei-sem1-1', departmentId: 'dept-eie', semesterId: 'sem-1', subjectName: 'Engineering Physics-I', subjectCode: 'PH-101T', paperCode: '23031', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ei-sem1-2', departmentId: 'dept-eie', semesterId: 'sem-1', subjectName: 'Engineering Chemistry-I', subjectCode: 'CY-101T', paperCode: '23001', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ei-sem1-3', departmentId: 'dept-eie', semesterId: 'sem-1', subjectName: 'Engineering Mathematics-I', subjectCode: 'MA-101T', paperCode: '23021', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ei-sem1-4', departmentId: 'dept-eie', semesterId: 'sem-1', subjectName: 'English Language & Literature', subjectCode: 'HU-101T', paperCode: '23011', category: 'Theory', credits: 3, createdAt: '2024-01-01' },
+  { id: 'sub-ei-sem1-5', departmentId: 'dept-eie', semesterId: 'sem-1', subjectName: 'Computer Fundamentals & Programming in C++', subjectCode: 'CS-101T', paperCode: '25201', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ei-sem1-6', departmentId: 'dept-eie', semesterId: 'sem-1', subjectName: 'Basic Electrical Engineering', subjectCode: 'EE-101N', paperCode: '23401', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ei-sem1-7', departmentId: 'dept-eie', semesterId: 'sem-1', subjectName: 'Basic Electronics Engineering', subjectCode: 'EL-101T', paperCode: '25311', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ei-sem1-8', departmentId: 'dept-eie', semesterId: 'sem-1', subjectName: 'Basic Mechanical Engineering', subjectCode: 'BME-505C', paperCode: '23602', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+
+  // Semester 2 — 1st Year (Theory Courses)
+  { id: 'sub-ei-sem2-1', departmentId: 'dept-eie', semesterId: 'sem-2', subjectName: 'Engineering Physics-II', subjectCode: 'PH-102T', paperCode: '23032', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ei-sem2-2', departmentId: 'dept-eie', semesterId: 'sem-2', subjectName: 'Engineering Mathematics-II', subjectCode: 'MA-102T', paperCode: '23022', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ei-sem2-3', departmentId: 'dept-eie', semesterId: 'sem-2', subjectName: 'Engineering Graphics', subjectCode: 'BME-503C', paperCode: '23605', category: 'Theory', credits: 3, createdAt: '2024-01-01' },
+  { id: 'sub-ei-sem2-4', departmentId: 'dept-eie', semesterId: 'sem-2', subjectName: 'Basic Electronics Engineering', subjectCode: 'EL-102T', paperCode: '25311', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ei-sem2-5', departmentId: 'dept-eie', semesterId: 'sem-2', subjectName: 'Environmental Studies', subjectCode: 'CY-103T', paperCode: '23003', category: 'Theory', credits: 3, createdAt: '2024-01-01' },
+  { id: 'sub-ei-sem2-6', departmentId: 'dept-eie', semesterId: 'sem-2', subjectName: 'Fundamentals of the Economics', subjectCode: 'HU-103T', paperCode: '23013', category: 'Theory', credits: 3, createdAt: '2024-01-01' },
+  { id: 'sub-ei-sem2-7', departmentId: 'dept-eie', semesterId: 'sem-2', subjectName: 'Manufacturing Techniques', subjectCode: 'BME-101C', paperCode: '23601', category: 'Theory', credits: 3, createdAt: '2024-01-01' },
+
+  // Semester 3 — 2nd Year (Theory Courses)
+  { id: 'sub-ei-sem3-1', departmentId: 'dept-eie', semesterId: 'sem-3', subjectName: 'Analog Electronics', subjectCode: 'EL-201T', paperCode: '25321', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ei-sem3-2', departmentId: 'dept-eie', semesterId: 'sem-3', subjectName: 'Electronic Measurement & Instrumentation', subjectCode: 'EL-203T', paperCode: '25322', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ei-sem3-3', departmentId: 'dept-eie', semesterId: 'sem-3', subjectName: 'Data Structure using C++', subjectCode: 'CS-203T', paperCode: '25212', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ei-sem3-4', departmentId: 'dept-eie', semesterId: 'sem-3', subjectName: 'Electromagnetic Theory', subjectCode: 'EC-203T', paperCode: '23322', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ei-sem3-5', departmentId: 'dept-eie', semesterId: 'sem-3', subjectName: 'Network Analysis & Synthesis', subjectCode: 'EE-201N', paperCode: '23421', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ei-sem3-6', departmentId: 'dept-eie', semesterId: 'sem-3', subjectName: 'Engineering Mathematics-III', subjectCode: 'MA-201T', paperCode: '23023', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+
+  // Semester 4 — 2nd Year (Theory Courses)
+  { id: 'sub-ei-sem4-1', departmentId: 'dept-eie', semesterId: 'sem-4', subjectName: 'Linear Integrated Circuits', subjectCode: 'EL-202T', paperCode: '23531', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ei-sem4-2', departmentId: 'dept-eie', semesterId: 'sem-4', subjectName: 'Signals & Systems', subjectCode: 'EC-202T', paperCode: '23331', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ei-sem4-3', departmentId: 'dept-eie', semesterId: 'sem-4', subjectName: 'Digital Electronic Circuits', subjectCode: 'EL-204T', paperCode: '23532', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ei-sem4-4', departmentId: 'dept-eie', semesterId: 'sem-4', subjectName: 'Computer Organization', subjectCode: 'CS-204T', paperCode: '25222', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ei-sem4-5', departmentId: 'dept-eie', semesterId: 'sem-4', subjectName: 'Solid State Materials and Devices', subjectCode: 'EL-206T', paperCode: '25333', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ei-sem4-6', departmentId: 'dept-eie', semesterId: 'sem-4', subjectName: 'Human Values and Professional Ethics', subjectCode: 'HU-204T', paperCode: '23019', category: 'Theory', credits: 3, createdAt: '2024-01-01' },
+
+  // Semester 5 — 3rd Year (Theory Courses & Pool Elective 1 Catalogue)
+  { id: 'sub-ei-sem5-1', departmentId: 'dept-eie', semesterId: 'sem-5', subjectName: 'Analog Communication Systems', subjectCode: 'EC-301T', paperCode: '23341', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ei-sem5-2', departmentId: 'dept-eie', semesterId: 'sem-5', subjectName: 'Microprocessors & Their Applications', subjectCode: 'EL-301T', paperCode: '23541', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ei-sem5-3', departmentId: 'dept-eie', semesterId: 'sem-5', subjectName: 'Sensors and Transducers', subjectCode: 'EL-303T', paperCode: '23542', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ei-sem5-4', departmentId: 'dept-eie', semesterId: 'sem-5', subjectName: 'Antenna Engineering', subjectCode: 'EL-305T', paperCode: '25343', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ei-sem5-5', departmentId: 'dept-eie', semesterId: 'sem-5', subjectName: 'Control Systems', subjectCode: 'EE-301T', paperCode: '23441', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ei-sem5-pool1-1', departmentId: 'dept-eie', semesterId: 'sem-5', subjectName: 'Semiconductor Fabrication technology', subjectCode: 'EL-307T', paperCode: '25344', category: 'Elective', electiveGroup: 'Pool Elective 1', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ei-sem5-pool1-2', departmentId: 'dept-eie', semesterId: 'sem-5', subjectName: 'PCB Design & Technology', subjectCode: 'EL-309T', paperCode: '25345', category: 'Elective', electiveGroup: 'Pool Elective 1', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ei-sem5-pool1-3', departmentId: 'dept-eie', semesterId: 'sem-5', subjectName: 'Mixed Signal Design', subjectCode: 'EL-311T', paperCode: '25346', category: 'Elective', electiveGroup: 'Pool Elective 1', credits: 4, createdAt: '2024-01-01' },
+
+  // Semester 6 — 3rd Year (Theory Courses & Pool Elective 2 Catalogue)
+  { id: 'sub-ei-sem6-1', departmentId: 'dept-eie', semesterId: 'sem-6', subjectName: 'Digital Signal Processing', subjectCode: 'EC-302T', paperCode: '23351', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ei-sem6-2', departmentId: 'dept-eie', semesterId: 'sem-6', subjectName: 'Embedded Systems', subjectCode: 'EL-302T', paperCode: '25351', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ei-sem6-3', departmentId: 'dept-eie', semesterId: 'sem-6', subjectName: 'Digital Communication System', subjectCode: 'EC-304T', paperCode: '23352', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ei-sem6-4', departmentId: 'dept-eie', semesterId: 'sem-6', subjectName: 'VLSI Design', subjectCode: 'EL-304T', paperCode: '25352', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ei-sem6-5', departmentId: 'dept-eie', semesterId: 'sem-6', subjectName: 'RF and Microwave engineering', subjectCode: 'EL-306T', paperCode: '25353', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ei-sem6-6', departmentId: 'dept-eie', semesterId: 'sem-6', subjectName: 'Technical Writing', subjectCode: 'EL-308T', paperCode: '25354', category: 'Theory', credits: 3, createdAt: '2024-01-01' },
+  { id: 'sub-ei-sem6-pool2-1', departmentId: 'dept-eie', semesterId: 'sem-6', subjectName: 'Artificial Intelligence and Machine Learning', subjectCode: 'EL-310T', paperCode: '25355', category: 'Elective', electiveGroup: 'Pool Elective 2', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ei-sem6-pool2-2', departmentId: 'dept-eie', semesterId: 'sem-6', subjectName: 'Information theory and coding', subjectCode: 'EL-312T', paperCode: '25356', category: 'Elective', electiveGroup: 'Pool Elective 2', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ei-sem6-pool2-3', departmentId: 'dept-eie', semesterId: 'sem-6', subjectName: 'Computational Electromagnetics', subjectCode: 'EL-314T', paperCode: '25357', category: 'Elective', electiveGroup: 'Pool Elective 2', credits: 4, createdAt: '2024-01-01' },
+
+  // Semester 7 — 4th Year (Theory Courses, Open Elective, Pool Electives 3, 4, 5, Training & Seminar)
+  { id: 'sub-ei-sem7-1', departmentId: 'dept-eie', semesterId: 'sem-7', subjectName: 'Biomedical Engineering', subjectCode: 'EL-401T', paperCode: '25361', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ei-sem7-2', departmentId: 'dept-eie', semesterId: 'sem-7', subjectName: 'Metrology and Calibration', subjectCode: 'EL-403T', paperCode: '25362', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+
+  // Semester 7 — Open Elective Catalogue
+  { id: 'sub-ei-open-1', departmentId: 'dept-eie', semesterId: 'sem-7', subjectName: 'Operation Research', subjectCode: 'MA-491T', paperCode: '23033', category: 'Elective', electiveGroup: 'Open Elective', note: 'Offered by Science and Humanities Department', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ei-open-2', departmentId: 'dept-eie', semesterId: 'sem-7', subjectName: 'Polymeric Materials and their Applications', subjectCode: 'CY-401T', paperCode: '23052', category: 'Elective', electiveGroup: 'Open Elective', note: 'Offered by Science and Humanities Department', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ei-open-3', departmentId: 'dept-eie', semesterId: 'sem-7', subjectName: 'Futuristic Materials', subjectCode: 'PH-419T', paperCode: '23024', category: 'Elective', electiveGroup: 'Open Elective', note: 'Offered by Science and Humanities Department', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ei-open-4', departmentId: 'dept-eie', semesterId: 'sem-7', subjectName: 'Principles of Management', subjectCode: 'HU-449T', paperCode: '23017', category: 'Elective', electiveGroup: 'Open Elective', note: 'Offered by Science and Humanities Department', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ei-open-5', departmentId: 'dept-eie', semesterId: 'sem-7', subjectName: 'Quantitative Methods in Economics', subjectCode: 'HU-409T', paperCode: '23016', category: 'Elective', electiveGroup: 'Open Elective', note: 'Offered by Science and Humanities Department', credits: 4, createdAt: '2024-01-01' },
+
+  // Semester 7 — Pool Elective 3 Catalogue
+  { id: 'sub-ei-pool3-1', departmentId: 'dept-eie', semesterId: 'sem-7', subjectName: 'Nano Electronics', subjectCode: 'EL-407T', paperCode: '25365', category: 'Elective', electiveGroup: 'Pool Elective 3', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ei-pool3-2', departmentId: 'dept-eie', semesterId: 'sem-7', subjectName: 'Microwave Integrated Circuit', subjectCode: 'EL-409T', paperCode: '25366', category: 'Elective', electiveGroup: 'Pool Elective 3', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ei-pool3-3', departmentId: 'dept-eie', semesterId: 'sem-7', subjectName: 'Introduction to MEMS', subjectCode: 'EL-411T', paperCode: '25367', category: 'Elective', electiveGroup: 'Pool Elective 3', credits: 4, createdAt: '2024-01-01' },
+
+  // Semester 7 — Pool Elective 4 Catalogue
+  { id: 'sub-ei-pool4-1', departmentId: 'dept-eie', semesterId: 'sem-7', subjectName: 'Optical fiber communication', subjectCode: 'EL-413T', paperCode: '25371', category: 'Elective', electiveGroup: 'Pool Elective 4', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ei-pool4-2', departmentId: 'dept-eie', semesterId: 'sem-7', subjectName: 'Wireless communication', subjectCode: 'EL-415T', paperCode: '25372', category: 'Elective', electiveGroup: 'Pool Elective 4', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ei-pool4-3', departmentId: 'dept-eie', semesterId: 'sem-7', subjectName: 'Wireless sensor network', subjectCode: 'EL-417T', paperCode: '25373', category: 'Elective', electiveGroup: 'Pool Elective 4', credits: 4, createdAt: '2024-01-01' },
+
+  // Semester 7 — Pool Elective 5 Catalogue
+  { id: 'sub-ei-pool5-1', departmentId: 'dept-eie', semesterId: 'sem-7', subjectName: 'Digital System Design', subjectCode: 'EL-419T', paperCode: '25375', category: 'Elective', electiveGroup: 'Pool Elective 5', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ei-pool5-2', departmentId: 'dept-eie', semesterId: 'sem-7', subjectName: 'Digital Audio Processing', subjectCode: 'EL-421T', paperCode: '25376', category: 'Elective', electiveGroup: 'Pool Elective 5', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ei-pool5-3', departmentId: 'dept-eie', semesterId: 'sem-7', subjectName: 'Milli meter wave Device and circuits', subjectCode: 'EL-423T', paperCode: '25377', category: 'Elective', electiveGroup: 'Pool Elective 5', credits: 4, createdAt: '2024-01-01' },
+
+  // Semester 7 — Academic Components
+  { id: 'sub-ei-sem7-trn', departmentId: 'dept-eie', semesterId: 'sem-7', subjectName: 'Industrial Training (EI)', subjectCode: 'EL-407', paperCode: '26324', category: 'Training', credits: 2, createdAt: '2024-01-01' },
+  { id: 'sub-ei-sem7-sem', departmentId: 'dept-eie', semesterId: 'sem-7', subjectName: 'Seminar (EI)', subjectCode: 'EL-409', paperCode: '26325', category: 'Seminar', credits: 2, createdAt: '2024-01-01' },
+
+  // Semester 8 — 4th Year (Major Project / Internship)
+  { id: 'sub-ei-sem8-proj', departmentId: 'dept-eie', semesterId: 'sem-8', subjectName: 'Major Project/Internship', subjectCode: 'EL-402P', paperCode: '26326', category: 'Project', credits: 12, createdAt: '2024-01-01' },
 ];
 
 export const INITIAL_PAPERS: QuestionPaper[] = [
@@ -669,22 +755,22 @@ export const INITIAL_PAPERS: QuestionPaper[] = [
   {
     id: 'paper-10',
     departmentId: 'dept-eie',
-    subjectId: 'sub-eie-2',
-    academicYearId: 'year-2',
-    semesterId: 'sem-4',
+    subjectId: 'sub-ei-sem5-5',
+    academicYearId: 'year-3',
+    semesterId: 'sem-5',
     examinationYear: 2024,
     examinationType: 'Regular',
-    filePath: '/papers/mjpru_bei401_2024.pdf',
-    fileName: 'MJPRU_BEI401_ControlSystems_2024.pdf',
+    filePath: '/papers/mjpru_ee301t_2024.pdf',
+    fileName: 'MJPRU_EE301T_ControlSystems_2024.pdf',
     fileSizeBytes: 245000,
     pageCount: 2,
-    description: 'Root Locus techniques, Bode plots, Phase & Gain Margins, and state transition matrices.',
+    description: 'Control Systems (EE-301T / Paper Code 23441): Root Locus techniques, Bode plots, Phase & Gain Margins, and state transition matrices.',
     uploadedAt: '2024-10-25T15:00:00.000Z',
     downloadCount: 184,
   },
 ];
 
-const LOCAL_STORAGE_KEY = 'mjpru_pyq_platform_data_v7';
+const LOCAL_STORAGE_KEY = 'mjpru_pyq_platform_data_v8';
 
 interface StoredData {
   departments: Department[];
@@ -708,10 +794,10 @@ export class DataStore {
     if (this.isInitialized) return;
 
     try {
-      // Check v7 or migrate from v6/v5/v4/v3/v2
+      // Check v8 or migrate from v7/v6/v5/v4/v3/v2
       let stored = localStorage.getItem(LOCAL_STORAGE_KEY);
       if (!stored) {
-        stored = localStorage.getItem('mjpru_pyq_platform_data_v6') || localStorage.getItem('mjpru_pyq_platform_data_v5') || localStorage.getItem('mjpru_pyq_platform_data_v4') || localStorage.getItem('mjpru_pyq_platform_data_v3') || localStorage.getItem('mjpru_pyq_platform_data_v2');
+        stored = localStorage.getItem('mjpru_pyq_platform_data_v7') || localStorage.getItem('mjpru_pyq_platform_data_v6') || localStorage.getItem('mjpru_pyq_platform_data_v5') || localStorage.getItem('mjpru_pyq_platform_data_v4') || localStorage.getItem('mjpru_pyq_platform_data_v3') || localStorage.getItem('mjpru_pyq_platform_data_v2');
       }
 
       if (stored) {
@@ -738,18 +824,26 @@ export class DataStore {
               code: 'ME',
             };
           }
+          if (d.id === 'dept-eie') {
+            return {
+              ...d,
+              name: 'Electronics & Instrumentation Engineering',
+              code: 'EI',
+            };
+          }
           return d;
         });
         
-        // Ensure CSIT, Electrical Engineering, Electronics & Communication Engineering, Chemical Engineering, and Mechanical Engineering have complete official schemes
+        // Ensure CSIT, Electrical, Electronics & Communication, Chemical, Mechanical, and Electronics & Instrumentation have complete official schemes
         const otherSubjects = (parsed.subjects || []).filter(
-          (s) => s.departmentId !== 'dept-csit' && s.departmentId !== 'dept-ee' && s.departmentId !== 'dept-ece' && s.departmentId !== 'dept-ce' && s.departmentId !== 'dept-me'
+          (s) => s.departmentId !== 'dept-csit' && s.departmentId !== 'dept-ee' && s.departmentId !== 'dept-ece' && s.departmentId !== 'dept-ce' && s.departmentId !== 'dept-me' && s.departmentId !== 'dept-eie'
         );
         const csitOfficialSubjects = INITIAL_SUBJECTS.filter((s) => s.departmentId === 'dept-csit');
         const eeOfficialSubjects = INITIAL_SUBJECTS.filter((s) => s.departmentId === 'dept-ee');
         const eceOfficialSubjects = INITIAL_SUBJECTS.filter((s) => s.departmentId === 'dept-ece');
         const cheOfficialSubjects = INITIAL_SUBJECTS.filter((s) => s.departmentId === 'dept-ce');
         const meOfficialSubjects = INITIAL_SUBJECTS.filter((s) => s.departmentId === 'dept-me');
+        const eiOfficialSubjects = INITIAL_SUBJECTS.filter((s) => s.departmentId === 'dept-eie');
 
         // Preserve any custom elective group assignments made by admin in previous sessions for CSIT
         const existingCsitSubMap = new Map(
@@ -805,7 +899,26 @@ export class DataStore {
           return sub;
         });
 
-        this.subjects = [...otherSubjects, ...mergedCsitSubjects, ...eeOfficialSubjects, ...eceOfficialSubjects, ...mergedCheSubjects, ...mergedMeSubjects];
+        // Preserve any custom elective group assignments made by admin in previous sessions for Electronics & Instrumentation Engineering
+        const existingEiSubMap = new Map(
+          (parsed.subjects || []).filter((s) => s.departmentId === 'dept-eie').map((s) => [s.subjectCode, s])
+        );
+        const mergedEiSubjects = eiOfficialSubjects.map((sub) => {
+          const userSub = existingEiSubMap.get(sub.subjectCode);
+          if (userSub && userSub.electiveGroup) {
+            return {
+              ...sub,
+              electiveGroup: userSub.electiveGroup,
+              semesterId: userSub.semesterId || sub.semesterId,
+              category: userSub.category || sub.category,
+              paperCode: userSub.paperCode || sub.paperCode,
+              note: userSub.note || sub.note,
+            };
+          }
+          return sub;
+        });
+
+        this.subjects = [...otherSubjects, ...mergedCsitSubjects, ...eeOfficialSubjects, ...eceOfficialSubjects, ...mergedCheSubjects, ...mergedMeSubjects, ...mergedEiSubjects];
 
         // Migrate any papers that referenced the old placeholder subject ids
         this.papers = (parsed.papers || INITIAL_PAPERS).map((p) => {
@@ -887,6 +1000,19 @@ export class DataStore {
               filePath: '/papers/mjpru_me205t_2024.pdf',
             };
           }
+          if (p.subjectId === 'sub-eie-1' || p.subjectId === 'sub-eie-2') {
+            return {
+              ...p,
+              subjectId: 'sub-ei-sem5-5',
+              subjectCode: 'EE-301T',
+              subjectName: 'Control Systems',
+              paperCode: '23441',
+              academicYearId: 'year-3',
+              semesterId: 'sem-5',
+              fileName: 'MJPRU_EE301T_ControlSystems_2024.pdf',
+              filePath: '/papers/mjpru_ee301t_2024.pdf',
+            };
+          }
           return p;
         });
 
@@ -935,6 +1061,7 @@ export class DataStore {
       p.departmentName = dept?.name || 'Department of Technology';
       p.subjectName = sub?.subjectName || 'Engineering Subject';
       p.subjectCode = sub?.subjectCode || 'BT-000';
+      p.paperCode = sub?.paperCode || p.paperCode;
       p.semesterNumber = sem?.semesterNumber || 1;
       p.academicYearName = year?.name || 'Academic Year';
     });
@@ -1082,6 +1209,7 @@ export class DataStore {
           category: newSub.category || 'Theory',
           elective_group: newSub.electiveGroup || null,
           note: newSub.note || null,
+          paper_code: newSub.paperCode || null,
         });
       } catch (err) {
         console.warn('Supabase add subject fallback:', err);
@@ -1111,6 +1239,7 @@ export class DataStore {
           category: updated.category,
           elective_group: updated.electiveGroup,
           note: updated.note,
+          paper_code: updated.paperCode,
         }).eq('id', id);
       } catch (err) {
         console.warn('Supabase update subject fallback:', err);
