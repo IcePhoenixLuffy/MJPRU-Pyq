@@ -83,8 +83,8 @@ export const HomePage: React.FC<HomePageProps> = ({
 
           {/* Strong Heading with Rich Gradient Text */}
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-slate-900 leading-[1.15]">
-            Your Exams. Your Preparation.{' '}
-            <span className="gradient-text-vibrant block mt-1">Your Success.</span>
+            Exams Preparation{' '}
+            <span className="gradient-text-vibrant block mt-1">Success</span>
           </h1>
 
           {/* Supporting Text */}
