@@ -1,12 +1,7 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
 // Environment variables with SSR / test runner safe check
-interface EnvConfig {
-  VITE_SUPABASE_URL?: string;
-  VITE_SUPABASE_ANON_KEY?: string;
-}
-
-const env: EnvConfig = (typeof import.meta !== 'undefined' && import.meta.env) ? (import.meta.env as unknown as EnvConfig) : {};
+const env = typeof import.meta !== 'undefined' && import.meta.env ? import.meta.env : {};
 const supabaseUrl = env.VITE_SUPABASE_URL || '';
 const supabaseAnonKey = env.VITE_SUPABASE_ANON_KEY || '';
 
