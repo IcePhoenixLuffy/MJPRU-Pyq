@@ -387,36 +387,6 @@ export const HomePage: React.FC<HomePageProps> = ({
           </div>
         )}
       </section>
-
-      {/* 5. MULTI-COLOR GRADIENT CALLOUT BANNER */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="relative rounded-3xl bg-gradient-to-r from-[#0e0fed] via-[#1d4ed8] to-[#94f0f1] p-8 sm:p-12 overflow-hidden shadow-2xl text-white">
-          <div className="absolute top-0 right-0 w-80 h-80 bg-[#ffdc6a]/30 rounded-full blur-3xl pointer-events-none" />
-          <div className="absolute bottom-0 right-1/4 w-72 h-72 bg-[#f2b1d8]/30 rounded-full blur-3xl pointer-events-none" />
-
-          <div className="relative z-10 max-w-2xl space-y-4">
-            <span className="inline-block px-3.5 py-1 rounded-full bg-[#8bf0ba] text-slate-950 text-xs font-extrabold uppercase tracking-wider shadow-sm">
-              Smart Exam Strategy
-            </span>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white leading-tight">
-              Analyze Question Trends &amp; Ace Your Semester Exams
-            </h2>
-            <p className="text-sm text-blue-100 leading-relaxed font-semibold">
-              Practicing previous year papers is proven to boost examination scores by up to 35%. Understand the question weighting, recurring formulas, and section-wise mark distribution.
-            </p>
-            <div className="pt-2">
-              <button
-                onClick={() => onNavigateTab('library')}
-                className="px-7 py-3.5 rounded-2xl bg-[#ffdc6a] text-slate-950 font-extrabold text-xs sm:text-sm hover:bg-[#ffe58f] transition-all shadow-lg active:scale-95 magnetic-target"
-                data-magnetic="true"
-              >
-                Start Practicing Question Papers
-              </button>
-            </div>
-          </div>
-        </div>
-      </section>
-
     </div>
   );
 };
