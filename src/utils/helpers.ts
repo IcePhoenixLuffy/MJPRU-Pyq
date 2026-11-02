@@ -138,3 +138,31 @@ export function isValidPdfFile(file: File): { valid: boolean; error?: string } {
   }
   return { valid: true };
 }
+
+/**
+ * Dynamic, future-proof examination years generator.
+ * Automatically includes:
+ * - Next year (currentYear + 1) for upcoming examination scheduling
+ * - Current calendar year (e.g. 2026)
+ * - All historical university examination years down to 2018
+ * - Any additional examination years present in uploaded question papers
+ */
+export function getAvailableExamYears(papers: QuestionPaper[] = []): number[] {
+  const currentYear = new Date().getFullYear();
+  const maxYear = Math.max(currentYear + 1, 2026);
+  const minBaseYear = 2018;
+
+  const yearSet = new Set<number>();
+  for (let yr = maxYear; yr >= minBaseYear; yr--) {
+    yearSet.add(yr);
+  }
+
+  // Preserve all examination years from existing papers
+  for (const paper of papers) {
+    if (typeof paper.examinationYear === 'number' && !isNaN(paper.examinationYear) && paper.examinationYear >= 1990) {
+      yearSet.add(paper.examinationYear);
+    }
+  }
+
+  return Array.from(yearSet).sort((a, b) => b - a);
+}

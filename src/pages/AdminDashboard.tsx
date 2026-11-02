@@ -17,10 +17,13 @@ import {
   GraduationCap,
   FileText,
   Loader2,
-  CheckCircle2
+  CheckCircle2,
+  Filter,
+  Search,
+  X
 } from 'lucide-react';
 import { Department, Subject, QuestionPaper, AcademicYear, Semester, ExaminationType } from '../types';
-import { isValidPdfFile, slugify } from '../utils/helpers';
+import { isValidPdfFile, slugify, getAvailableExamYears } from '../utils/helpers';
 import { 
   SUPABASE_SQL_SETUP, 
   isSupabaseConfigured, 
@@ -62,6 +65,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   onUpdateSubject,
   onDeleteSubject,
   onAddPaper,
+  onUpdatePaper,
   onDeletePaper,
   onResetData,
   onViewPaper,
@@ -172,17 +176,32 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const [subjectFilterDeptId, setSubjectFilterDeptId] = useState('all');
   const [subjectFilterQuery, setSubjectFilterQuery] = useState('');
 
+  // Dynamic available exam years (includes 2026, future years, and historical records)
+  const availableExamYears = getAvailableExamYears(papers);
+
   // PYQ Upload Form
   const [paperDeptId, setPaperDeptId] = useState(departments[0]?.id || '');
   const [paperYearId, setPaperYearId] = useState(academicYears[0]?.id || '');
   const [paperSemId, setPaperSemId] = useState(semesters[0]?.id || '');
   const [paperSubjectId, setPaperSubjectId] = useState('');
-  const [paperExamYear, setPaperExamYear] = useState<number>(2024);
+  const [paperExamYear, setPaperExamYear] = useState<number>(() => Math.max(new Date().getFullYear(), 2026));
   const [paperExamType, setPaperExamType] = useState<ExaminationType>('Regular');
   const [paperDescription, setPaperDescription] = useState('');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [uploadProgress, setUploadProgress] = useState<number>(0);
   const [isUploading, setIsUploading] = useState<boolean>(false);
+
+  // Paper Management Filters
+  const [paperFilterDeptId, setPaperFilterDeptId] = useState<string>('all');
+  const [paperFilterYear, setPaperFilterYear] = useState<string>('all');
+  const [paperFilterQuery, setPaperFilterQuery] = useState<string>('');
+
+  // Paper Edit Modal State
+  const [editingPaper, setEditingPaper] = useState<QuestionPaper | null>(null);
+  const [editPaperExamYear, setEditPaperExamYear] = useState<number>(2026);
+  const [editPaperExamType, setEditPaperExamType] = useState<ExaminationType>('Regular');
+  const [editPaperDescription, setEditPaperDescription] = useState<string>('');
+  const [isUpdatingPaper, setIsUpdatingPaper] = useState<boolean>(false);
 
   // SQL Copy State
   const [copiedSql, setCopiedSql] = useState(false);
@@ -526,6 +545,45 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       setPaperPendingDelete(null);
     }
   };
+
+  const handleStartEditPaper = (paper: QuestionPaper) => {
+    setEditingPaper(paper);
+    setEditPaperExamYear(paper.examinationYear);
+    setEditPaperExamType(paper.examinationType);
+    setEditPaperDescription(paper.description || '');
+  };
+
+  const handleSavePaperEdit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingPaper) return;
+    setIsUpdatingPaper(true);
+    try {
+      await onUpdatePaper(editingPaper.id, {
+        examinationYear: editPaperExamYear,
+        examinationType: editPaperExamType,
+        description: editPaperDescription,
+      });
+      showToast(`Question Paper updated successfully (Year: ${editPaperExamYear}).`, 'success');
+      setEditingPaper(null);
+    } catch (err: any) {
+      showToast(err?.message || 'Failed to update question paper.', 'error');
+    } finally {
+      setIsUpdatingPaper(false);
+    }
+  };
+
+  const filteredPapers = papers.filter((paper) => {
+    if (paperFilterDeptId !== 'all' && paper.departmentId !== paperFilterDeptId) return false;
+    if (paperFilterYear !== 'all' && String(paper.examinationYear) !== paperFilterYear) return false;
+    if (paperFilterQuery.trim()) {
+      const q = paperFilterQuery.toLowerCase();
+      const matchSub = (paper.subjectName || '').toLowerCase().includes(q);
+      const matchCode = (paper.subjectCode || '').toLowerCase().includes(q);
+      const matchYear = String(paper.examinationYear).includes(q);
+      if (!matchSub && !matchCode && !matchYear) return false;
+    }
+    return true;
+  });
 
   const handleCopySql = () => {
     navigator.clipboard.writeText(SUPABASE_SQL_SETUP);
@@ -1375,7 +1433,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                     onChange={(e) => setPaperExamYear(Number(e.target.value))}
                     className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:border-[#0e0fed]"
                   >
-                    {[2025, 2024, 2023, 2022, 2021, 2020, 2019, 2018].map((yr) => (
+                    {availableExamYears.map((yr) => (
                       <option key={yr} value={yr}>
                         Year {yr}
                       </option>
@@ -1438,9 +1496,67 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           </div>
 
           <div className="lg:col-span-7 space-y-3">
-            <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500">
-              Uploaded Question Papers ({papers.length})
-            </h2>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500">
+                Uploaded Question Papers ({papers.length})
+                {papers.length > 0 && filteredPapers.length !== papers.length && (
+                  <span className="text-[#0e0fed] ml-1.5 font-semibold">({filteredPapers.length} filtered)</span>
+                )}
+              </h2>
+            </div>
+
+            {/* Filter and Search Bar for Paper Management */}
+            {papers.length > 0 && (
+              <div className="p-3 bg-white border border-slate-200/90 rounded-2xl space-y-2 shadow-2xs">
+                <div className="flex flex-col sm:flex-row gap-2">
+                  <div className="relative flex-1">
+                    <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                    <input
+                      type="text"
+                      value={paperFilterQuery}
+                      onChange={(e) => setPaperFilterQuery(e.target.value)}
+                      placeholder="Search papers by subject or code..."
+                      className="w-full pl-8 pr-7 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:border-[#0e0fed]"
+                    />
+                    {paperFilterQuery && (
+                      <button
+                        type="button"
+                        onClick={() => setPaperFilterQuery('')}
+                        className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
+                    )}
+                  </div>
+
+                  <div className="flex gap-2">
+                    <select
+                      value={paperFilterDeptId}
+                      onChange={(e) => setPaperFilterDeptId(e.target.value)}
+                      className="px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:border-[#0e0fed] max-w-[140px]"
+                    >
+                      <option value="all">All Depts</option>
+                      {departments.map((d) => (
+                        <option key={d.id} value={d.id}>{d.code}</option>
+                      ))}
+                    </select>
+
+                    <select
+                      value={paperFilterYear}
+                      onChange={(e) => setPaperFilterYear(e.target.value)}
+                      className="px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:outline-none focus:border-[#0e0fed]"
+                    >
+                      <option value="all">All Exam Years</option>
+                      {availableExamYears.map((yr) => (
+                        <option key={yr} value={String(yr)}>
+                          Year {yr}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {papers.length === 0 ? (
               <div className="p-8 bg-slate-50 border border-dashed border-slate-200 rounded-2xl text-center space-y-1.5">
@@ -1450,20 +1566,46 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   Use the upload form on the left to add PDF question papers to the library.
                 </p>
               </div>
+            ) : filteredPapers.length === 0 ? (
+              <div className="p-8 bg-slate-50 border border-slate-200 rounded-2xl text-center space-y-2">
+                <Filter className="w-6 h-6 text-slate-400 mx-auto" />
+                <div className="text-xs font-bold text-slate-700">No papers match current filters</div>
+                <p className="text-[11px] text-slate-500">
+                  Try clearing the year or department filter to view uploaded papers.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setPaperFilterDeptId('all');
+                    setPaperFilterYear('all');
+                    setPaperFilterQuery('');
+                  }}
+                  className="px-3 py-1.5 text-xs font-bold text-[#0e0fed] bg-blue-50 hover:bg-blue-100 rounded-xl transition-colors"
+                >
+                  Clear Filters
+                </button>
+              </div>
             ) : (
               <div className="max-h-[650px] overflow-y-auto space-y-2.5 pr-1">
-                {papers.map((paper) => (
+                {filteredPapers.map((paper) => (
                   <div
                     key={paper.id}
-                    className="p-3.5 bg-white border border-slate-200/90 rounded-2xl flex items-center justify-between gap-3 text-xs shadow-2xs"
+                    className="p-3.5 bg-white border border-slate-200/90 rounded-2xl flex items-center justify-between gap-3 text-xs shadow-2xs hover:border-slate-300 transition-colors"
                   >
                     <div className="min-w-0 space-y-1">
                       <div className="flex items-center gap-2">
                         <span className="font-mono font-bold text-[#0e0fed]">{paper.subjectCode}</span>
                         <span className="font-bold text-slate-900 truncate">{paper.subjectName}</span>
                       </div>
-                      <div className="text-[11px] text-slate-500 font-medium">
-                        {paper.departmentName} &bull; Sem {paper.semesterNumber} &bull; {paper.examinationYear} ({paper.examinationType})
+                      <div className="text-[11px] text-slate-500 font-medium flex items-center gap-1.5 flex-wrap">
+                        <span>{paper.departmentName}</span>
+                        <span>&bull;</span>
+                        <span>Sem {paper.semesterNumber}</span>
+                        <span>&bull;</span>
+                        <span className={`px-1.5 py-0.5 rounded-md font-bold ${paper.examinationYear >= 2026 ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-slate-100 text-slate-700'}`}>
+                          {paper.examinationYear}
+                        </span>
+                        <span>({paper.examinationType})</span>
                       </div>
                     </div>
 
@@ -1475,6 +1617,15 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                         data-magnetic="true"
                       >
                         <Eye className="w-3.5 h-3.5" />
+                      </button>
+
+                      <button
+                        onClick={() => handleStartEditPaper(paper)}
+                        className="p-1.5 rounded-xl bg-blue-50 hover:bg-blue-100 text-[#0e0fed] transition-colors magnetic-target"
+                        title="Edit Question Paper Details & Year"
+                        data-magnetic="true"
+                      >
+                        <Edit3 className="w-3.5 h-3.5" />
                       </button>
 
                       <button
@@ -1616,6 +1767,126 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 )}
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Question Paper Modal */}
+      {editingPaper && (
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-in fade-in duration-200"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="edit-paper-dialog-title"
+        >
+          <div className="w-full max-w-lg bg-white border border-slate-200 rounded-3xl p-6 shadow-2xl space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="p-3 bg-blue-100 text-[#0e0fed] rounded-2xl shrink-0">
+                  <Edit3 className="w-6 h-6" />
+                </div>
+                <div>
+                  <h3 id="edit-paper-dialog-title" className="text-base font-bold text-slate-900">
+                    Edit Question Paper
+                  </h3>
+                  <p className="text-xs text-slate-500 font-medium">
+                    Update examination year, examination type, or notes.
+                  </p>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setEditingPaper(null)}
+                className="p-1.5 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-2xl space-y-1 text-xs">
+              <div className="flex items-center gap-2">
+                <span className="font-mono font-bold text-[#0e0fed]">{editingPaper.subjectCode}</span>
+                <span className="font-bold text-slate-900 truncate">{editingPaper.subjectName}</span>
+              </div>
+              <div className="text-slate-500 font-medium text-[11px]">
+                {editingPaper.departmentName} &bull; Semester {editingPaper.semesterNumber} &bull; File: <span className="font-mono">{editingPaper.fileName}</span>
+              </div>
+            </div>
+
+            <form onSubmit={handleSavePaperEdit} className="space-y-3.5 text-xs">
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-700">Exam Year</label>
+                  <select
+                    value={editPaperExamYear}
+                    onChange={(e) => setEditPaperExamYear(Number(e.target.value))}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:outline-none focus:border-[#0e0fed]"
+                  >
+                    {availableExamYears.map((yr) => (
+                      <option key={yr} value={yr}>
+                        Year {yr}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-700">Exam Type</label>
+                  <select
+                    value={editPaperExamType}
+                    onChange={(e) => setEditPaperExamType(e.target.value as ExaminationType)}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:border-[#0e0fed]"
+                  >
+                    <option value="Regular">Regular</option>
+                    <option value="Back Paper">Back Paper</option>
+                    <option value="Carry Over">Carry Over</option>
+                    <option value="Improvement">Improvement</option>
+                    <option value="Mid-Term">Mid-Term</option>
+                    <option value="End-Term">End-Term</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-slate-700">Description / Paper Notes</label>
+                <input
+                  type="text"
+                  value={editPaperDescription}
+                  onChange={(e) => setEditPaperDescription(e.target.value)}
+                  placeholder="e.g. End Semester Examination paper with answer key"
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:border-[#0e0fed]"
+                />
+              </div>
+
+              <div className="flex items-center justify-end gap-2.5 pt-2">
+                <button
+                  type="button"
+                  disabled={isUpdatingPaper}
+                  onClick={() => setEditingPaper(null)}
+                  className="px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 hover:bg-slate-100 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={isUpdatingPaper}
+                  className="px-4 py-2.5 rounded-xl bg-[#0e0fed] hover:bg-blue-700 text-xs font-bold text-white transition-all shadow-sm flex items-center gap-2 disabled:opacity-50"
+                >
+                  {isUpdatingPaper ? (
+                    <>
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      <span>Saving Changes...</span>
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle2 className="w-3.5 h-3.5" />
+                      <span>Save Changes</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

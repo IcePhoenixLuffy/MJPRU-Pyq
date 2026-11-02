@@ -23,7 +23,7 @@ import {
   Clock
 } from 'lucide-react';
 import { Department, QuestionPaper, Subject, AcademicYear, Semester } from '../types';
-import { formatBytes } from '../utils/helpers';
+import { formatBytes, getAvailableExamYears } from '../utils/helpers';
 
 interface DepartmentsPageProps {
   departments: Department[];
@@ -932,12 +932,11 @@ export const DepartmentsPage: React.FC<DepartmentsPageProps> = ({
                   className="px-2.5 py-1 bg-white border border-slate-300 rounded-lg text-xs font-semibold text-slate-800 focus:outline-none focus:border-[#0e0fed]"
                 >
                   <option value="all">All Years</option>
-                  <option value="2025">2025</option>
-                  <option value="2024">2024</option>
-                  <option value="2023">2023</option>
-                  <option value="2022">2022</option>
-                  <option value="2021">2021</option>
-                  <option value="2020">2020</option>
+                  {getAvailableExamYears(papers).map((yr) => (
+                    <option key={yr} value={yr.toString()}>
+                      {yr}
+                    </option>
+                  ))}
                 </select>
               </div>
             </div>

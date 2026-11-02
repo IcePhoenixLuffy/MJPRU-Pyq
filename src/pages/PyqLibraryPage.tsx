@@ -12,7 +12,7 @@ import {
   SlidersHorizontal
 } from 'lucide-react';
 import { Department, AcademicYear, Semester, Subject, QuestionPaper, FilterState, ExaminationType } from '../types';
-import { formatBytes, filterQuestionPapers } from '../utils/helpers';
+import { formatBytes, filterQuestionPapers, getAvailableExamYears } from '../utils/helpers';
 
 interface PyqLibraryPageProps {
   departments: Department[];
@@ -67,8 +67,7 @@ export const PyqLibraryPage: React.FC<PyqLibraryPageProps> = ({
   }, [filters.departmentId, filters.semesterId, subjects]);
 
   const availableExamYears = useMemo(() => {
-    const years = Array.from(new Set(papers.map((p) => p.examinationYear))).sort((a, b) => b - a);
-    return years;
+    return getAvailableExamYears(papers);
   }, [papers]);
 
   const examTypes: ExaminationType[] = [
