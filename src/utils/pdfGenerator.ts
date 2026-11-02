@@ -1,4 +1,40 @@
 import { QuestionPaper } from '../types';
+import { supabase, isSupabaseConfigured } from '../lib/supabase';
+
+/**
+ * Resolves a paper's filePath to a fully accessible URL for preview and download.
+ * Handles:
+ * 1. Full URLs (http:// or https://)
+ * 2. Supabase Storage bucket paths ('pyq-papers' bucket)
+ * 3. Relative clean file names in the Supabase Storage bucket
+ */
+export function resolvePdfUrl(filePath: string): string {
+  if (!filePath) return '';
+  if (
+    filePath.startsWith('http://') ||
+    filePath.startsWith('https://') ||
+    filePath.startsWith('blob:') ||
+    filePath.startsWith('data:')
+  ) {
+    return filePath;
+  }
+
+  if (isSupabaseConfigured() && supabase) {
+    const cleanPath = filePath
+      .replace(/^\/?(papers|pyq-papers)\//, '')
+      .replace(/^\//, '');
+
+    const { data } = supabase.storage
+      .from('pyq-papers')
+      .getPublicUrl(cleanPath);
+
+    if (data?.publicUrl) {
+      return data.publicUrl;
+    }
+  }
+
+  return filePath;
+}
 
 /**
  * Generates an authentic MJPRU University Question Paper document content
@@ -193,139 +229,51 @@ export function generateQuestionPaperHtml(paper: QuestionPaper, pageNum = 1): st
 }
 
 /**
- * Generates an actual downloadable PDF document using clean standard PDF syntax
+ * Downloads the actual uploaded question paper PDF from Supabase Storage.
+ * Initiates a real binary file download matching the uploaded file byte-for-byte.
  */
-export function downloadQuestionPaperPdf(paper: QuestionPaper): void {
-  const subCode = paper.subjectCode || 'BT401';
-  const subName = paper.subjectName || 'Question-Paper';
-  const year = paper.examinationYear || 2024;
-  const fileName = `MJPRU_${subCode}_${year}_PYQ.pdf`;
+export async function downloadQuestionPaperPdf(paper: QuestionPaper): Promise<void> {
+  const url = resolvePdfUrl(paper.filePath);
+  const downloadFileName = paper.fileName || `MJPRU_${paper.subjectCode || 'Paper'}_${paper.examinationYear || 'Exam'}.pdf`;
 
-  // Create printable iframe / window for authentic high-resolution print-to-PDF or instant direct download
-  const printWindow = window.open('', '_blank');
-  if (!printWindow) {
-    // If popups are blocked, generate a clean download data URI
-    const content = `
-%PDF-1.4
-%MJPRU PYQ Academic Paper
-1 0 obj
-<< /Title (MJPRU PYQ - ${subName} ${year})
-   /Author (M.J.P. Rohilkhand University, Bareilly)
-   /Subject (${subCode} Previous Year Question Paper)
-   /Creator (MJPRU PYQ Digital Library) >>
-endobj
-2 0 obj
-<< /Type /Catalog /Pages 3 0 R >>
-endobj
-3 0 obj
-<< /Type /Pages /Kids [4 0 R] /Count 1 >>
-endobj
-4 0 obj
-<< /Type /Page /Parent 3 0 R /MediaBox [0 0 595 842] /Contents 5 0 R
-   /Resources << /Font << /F1 << /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>
-                          /F2 << /Type /Font /Subtype /Type1 /BaseFont /Helvetica >> >> >> >>
-endobj
-5 0 obj
-<< /Length 580 >>
-stream
-BT
-/F1 14 Tf
-70 800 Td
-(MAHATMA JYOTIBA PHULE ROHILKHAND UNIVERSITY, BAREILLY) Tj
-0 -22 Td
-/F1 11 Tf
-(B.TECH EXAMINATION ${year} - ${paper.departmentName || 'ENGINEERING'}) Tj
-0 -18 Td
-/F2 10 Tf
-(Subject: ${subName} [Course Code: ${subCode}]) Tj
-0 -16 Td
-(Semester: ${paper.semesterNumber || 1} | Exam Type: ${paper.examinationType}) Tj
-0 -24 Td
-/F1 10 Tf
-(Time: 3 Hours                                                Max Marks: 60) Tj
-0 -20 Td
-/F2 9 Tf
-(Instructions: Section A: Attempt 3 of 6 = 30M | Section B: Attempt 2 of 4 = 30M) Tj
-0 -25 Td
-/F1 10 Tf
-(SECTION A - 30 MARKS [Attempt any 3 questions out of 6]) Tj
-0 -18 Td
-/F2 9 Tf
-(Q1. State fundamental theorems and governing principles. [10 Marks]) Tj
-0 -14 Td
-(Q2. Derive state response transfer function and block model. [10 Marks]) Tj
-0 -14 Td
-(Q3. Compute damping ratio, natural frequency and settling time. [10 Marks]) Tj
-0 -25 Td
-/F1 10 Tf
-(SECTION B - 30 MARKS [Attempt any 2 questions out of 4]) Tj
-0 -18 Td
-/F2 9 Tf
-(Q7. Formulate system architecture and state space optimization. [15 Marks]) Tj
-0 -14 Td
-(Q8. Comprehensive analytical study and trade-off evaluation. [15 Marks]) Tj
-ET
-endstream
-endobj
-xref
-0 6
-0000000000 65535 f 
-0000000072 00000 n 
-0000000250 00000 n 
-0000000299 00000 n 
-0000000356 00000 n 
-0000000550 00000 n 
-trailer
-<< /Size 6 /Root 2 0 R /Info 1 0 R >>
-startxref
-1180
-%%EOF`;
-    const blob = new Blob([content], { type: 'application/pdf' });
-    const url = URL.createObjectURL(blob);
+  if (url && (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('blob:'))) {
+    try {
+      const response = await fetch(url);
+      if (response.ok) {
+        const blob = await response.blob();
+        const blobUrl = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = blobUrl;
+        link.download = downloadFileName;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        setTimeout(() => URL.revokeObjectURL(blobUrl), 2000);
+        return;
+      }
+    } catch (err) {
+      console.warn('Direct blob fetch failed, falling back to direct anchor download:', err);
+    }
+
+    // Direct browser anchor fallback
     const link = document.createElement('a');
     link.href = url;
-    link.download = fileName;
+    link.download = downloadFileName;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    URL.revokeObjectURL(url);
     return;
   }
 
-  // Populate formatted print document
-  const htmlDoc = `
-    <!DOCTYPE html>
-    <html>
-      <head>
-        <title>${fileName}</title>
-        <meta charset="utf-8" />
-        <script src="https://cdn.tailwindcss.com"></script>
-        <style>
-          @media print {
-            body { margin: 0; padding: 0; background: white; }
-            .page-break { page-break-before: always; }
-            @page { size: A4; margin: 15mm; }
-          }
-        </style>
-      </head>
-      <body class="bg-slate-100 p-8 antialiased">
-        <div class="max-w-3xl mx-auto mb-6 flex justify-between items-center bg-white p-4 rounded-lg shadow print:hidden">
-          <div>
-            <h2 class="font-bold text-slate-800 text-sm">MJPRU PYQ PDF Document Ready</h2>
-            <p class="text-xs text-slate-500">${fileName} &bull; 2 Pages</p>
-          </div>
-          <button onclick="window.print()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-4 py-2 rounded text-xs transition">
-            Print / Save as PDF
-          </button>
-        </div>
-        ${generateQuestionPaperHtml(paper, 1)}
-        <div class="page-break my-8 print:my-0"></div>
-        ${generateQuestionPaperHtml(paper, 2)}
-      </body>
-    </html>
-  `;
-
-  printWindow.document.open();
-  printWindow.document.write(htmlDoc);
-  printWindow.document.close();
+  // Fallback for relative paths
+  const link = document.createElement('a');
+  link.href = url || paper.filePath;
+  link.download = downloadFileName;
+  link.target = '_blank';
+  link.rel = 'noopener noreferrer';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
 }

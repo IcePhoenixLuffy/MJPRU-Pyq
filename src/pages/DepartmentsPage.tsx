@@ -84,7 +84,12 @@ export const DepartmentsPage: React.FC<DepartmentsPageProps> = ({
   const isSemesterWiseDept = activeDept?.code === 'EE' || activeDept?.code === 'ECE' || activeDept?.code === 'CSIT' || activeDept?.code === 'CH' || activeDept?.code === 'CHE' || activeDept?.code === 'ME' || activeDept?.code === 'BME' || activeDept?.code === 'EI' || activeDept?.code === 'EIE';
 
   const activeDeptSubjects = subjects.filter((s) => s.departmentId === activeDept?.id);
-  const activeDeptPapers = papers.filter((p) => p.departmentId === activeDept?.id);
+  const activeDeptPapers = papers.filter((p) => {
+    if (p.departmentId === activeDept?.id) return true;
+    return activeDeptSubjects.some((s) =>
+      s.subjectCode.toLowerCase() === p.subjectCode?.toLowerCase() && s.semesterId === p.semesterId
+    );
+  });
 
   // CSIT 16-Course Elective Catalogue (all electives belonging to CSIT)
   const csitElectives = activeDept?.code === 'CSIT'
@@ -118,7 +123,14 @@ export const DepartmentsPage: React.FC<DepartmentsPageProps> = ({
   };
 
   const getPapersForSubject = (subId: string) => {
-    return activeDeptPapers.filter((p) => p.subjectId === subId);
+    const targetSub = activeDeptSubjects.find((s) => s.id === subId);
+    return papers.filter((p) => {
+      if (p.subjectId === subId) return true;
+      if (targetSub && p.subjectCode && p.subjectCode.toLowerCase() === targetSub.subjectCode.toLowerCase()) {
+        if (p.semesterId === targetSub.semesterId) return true;
+      }
+      return false;
+    });
   };
 
   const filteredSubjectPapers = activeSubjectModal

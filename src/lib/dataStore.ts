@@ -1,6 +1,7 @@
-import { Department, AcademicYear, Semester, Subject, QuestionPaper, FilterState, SystemStatistics } from '../types';
+import { Department, AcademicYear, Semester, Subject, QuestionPaper, FilterState, SystemStatistics, ExaminationType } from '../types';
 import { filterQuestionPapers, calculateStatistics, slugify } from '../utils/helpers';
 import { supabase, isSupabaseConfigured } from './supabase';
+import { resolvePdfUrl } from '../utils/pdfGenerator';
 
 export const INITIAL_ACADEMIC_YEARS: AcademicYear[] = [
   { id: 'year-1', name: '1st Year', yearNumber: 1 },
@@ -1033,21 +1034,169 @@ export class DataStore {
     return true;
   }
 
+  // Synchronize question papers with Supabase Database and Storage bucket 'pyq-papers'
+  async syncWithSupabase(): Promise<void> {
+    if (!isSupabaseConfigured() || !supabase) return;
+
+    try {
+      const papersMap = new Map<string, QuestionPaper>();
+
+      // 1. Fetch from Supabase database table 'question_papers'
+      try {
+        const { data: dbRows, error: dbErr } = await supabase
+          .from('question_papers')
+          .select('*')
+          .order('uploaded_at', { ascending: false });
+
+        if (!dbErr && dbRows && dbRows.length > 0) {
+          dbRows.forEach((row) => {
+            const resolvedUrl = resolvePdfUrl(row.file_path);
+            const paper: QuestionPaper = {
+              id: row.id,
+              departmentId: row.department_id,
+              subjectId: row.subject_id,
+              academicYearId: row.academic_year_id,
+              semesterId: row.semester_id,
+              examinationYear: row.examination_year,
+              examinationType: (row.examination_type as ExaminationType) || 'Regular',
+              filePath: resolvedUrl || row.file_path,
+              fileName: row.file_name,
+              fileSizeBytes: row.file_size_bytes || 0,
+              pageCount: row.page_count || 2,
+              description: row.description || '',
+              downloadCount: row.download_count || 0,
+              uploadedAt: row.uploaded_at || new Date().toISOString(),
+            };
+            papersMap.set(paper.filePath, paper);
+          });
+        }
+      } catch (dbFetchErr) {
+        console.warn('Supabase DB papers fetch fallback:', dbFetchErr);
+      }
+
+      // 2. Fetch all uploaded files from Supabase Storage bucket 'pyq-papers'
+      try {
+        const { data: storageFiles, error: storageErr } = await supabase.storage
+          .from('pyq-papers')
+          .list();
+
+        if (!storageErr && storageFiles && storageFiles.length > 0) {
+          storageFiles.forEach((file) => {
+            if (!file.name || !file.name.toLowerCase().endsWith('.pdf')) return;
+
+            const publicUrlData = supabase.storage
+              .from('pyq-papers')
+              .getPublicUrl(file.name);
+            const publicUrl = publicUrlData?.data?.publicUrl || file.name;
+
+            // Check if already in papersMap by file path
+            let matched = false;
+            for (const [key] of papersMap.entries()) {
+              if (key.includes(file.name) || key === publicUrl) {
+                matched = true;
+                break;
+              }
+            }
+
+            if (!matched) {
+              // Parse details from file name (e.g. ph-102t_2025_end-term_1793603397045.pdf)
+              const clean = file.name.replace(/\.pdf$/i, '');
+              const parts = clean.split('_');
+              let subCode = 'PH-102T';
+              let examYear = 2025;
+              let examType: ExaminationType = 'End-Term';
+
+              if (parts.length >= 1) {
+                subCode = parts[0].toUpperCase();
+              }
+              if (parts.length >= 2) {
+                const parsedYear = parseInt(parts[1], 10);
+                if (!isNaN(parsedYear) && parsedYear >= 2000) {
+                  examYear = parsedYear;
+                }
+              }
+              if (parts.length >= 3) {
+                const rawType = parts[2].toLowerCase();
+                if (rawType.includes('back')) examType = 'Back Paper';
+                else if (rawType.includes('carry')) examType = 'Carry Over';
+                else if (rawType.includes('improve')) examType = 'Improvement';
+                else if (rawType.includes('mid')) examType = 'Mid-Term';
+                else if (rawType.includes('end')) examType = 'End-Term';
+                else examType = 'Regular';
+              }
+
+              // Match against subjects in repository
+              const targetSub = this.subjects.find(
+                (s) => s.subjectCode.toLowerCase() === subCode.toLowerCase()
+              ) || this.subjects.find((s) => s.subjectCode === 'PH-102T');
+
+              const deptId = targetSub?.departmentId || 'dept-csit';
+              const semId = targetSub?.semesterId || 'sem-2';
+              const yearId = targetSub?.academicYearId || 'year-1';
+
+              const fileSize = (file.metadata as any)?.size || file.size || 440665;
+
+              const paperObj: QuestionPaper = {
+                id: file.id || `storage-${file.name}`,
+                departmentId: deptId,
+                subjectId: targetSub?.id || 'sub-csit-sem2-4',
+                academicYearId: yearId,
+                semesterId: semId,
+                examinationYear: examYear,
+                examinationType: examType,
+                filePath: publicUrl,
+                fileName: file.name,
+                fileSizeBytes: fileSize,
+                pageCount: 2,
+                description: `Official question paper for ${targetSub?.subjectName || subCode}.`,
+                downloadCount: 0,
+                uploadedAt: file.created_at || new Date().toISOString(),
+                subjectCode: targetSub?.subjectCode || subCode,
+                subjectName: targetSub?.subjectName || 'Engineering Physics-II',
+              };
+
+              papersMap.set(publicUrl, paperObj);
+            }
+          });
+        }
+      } catch (storageListErr) {
+        console.warn('Supabase storage files sync fallback:', storageListErr);
+      }
+
+      // Include any user papers in memory that have a valid filePath
+      this.papers.forEach((p) => {
+        if (p.filePath && !papersMap.has(p.filePath)) {
+          papersMap.set(p.filePath, p);
+        }
+      });
+
+      this.papers = Array.from(papersMap.values());
+      this.hydratePaperMetadata();
+      this.saveToStorage();
+    } catch (err) {
+      console.warn('Supabase sync overall fallback:', err);
+    }
+  }
+
   // Question Papers
   async getQuestionPapers(filters?: Partial<FilterState>): Promise<QuestionPaper[]> {
+    await this.syncWithSupabase();
     this.hydratePaperMetadata();
     if (!filters) return [...this.papers];
     return filterQuestionPapers(this.papers, filters);
   }
 
   async getQuestionPaperById(id: string): Promise<QuestionPaper | null> {
+    await this.syncWithSupabase();
     this.hydratePaperMetadata();
     return this.papers.find((p) => p.id === id) || null;
   }
 
   async addQuestionPaper(paper: Omit<QuestionPaper, 'id' | 'uploadedAt' | 'downloadCount'>): Promise<QuestionPaper> {
+    const resolvedPath = resolvePdfUrl(paper.filePath);
     const newPaper: QuestionPaper = {
       ...paper,
+      filePath: resolvedPath,
       id: `paper-${Date.now()}`,
       uploadedAt: new Date().toISOString(),
       downloadCount: 0,
@@ -1055,20 +1204,23 @@ export class DataStore {
 
     if (isSupabaseConfigured() && supabase) {
       try {
-        await supabase.from('question_papers').insert({
-          id: newPaper.id,
+        const { error: insertErr } = await supabase.from('question_papers').insert({
           department_id: newPaper.departmentId,
           subject_id: newPaper.subjectId,
           academic_year_id: newPaper.academicYearId,
           semester_id: newPaper.semesterId,
           examination_year: newPaper.examinationYear,
           examination_type: newPaper.examinationType,
-          file_path: newPaper.filePath,
+          file_path: resolvedPath,
           file_name: newPaper.fileName,
           file_size_bytes: newPaper.fileSizeBytes,
           page_count: newPaper.pageCount,
           description: newPaper.description,
         });
+
+        if (insertErr) {
+          console.warn('Supabase add question paper notice:', insertErr.message);
+        }
       } catch (err) {
         console.warn('Supabase add question paper fallback:', err);
       }
