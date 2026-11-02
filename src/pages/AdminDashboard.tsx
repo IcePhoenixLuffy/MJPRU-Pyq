@@ -234,7 +234,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         await supabase.auth.signOut();
         setIsAuthenticated(false);
         setCurrentUser(null);
-        setAuthError(`Access Denied: The account "${data.user.email}" is not an authorized university administrator. Only ${OFFICIAL_ADMIN_EMAIL} is granted access.`);
+        setAuthError(`Access Denied: The account "${data.user.email}" is not an authorized administrator. Only ${OFFICIAL_ADMIN_EMAIL} is granted access.`);
         setIsSubmitting(false);
         return;
       }
@@ -473,7 +473,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         fileName,
         fileSizeBytes: selectedFile ? selectedFile.size : 256000,
         pageCount: 2,
-        description: paperDescription || `Official university question paper for ${subCode}.`,
+        description: paperDescription || `University question paper for ${subCode}.`,
       });
 
       setIsUploading(false);
@@ -780,7 +780,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               </div>
               <h3 className="text-base font-bold text-slate-900">Upload Question Paper</h3>
               <p className="text-xs text-slate-600">
-                Add an official PDF examination paper with branch, semester, course code, and exam type.
+                Add a PDF examination paper with branch, semester, course code, and exam type.
               </p>
             </div>
 
@@ -1415,7 +1415,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 <FileText className="w-8 h-8 text-slate-400 mx-auto" />
                 <div className="text-xs font-bold text-slate-700">No question papers uploaded yet</div>
                 <p className="text-[11px] text-slate-500">
-                  Use the upload form on the left to add official PDF question papers to the library.
+                  Use the upload form on the left to add PDF question papers to the library.
                 </p>
               </div>
             ) : (

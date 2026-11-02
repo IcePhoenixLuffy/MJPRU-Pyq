@@ -78,7 +78,7 @@ export const HomePage: React.FC<HomePageProps> = ({
             <span className="w-2.5 h-2.5 rounded-full bg-[#0e0fed] animate-pulse" />
             <span className="text-xs font-bold text-slate-800">M.J.P. Rohilkhand University, Bareilly</span>
             <span className="text-slate-300">&bull;</span>
-            <span className="text-xs font-extrabold text-[#0e0fed]">Official Academic Repository</span>
+            <span className="text-xs font-extrabold text-[#0e0fed]">Independent Academic Library</span>
           </div>
 
           {/* Strong Heading with Rich Gradient Text */}
@@ -175,7 +175,7 @@ export const HomePage: React.FC<HomePageProps> = ({
             <div className="text-3xl sm:text-4xl font-extrabold text-slate-900 font-mono tabular-nums">
               {statistics.totalQuestionPapers}
             </div>
-            <p className="text-xs text-cyan-800 mt-1 font-bold">Archived Official PYQs</p>
+            <p className="text-xs text-cyan-800 mt-1 font-bold">Archived Question Papers</p>
           </div>
 
           {/* Stat 3: Green -> Pinky Ring */}
@@ -304,7 +304,7 @@ export const HomePage: React.FC<HomePageProps> = ({
               Recently Uploaded Papers
             </h2>
             <p className="text-sm text-slate-700 font-medium mt-1">
-              Latest semester examination papers submitted to the university database.
+              Latest semester examination papers added to the repository.
             </p>
           </div>
 

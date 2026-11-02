@@ -136,7 +136,7 @@ export const PyqLibraryPage: React.FC<PyqLibraryPageProps> = ({
             Browse Question Paper <span className="gradient-text-vibrant">Library</span>
           </h1>
           <p className="text-sm text-slate-700 font-medium mt-1 max-w-xl">
-            Navigate through university department, academic year, semester, and subjects.
+            Navigate through engineering departments, academic years, semesters, and subjects.
           </p>
         </div>
 
@@ -371,7 +371,7 @@ export const PyqLibraryPage: React.FC<PyqLibraryPageProps> = ({
                 </h3>
                 <p className="text-xs text-slate-500 mt-1 font-medium">
                   {papers.length === 0
-                    ? 'The question paper repository is currently empty. Authenticated administrators can upload official examination papers through the Admin Portal.'
+                    ? 'The question paper repository is currently empty. Authenticated administrators can upload examination papers through the Admin Portal.'
                     : 'Try broadening your search query, selecting another semester or exam type, or resetting filters.'}
                 </p>
                 {papers.length > 0 && activeFilterCount > 0 && (

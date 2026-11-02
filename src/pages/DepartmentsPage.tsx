@@ -342,7 +342,7 @@ export const DepartmentsPage: React.FC<DepartmentsPageProps> = ({
                           <div className="flex items-center gap-2">
                             <h4 className="text-xs sm:text-sm font-black text-slate-900">ME 12-Course Departmental Elective Catalogue</h4>
                             <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-blue-100 text-[#0e0fed] border border-blue-200">
-                              12 Official Electives
+                              12 Departmental Electives
                             </span>
                           </div>
                           <p className="text-[11px] text-slate-600 font-medium">
@@ -586,7 +586,7 @@ export const DepartmentsPage: React.FC<DepartmentsPageProps> = ({
                               );
                             })}
 
-                            {/* CSIT Semester 7: Official Curriculum Elective Slots (if not assigned yet) */}
+                            {/* CSIT Semester 7: Elective Curriculum Slots (if not assigned yet) */}
                             {activeDept.code === 'CSIT' && sem.semesterNumber === 7 && (
                               ['Departmental Elective-I', 'Pool Elective', 'Open Elective']
                                 .filter((slot) => !distinctElectiveGroups.some((g) => g.toLowerCase() === slot.toLowerCase()))
@@ -609,7 +609,7 @@ export const DepartmentsPage: React.FC<DepartmentsPageProps> = ({
                                         <p className="text-xs text-slate-600 font-medium leading-relaxed max-w-xl">
                                           {slot === 'Open Elective' 
                                             ? 'Inter-departmental open elective chosen across university disciplines. Assign or manage via Admin Dashboard.'
-                                            : 'Selectable from the official 16-Course CSIT Elective Catalogue. Assign an elective to this slot via the Admin Dashboard.'}
+                                            : 'Selectable from the 16-Course CSIT Elective Catalogue. Assign an elective to this slot via the Admin Dashboard.'}
                                         </p>
                                       </div>
                                       <button
@@ -625,7 +625,7 @@ export const DepartmentsPage: React.FC<DepartmentsPageProps> = ({
                                 ))
                             )}
 
-                            {/* CSIT Semester 8: Official Curriculum Elective Slots (if not assigned yet) */}
+                            {/* CSIT Semester 8: Elective Curriculum Slots (if not assigned yet) */}
                             {activeDept.code === 'CSIT' && sem.semesterNumber === 8 && (
                               ['Departmental Elective-II', 'Departmental Elective-III', 'Open Elective']
                                 .filter((slot) => !distinctElectiveGroups.some((g) => 
@@ -651,7 +651,7 @@ export const DepartmentsPage: React.FC<DepartmentsPageProps> = ({
                                         <p className="text-xs text-slate-600 font-medium leading-relaxed max-w-xl">
                                           {slot === 'Open Elective' 
                                             ? 'Inter-departmental open elective chosen across university disciplines. Assign or manage via Admin Dashboard.'
-                                            : 'Selectable from the official 16-Course CSIT Elective Catalogue. Assign an elective to this slot via the Admin Dashboard.'}
+                                            : 'Selectable from the 16-Course CSIT Elective Catalogue. Assign an elective to this slot via the Admin Dashboard.'}
                                         </p>
                                       </div>
                                       <button
@@ -694,13 +694,13 @@ export const DepartmentsPage: React.FC<DepartmentsPageProps> = ({
                               </div>
                             )}
 
-                            {/* Mandatory Official Note for Semester 8 in Electrical Engineering */}
+                            {/* Curriculum Note for Semester 8 in Electrical Engineering */}
                             {activeDept.code === 'EE' && sem.semesterNumber === 8 && (
                               <div className="p-4 rounded-2xl bg-gradient-to-r from-amber-50 to-yellow-50 border border-amber-200 flex items-start gap-3 shadow-2xs">
                                 <Info className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
                                 <div className="space-y-1">
                                   <div className="text-xs font-black text-amber-900 uppercase tracking-wide">
-                                    Official Faculty Course Guideline
+                                    Curriculum Course Guideline
                                   </div>
                                   <p className="text-xs text-amber-800 font-semibold leading-relaxed">
                                     &ldquo;The student shall decide the MOOC course in consultation with the department faculty member and approved by Head of the Department.&rdquo;
@@ -997,7 +997,7 @@ export const DepartmentsPage: React.FC<DepartmentsPageProps> = ({
             {/* Modal Footer */}
             <div className="p-4 bg-slate-50 border-t border-slate-200 flex items-center justify-between text-xs text-slate-600">
               <span className="font-semibold text-slate-700">
-                Official M.J.P. Rohilkhand University Question Paper Repository
+                MJPRU PYQ &bull; Independent Question Paper Library
               </span>
               <button
                 onClick={() => setActiveSubjectModal(null)}
@@ -1036,10 +1036,10 @@ export const DepartmentsPage: React.FC<DepartmentsPageProps> = ({
                   </span>
                 </div>
                 <h3 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
-                  Official CSIT Elective Catalogue
+                  CSIT Departmental Elective Catalogue
                 </h3>
                 <p className="text-xs text-slate-600 font-medium max-w-2xl leading-relaxed">
-                  Official approved elective syllabus pool. All 16 subjects start in this catalogue and can be assigned to Departmental Elective-I, II, III, Pool Elective, or Open Elective via Admin Portal. Click any course to view archived question papers.
+                  Elective syllabus pool for CSIT students. All 16 subjects start in this catalogue and can be assigned to Departmental Elective-I, II, III, Pool Elective, or Open Elective via Admin Portal. Click any course to view archived question papers.
                 </p>
               </div>
 
@@ -1180,13 +1180,13 @@ export const DepartmentsPage: React.FC<DepartmentsPageProps> = ({
             <div className="p-6 bg-gradient-to-r from-blue-50/90 via-indigo-50/70 to-cyan-50/80 border-b border-blue-200 flex items-start justify-between gap-4">
               <div className="space-y-1">
                 <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-blue-100 text-[#0e0fed] text-[10px] font-black uppercase tracking-wider">
-                  Official Syllabus Catalogue
+                  Departmental Electives
                 </div>
                 <h3 className="text-xl font-black text-slate-900">
                   ME 12-Course Departmental Elective Catalogue
                 </h3>
                 <p className="text-xs text-slate-600 font-medium max-w-2xl leading-relaxed">
-                  Official approved Departmental Elective pool for Mechanical Engineering. All 12 subjects are preserved in this catalogue and can be configured to Elective-I, II, III, IV, or V via the Admin Dashboard. Click any course to view archived question papers.
+                  Departmental Elective pool for Mechanical Engineering students. All 12 subjects are preserved in this catalogue and can be configured to Elective-I, II, III, IV, or V via the Admin Dashboard. Click any course to view archived question papers.
                 </p>
               </div>
 

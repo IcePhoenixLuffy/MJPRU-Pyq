@@ -36,7 +36,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
               </span>
             </div>
             <p className="text-xs text-slate-600 leading-relaxed font-medium">
-              Official student-first Previous Year Question Paper repository for Mahatma Jyotiba Phule Rohilkhand University, Bareilly, Uttar Pradesh.
+              Independent student-first Previous Year Question Paper library for M.J.P. Rohilkhand University students, Bareilly, Uttar Pradesh.
             </p>
             <div className="flex items-center gap-2 text-xs text-slate-700 font-semibold">
               <MapPin className="w-3.5 h-3.5 text-amber-600" />
@@ -121,10 +121,22 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
 
         </div>
 
+        {/* Clear Disclaimer & Acknowledgement */}
+        <div className="mt-10 pt-6 border-t border-cyan-200/60 space-y-3">
+          <p className="text-[11px] text-slate-500 leading-relaxed font-medium">
+            <span className="font-bold text-slate-700">Disclaimer:</span> MJPRU PYQ is an independent, student-focused educational resource. It is not an official website of M.J.P. Rohilkhand University and is not affiliated with, endorsed by, or operated by the university. University names and academic references are used only for identification and educational purposes.
+          </p>
+          <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] text-slate-500 font-medium">
+            <span className="inline-flex items-center gap-1.5 font-semibold text-slate-600">
+              <span>Independently created by an MJPRU student 💚</span>
+            </span>
+          </div>
+        </div>
+
         {/* Bottom Credits & Copyright */}
-        <div className="mt-12 pt-6 border-t border-cyan-200/60 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500 font-medium">
+        <div className="mt-6 pt-4 border-t border-cyan-200/40 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500 font-medium">
           <div>
-            &copy; {new Date().getFullYear()} MJPRU PYQ &bull; M.J.P. Rohilkhand University, Bareilly. All rights reserved.
+            &copy; {new Date().getFullYear()} MJPRU PYQ &bull; Independent Academic Resource for MJPRU Students.
           </div>
           <div className="flex items-center gap-4">
             <button onClick={() => onNavigate('about')} className="hover:text-slate-800 font-bold">

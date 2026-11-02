@@ -70,7 +70,7 @@ export const RecentlyUploadedPage: React.FC<RecentlyUploadedPageProps> = ({
             Recently Uploaded <span className="gradient-text-primary">Question Papers</span>
           </h1>
           <p className="text-sm text-slate-700 max-w-2xl leading-relaxed font-medium">
-            Stay up to date with newly digitized question papers uploaded by university academic faculties and contributors.
+            Stay up to date with newly digitized question papers uploaded for student examination preparation.
           </p>
         </div>
       </div>

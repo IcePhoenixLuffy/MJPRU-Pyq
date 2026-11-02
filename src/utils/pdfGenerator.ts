@@ -21,57 +21,57 @@ export function generateQuestionPaperHtml(paper: QuestionPaper, pageNum = 1): st
         </div>
 
         <div class="mb-6">
-          <div class="font-bold text-sm tracking-wide uppercase mb-3 flex items-center justify-between border-b pb-1">
-            <span>SECTION – C (Long Answer Type Questions)</span>
-            <span class="text-xs font-normal">Attempt any THREE questions (3 × 10 = 30 Marks)</span>
+          <div class="font-bold text-sm tracking-wide uppercase mb-3 flex items-center justify-between border-b pb-1 font-sans">
+            <span>SECTION – B (30 Marks)</span>
+            <span class="text-xs font-normal text-slate-600">Attempt any TWO questions out of 4 (2 &times; 15 = 30 Marks)</span>
           </div>
 
           <div class="space-y-4 text-xs leading-relaxed text-slate-800">
             <div class="flex gap-3">
-              <span class="font-bold min-w-[20px]">Q4.</span>
+              <span class="font-bold min-w-[25px]">Q7.</span>
               <div class="flex-1">
-                <p class="font-medium">With neat architectural diagrams, explain the operational stages and memory management subsystems relevant to ${subName}.</p>
-                <p class="text-slate-600 mt-1 italic">(b) Derive the comparative state complexity and analyze boundary condition performance.</p>
+                <p class="font-medium">With neat architectural diagrams, explain the operational stages and subsystems relevant to <strong>${subName}</strong>.</p>
+                <p class="text-slate-600 mt-1 italic">Derive the comparative state complexity and analyze boundary condition performance.</p>
               </div>
-              <span class="font-bold text-slate-500 min-w-[35px] text-right">[10]</span>
+              <span class="font-bold text-slate-500 min-w-[35px] text-right">[15]</span>
             </div>
 
             <div class="flex gap-3">
-              <span class="font-bold min-w-[20px]">Q5.</span>
+              <span class="font-bold min-w-[25px]">Q8.</span>
               <div class="flex-1">
                 <p class="font-medium">Formulate the theoretical foundation for high-performance deployment in modern ${dept} applications.</p>
-                <p class="text-slate-600 mt-1 italic">(b) Evaluate trade-offs between throughput, latency, and fault tolerance with an illustrative numerical example.</p>
+                <p class="text-slate-600 mt-1 italic">Evaluate trade-offs between throughput, latency, and fault tolerance with an illustrative numerical derivation.</p>
               </div>
-              <span class="font-bold text-slate-500 min-w-[35px] text-right">[10]</span>
+              <span class="font-bold text-slate-500 min-w-[35px] text-right">[15]</span>
             </div>
 
             <div class="flex gap-3">
-              <span class="font-bold min-w-[20px]">Q6.</span>
+              <span class="font-bold min-w-[25px]">Q9.</span>
               <div class="flex-1">
-                <p class="font-medium">Discuss the recent advancements in ${subName} and their industrial applications in Uttar Pradesh and global engineering sectors.</p>
-                <p class="text-slate-600 mt-1 italic">(b) Propose an optimal design workflow to mitigate thermal and algorithmic degradation in continuous cycles.</p>
+                <p class="font-medium">Discuss the recent computational or experimental advancements in <strong>${subName}</strong>.</p>
+                <p class="text-slate-600 mt-1 italic">Propose an optimal design workflow to mitigate thermal and operational degradation in continuous cycles.</p>
               </div>
-              <span class="font-bold text-slate-500 min-w-[35px] text-right">[10]</span>
+              <span class="font-bold text-slate-500 min-w-[35px] text-right">[15]</span>
             </div>
 
             <div class="flex gap-3">
-              <span class="font-bold min-w-[20px]">Q7.</span>
+              <span class="font-bold min-w-[25px]">Q10.</span>
               <div class="flex-1">
-                <p class="font-medium">Write comprehensive technical notes on any TWO of the following:</p>
+                <p class="font-medium">Write comprehensive analytical notes on any TWO of the following core areas:</p>
                 <ul class="list-disc list-inside mt-1 space-y-1 text-slate-700 ml-4">
-                  <li>Pipeline hazards and mitigation techniques</li>
-                  <li>Real-time deterministic scheduling algorithms</li>
-                  <li>Scalability protocols in modern industrial testbeds</li>
+                  <li>System stability criteria and frequency response compensation</li>
+                  <li>Real-time deterministic scheduling and control architectures</li>
+                  <li>Scalability protocols in modern engineering application testbeds</li>
                 </ul>
               </div>
-              <span class="font-bold text-slate-500 min-w-[35px] text-right">[10]</span>
+              <span class="font-bold text-slate-500 min-w-[35px] text-right">[15]</span>
             </div>
           </div>
         </div>
 
         <div class="mt-12 pt-6 border-t border-dashed border-slate-300 text-center text-xs text-slate-400 font-sans">
           --- END OF QUESTION PAPER ---
-          <div class="text-[10px] text-slate-400 mt-1">Mahatma Jyotiba Phule Rohilkhand University, Bareilly • Official Examination Record</div>
+          <div class="text-[10px] text-slate-400 mt-1">Mahatma Jyotiba Phule Rohilkhand University, Bareilly • Academic Examination Paper</div>
         </div>
       </div>
     `;
@@ -107,14 +107,15 @@ export function generateQuestionPaperHtml(paper: QuestionPaper, pageNum = 1): st
       <!-- Time & Marks -->
       <div class="flex justify-between items-center text-xs font-bold border-y border-slate-300 py-1.5 mb-4 font-sans">
         <span>Time: 3 Hours</span>
-        <span>Total Marks: 70</span>
+        <span class="font-mono text-[#0e0fed]">Total Marks: 60</span>
       </div>
 
       <!-- Instructions -->
       <div class="text-[11px] text-slate-600 italic mb-5 leading-normal bg-slate-50 p-2.5 rounded border border-slate-200 font-sans">
         <strong>Instructions for Candidates:</strong>
         <ol class="list-decimal list-inside space-y-0.5 mt-1">
-          <li>Attempt questions from all Sections as per instructed guidelines.</li>
+          <li><strong>Section A:</strong> Attempt any <strong>THREE</strong> questions out of 6 (3 &times; 10 = 30 Marks).</li>
+          <li><strong>Section B:</strong> Attempt any <strong>TWO</strong> questions out of 4 (2 &times; 15 = 30 Marks).</li>
           <li>Assume any missing standard empirical data suitably and specify it clearly.</li>
           <li>Use of scientific non-programmable calculators is permitted.</li>
         </ol>
@@ -122,76 +123,70 @@ export function generateQuestionPaperHtml(paper: QuestionPaper, pageNum = 1): st
 
       <!-- Section A -->
       <div class="mb-5">
-        <div class="font-bold text-xs tracking-wide uppercase mb-2 flex items-center justify-between border-b pb-1 font-sans">
-          <span>SECTION – A (Objective & Short Answers)</span>
-          <span class="text-[11px] font-normal text-slate-600">Attempt ALL parts (7 × 2 = 14 Marks)</span>
+        <div class="font-bold text-xs tracking-wide uppercase mb-3 flex items-center justify-between border-b pb-1 font-sans">
+          <span>SECTION – A (30 Marks)</span>
+          <span class="text-[11px] font-normal text-slate-600">Attempt any THREE questions out of 6 (3 &times; 10 = 30 Marks)</span>
         </div>
 
-        <div class="space-y-2.5 text-xs text-slate-800">
+        <div class="space-y-3.5 text-xs text-slate-800">
           <div class="flex gap-2">
-            <span class="font-bold min-w-[20px]">Q1.</span>
-            <div class="flex-1 space-y-1.5">
-              <div class="flex justify-between">
-                <span>(a) Define the fundamental operating principle underlying <strong>${subName}</strong>.</span>
-                <span class="font-mono text-slate-500">[2]</span>
-              </div>
-              <div class="flex justify-between">
-                <span>(b) State the primary distinction between synchronous and asynchronous operation in this domain.</span>
-                <span class="font-mono text-slate-500">[2]</span>
-              </div>
-              <div class="flex justify-between">
-                <span>(c) What is the physical significance of damping ratio and characteristic equation?</span>
-                <span class="font-mono text-slate-500">[2]</span>
-              </div>
-              <div class="flex justify-between">
-                <span>(d) Outline the Nyquist stability criterion and its practical relevance.</span>
-                <span class="font-mono text-slate-500">[2]</span>
-              </div>
-              <div class="flex justify-between">
-                <span>(e) Explain the role of feedback mechanisms in enhancing response precision.</span>
-                <span class="font-mono text-slate-500">[2]</span>
-              </div>
-              <div class="flex justify-between">
-                <span>(f) Differentiate between lumped parameter and distributed parameter modeling.</span>
-                <span class="font-mono text-slate-500">[2]</span>
-              </div>
-              <div class="flex justify-between">
-                <span>(g) List two industrial standards governing ${dept} laboratory verification.</span>
-                <span class="font-mono text-slate-500">[2]</span>
-              </div>
+            <span class="font-bold min-w-[25px]">Q1.</span>
+            <div class="flex-1">
+              <p class="font-medium">Define the fundamental operating principles and governing theoretical equations underlying <strong>${subName}</strong>.</p>
+              <p class="text-slate-600 mt-1 italic">Illustrate with a comprehensive schematic block diagram.</p>
             </div>
+            <span class="font-mono text-slate-500 min-w-[30px] text-right">[10]</span>
+          </div>
+
+          <div class="flex gap-2">
+            <span class="font-bold min-w-[25px]">Q2.</span>
+            <div class="flex-1">
+              <p class="font-medium">State the primary distinction between steady-state and transient responses in this technical domain.</p>
+              <p class="text-slate-600 mt-1 italic">Derive the mathematical transfer function governing the primary response curve.</p>
+            </div>
+            <span class="font-mono text-slate-500 min-w-[30px] text-right">[10]</span>
+          </div>
+
+          <div class="flex gap-2">
+            <span class="font-bold min-w-[25px]">Q3.</span>
+            <div class="flex-1">
+              <p class="font-medium">What is the physical significance of damping ratio, natural frequency, and the characteristic polynomial?</p>
+              <p class="text-slate-600 mt-1 italic">Solve for the peak overshoot and settling time for a standard step input.</p>
+            </div>
+            <span class="font-mono text-slate-500 min-w-[30px] text-right">[10]</span>
+          </div>
+
+          <div class="flex gap-2">
+            <span class="font-bold min-w-[25px]">Q4.</span>
+            <div class="flex-1">
+              <p class="font-medium">Explain the Nyquist and Routh-Hurwitz stability criteria with their practical engineering limitations.</p>
+              <p class="text-slate-600 mt-1 italic">Determine the range of parameter values for guaranteed marginal stability.</p>
+            </div>
+            <span class="font-mono text-slate-500 min-w-[30px] text-right">[10]</span>
+          </div>
+
+          <div class="flex gap-2">
+            <span class="font-bold min-w-[25px]">Q5.</span>
+            <div class="flex-1">
+              <p class="font-medium">Discuss the role of closed-loop feedback mechanisms in minimizing environmental distortion and sensitivity.</p>
+              <p class="text-slate-600 mt-1 italic">Calculate the maximum steady-state error coefficient under ramp excitation.</p>
+            </div>
+            <span class="font-mono text-slate-500 min-w-[30px] text-right">[10]</span>
+          </div>
+
+          <div class="flex gap-2">
+            <span class="font-bold min-w-[25px]">Q6.</span>
+            <div class="flex-1">
+              <p class="font-medium">Differentiate between lumped-parameter and distributed-parameter modeling in <strong>${dept}</strong> systems.</p>
+              <p class="text-slate-600 mt-1 italic">Provide two real-world case studies demonstrating performance optimization.</p>
+            </div>
+            <span class="font-mono text-slate-500 min-w-[30px] text-right">[10]</span>
           </div>
         </div>
       </div>
 
-      <!-- Section B -->
-      <div>
-        <div class="font-bold text-xs tracking-wide uppercase mb-2 flex items-center justify-between border-b pb-1 font-sans">
-          <span>SECTION – B (Analytical Questions)</span>
-          <span class="text-[11px] font-normal text-slate-600">Attempt any THREE parts (3 × 7 = 21 Marks)</span>
-        </div>
-
-        <div class="space-y-3 text-xs text-slate-800">
-          <div class="flex gap-2">
-            <span class="font-bold min-w-[20px]">Q2.</span>
-            <div class="flex-1">
-              <p>Derive the mathematical transfer function governing the primary response curve. Illustrate with a labeled block diagram.</p>
-            </div>
-            <span class="font-mono text-slate-500">[7]</span>
-          </div>
-
-          <div class="flex gap-2">
-            <span class="font-bold min-w-[20px]">Q3.</span>
-            <div class="flex-1">
-              <p>An engineering prototype operates under variable ambient load. Calculate the maximum steady-state efficiency and error coefficient.</p>
-            </div>
-            <span class="font-mono text-slate-500">[7]</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="mt-8 text-center text-xs text-slate-400 font-sans">
-        [ Continued on Page 2 ... ]
+      <div class="mt-6 text-center text-xs text-slate-400 font-sans">
+        [ Section B continues on Page 2 &bull; Total Examination: 60 Marks ]
       </div>
     </div>
   `;
@@ -212,7 +207,7 @@ export function downloadQuestionPaperPdf(paper: QuestionPaper): void {
     // If popups are blocked, generate a clean download data URI
     const content = `
 %PDF-1.4
-%MJPRU PYQ Official Academic Paper
+%MJPRU PYQ Academic Paper
 1 0 obj
 << /Title (MJPRU PYQ - ${subName} ${year})
    /Author (M.J.P. Rohilkhand University, Bareilly)
@@ -247,28 +242,28 @@ BT
 (Semester: ${paper.semesterNumber || 1} | Exam Type: ${paper.examinationType}) Tj
 0 -24 Td
 /F1 10 Tf
-(Time: 3 Hours                                                Max Marks: 70) Tj
+(Time: 3 Hours                                                Max Marks: 60) Tj
 0 -20 Td
 /F2 9 Tf
-(Instructions: Attempt all sections as per given guidelines.) Tj
+(Instructions: Section A: Attempt 3 of 6 = 30M | Section B: Attempt 2 of 4 = 30M) Tj
 0 -25 Td
 /F1 10 Tf
-(SECTION A - SHORT QUESTIONS) Tj
+(SECTION A - 30 MARKS [Attempt any 3 questions out of 6]) Tj
 0 -18 Td
 /F2 9 Tf
-(Q1. a) Explain the foundational operational laws of this subject. [2 Marks]) Tj
+(Q1. State fundamental theorems and governing principles. [10 Marks]) Tj
 0 -14 Td
-(    b) Define state space representation and characteristic polynomials. [2 Marks]) Tj
+(Q2. Derive state response transfer function and block model. [10 Marks]) Tj
 0 -14 Td
-(    c) Describe frequency response and bode plot gain margins. [2 Marks]) Tj
+(Q3. Compute damping ratio, natural frequency and settling time. [10 Marks]) Tj
 0 -25 Td
 /F1 10 Tf
-(SECTION B - LONG QUESTIONS) Tj
+(SECTION B - 30 MARKS [Attempt any 2 questions out of 4]) Tj
 0 -18 Td
 /F2 9 Tf
-(Q2. Derive the complete mathematical formulation with circuit diagram. [10 Marks]) Tj
+(Q7. Formulate system architecture and state space optimization. [15 Marks]) Tj
 0 -14 Td
-(Q3. Solve the boundary condition value problem for continuous time. [10 Marks]) Tj
+(Q8. Comprehensive analytical study and trade-off evaluation. [15 Marks]) Tj
 ET
 endstream
 endobj
