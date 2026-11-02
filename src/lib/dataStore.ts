@@ -1,7 +1,7 @@
 import { Department, AcademicYear, Semester, Subject, QuestionPaper, FilterState, SystemStatistics, ExaminationType } from '../types';
 import { filterQuestionPapers, calculateStatistics, slugify } from '../utils/helpers';
 import { supabase, isSupabaseConfigured } from './supabase';
-import { resolvePdfUrl } from '../utils/pdfGenerator';
+import { resolvePdfUrl, getStorageKeysForPaper } from '../utils/pdfGenerator';
 
 export const INITIAL_ACADEMIC_YEARS: AcademicYear[] = [
   { id: 'year-1', name: '1st Year', yearNumber: 1 },
@@ -611,6 +611,7 @@ export const INITIAL_SUBJECTS: Subject[] = [
 export const INITIAL_PAPERS: QuestionPaper[] = [];
 
 const LOCAL_STORAGE_KEY = 'mjpru_pyq_platform_data_v10';
+const DELETED_KEYS_STORAGE_KEY = 'mjpru_pyq_deleted_storage_keys_v1';
 
 interface StoredData {
   departments: Department[];
@@ -625,6 +626,7 @@ export class DataStore {
   private academicYears: AcademicYear[] = INITIAL_ACADEMIC_YEARS;
   private semesters: Semester[] = INITIAL_SEMESTERS;
   private isInitialized = false;
+  private deletedStorageKeys = new Set<string>();
 
   constructor() {
     this.initialize();
@@ -654,6 +656,18 @@ export class DataStore {
             // ignore
           }
         });
+      }
+
+      if (typeof localStorage !== 'undefined') {
+        const deletedRaw = localStorage.getItem(DELETED_KEYS_STORAGE_KEY);
+        if (deletedRaw) {
+          try {
+            const list: string[] = JSON.parse(deletedRaw);
+            this.deletedStorageKeys = new Set(list);
+          } catch {
+            this.deletedStorageKeys = new Set();
+          }
+        }
       }
 
       const stored = typeof localStorage !== 'undefined' ? localStorage.getItem(LOCAL_STORAGE_KEY) : null;
@@ -810,6 +824,15 @@ export class DataStore {
       localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(data));
     } catch (e) {
       console.warn('Could not save to localStorage:', e);
+    }
+  }
+
+  private saveDeletedKeys() {
+    if (typeof localStorage === 'undefined') return;
+    try {
+      localStorage.setItem(DELETED_KEYS_STORAGE_KEY, JSON.stringify(Array.from(this.deletedStorageKeys)));
+    } catch (e) {
+      console.warn('Could not save deleted keys to localStorage:', e);
     }
   }
 
@@ -1050,6 +1073,14 @@ export class DataStore {
 
         if (!dbErr && dbRows && dbRows.length > 0) {
           dbRows.forEach((row) => {
+            if (
+              this.deletedStorageKeys.has(row.id) ||
+              this.deletedStorageKeys.has(row.file_name) ||
+              this.deletedStorageKeys.has(row.file_path)
+            ) {
+              return;
+            }
+
             const resolvedUrl = resolvePdfUrl(row.file_path);
             const paper: QuestionPaper = {
               id: row.id,
@@ -1083,11 +1114,20 @@ export class DataStore {
         if (!storageErr && storageFiles && storageFiles.length > 0) {
           storageFiles.forEach((file) => {
             if (!file.name || !file.name.toLowerCase().endsWith('.pdf')) return;
+            if (
+              this.deletedStorageKeys.has(file.name) ||
+              this.deletedStorageKeys.has(decodeURIComponent(file.name)) ||
+              (file.id && this.deletedStorageKeys.has(file.id))
+            ) {
+              return;
+            }
 
-            const publicUrlData = supabase.storage
+            const publicUrlData = supabase?.storage
               .from('pyq-papers')
               .getPublicUrl(file.name);
             const publicUrl = publicUrlData?.data?.publicUrl || file.name;
+
+            if (this.deletedStorageKeys.has(publicUrl)) return;
 
             // Check if already in papersMap by file path
             let matched = false;
@@ -1134,7 +1174,7 @@ export class DataStore {
               const semId = targetSub?.semesterId || 'sem-2';
               const yearId = targetSub?.academicYearId || 'year-1';
 
-              const fileSize = (file.metadata as any)?.size || file.size || 440665;
+              const fileSize = (file.metadata as any)?.size || (file as any).size || 440665;
 
               const paperObj: QuestionPaper = {
                 id: file.id || `storage-${file.name}`,
@@ -1165,7 +1205,13 @@ export class DataStore {
 
       // Include any user papers in memory that have a valid filePath
       this.papers.forEach((p) => {
-        if (p.filePath && !papersMap.has(p.filePath)) {
+        if (
+          p.filePath &&
+          !papersMap.has(p.filePath) &&
+          !this.deletedStorageKeys.has(p.id) &&
+          !this.deletedStorageKeys.has(p.fileName) &&
+          !this.deletedStorageKeys.has(p.filePath)
+        ) {
           papersMap.set(p.filePath, p);
         }
       });
@@ -1201,6 +1247,13 @@ export class DataStore {
       uploadedAt: new Date().toISOString(),
       downloadCount: 0,
     };
+
+    // Remove any previous tombstones for this paper if it was re-uploaded
+    const newKeys = getStorageKeysForPaper(newPaper);
+    newKeys.forEach((k) => this.deletedStorageKeys.delete(k));
+    if (newPaper.filePath) this.deletedStorageKeys.delete(newPaper.filePath);
+    if (newPaper.fileName) this.deletedStorageKeys.delete(newPaper.fileName);
+    this.saveDeletedKeys();
 
     if (isSupabaseConfigured() && supabase) {
       try {
@@ -1257,16 +1310,76 @@ export class DataStore {
   }
 
   async deleteQuestionPaper(id: string): Promise<boolean> {
-    if (isSupabaseConfigured() && supabase) {
+    const target = this.papers.find((p) => p.id === id) || 
+                   this.papers.find((p) => p.filePath.includes(id) || p.fileName === id);
+
+    if (!target) {
+      console.warn('Target question paper not found for deletion with id:', id);
+      return false;
+    }
+
+    const candidateStorageKeys = getStorageKeysForPaper(target);
+
+    // 1. Delete corresponding PDF object from Supabase Storage bucket 'pyq-papers'
+    if (isSupabaseConfigured() && supabase && candidateStorageKeys.length > 0) {
       try {
-        await supabase.from('question_papers').delete().eq('id', id);
-      } catch (err) {
-        console.warn('Supabase delete paper fallback:', err);
+        const { data: removeData, error: removeErr } = await supabase.storage
+          .from('pyq-papers')
+          .remove(candidateStorageKeys);
+
+        if (removeErr) {
+          console.error('Supabase storage delete error:', removeErr);
+          // Safety requirement: Do not delete database record if Storage deletion fails
+          throw new Error(`Storage deletion failed: ${removeErr.message}`);
+        } else {
+          console.log('Supabase storage removed object(s):', removeData);
+        }
+      } catch (err: any) {
+        console.error('Failed to delete file from Supabase Storage:', err);
+        throw err;
       }
     }
 
-    this.papers = this.papers.filter((p) => p.id !== id);
+    // 2. Delete corresponding database record from 'question_papers' table
+    if (isSupabaseConfigured() && supabase) {
+      try {
+        const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(target.id);
+        if (isUuid) {
+          const { error: dbIdErr } = await supabase.from('question_papers').delete().eq('id', target.id);
+          if (dbIdErr) console.warn('Supabase DB delete by id notice:', dbIdErr.message);
+        }
+
+        if (target.filePath) {
+          const { error: dbPathErr } = await supabase.from('question_papers').delete().eq('file_path', target.filePath);
+          if (dbPathErr) console.warn('Supabase DB delete by file_path notice:', dbPathErr.message);
+        }
+
+        if (target.fileName) {
+          const { error: dbNameErr } = await supabase.from('question_papers').delete().eq('file_name', target.fileName);
+          if (dbNameErr) console.warn('Supabase DB delete by file_name notice:', dbNameErr.message);
+        }
+
+        for (const key of candidateStorageKeys) {
+          await supabase.from('question_papers').delete().ilike('file_path', `%${key}%`);
+          await supabase.from('question_papers').delete().eq('file_name', key);
+        }
+      } catch (dbErr) {
+        console.warn('Supabase database paper delete fallback:', dbErr);
+      }
+    }
+
+    // 3. Register deleted keys so syncWithSupabase won't resurrect them
+    candidateStorageKeys.forEach((k) => this.deletedStorageKeys.add(k));
+    if (target.filePath) this.deletedStorageKeys.add(target.filePath);
+    if (target.fileName) this.deletedStorageKeys.add(target.fileName);
+    if (target.id) this.deletedStorageKeys.add(target.id);
+    this.saveDeletedKeys();
+
+    // 4. Remove paper from local repository state immediately
+    this.papers = this.papers.filter((p) => p.id !== id && p.id !== target.id && p.filePath !== target.filePath);
     this.saveToStorage();
+    this.hydratePaperMetadata();
+
     return true;
   }
 

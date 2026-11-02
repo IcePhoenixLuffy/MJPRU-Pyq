@@ -37,6 +37,44 @@ export function resolvePdfUrl(filePath: string): string {
 }
 
 /**
+ * Extracts all possible Supabase Storage object keys for a question paper file.
+ * Handles full URLs, encoded characters, bucket paths, and file names.
+ */
+export function getStorageKeysForPaper(paper: { filePath?: string; fileName?: string }): string[] {
+  const keys = new Set<string>();
+
+  const extractKeys = (val?: string) => {
+    if (!val) return;
+    const cleanVal = val.split('#')[0].split('?')[0];
+
+    const markers = ['/pyq-papers/', '/papers/'];
+    for (const marker of markers) {
+      if (cleanVal.includes(marker)) {
+        const after = cleanVal.split(marker)[1];
+        if (after) {
+          keys.add(after);
+          try { keys.add(decodeURIComponent(after)); } catch {}
+          try { keys.add(encodeURIComponent(after)); } catch {}
+        }
+      }
+    }
+
+    const segments = cleanVal.split('/');
+    const lastSeg = segments[segments.length - 1];
+    if (lastSeg && lastSeg.toLowerCase().endsWith('.pdf')) {
+      keys.add(lastSeg);
+      try { keys.add(decodeURIComponent(lastSeg)); } catch {}
+      try { keys.add(encodeURIComponent(lastSeg)); } catch {}
+    }
+  };
+
+  if (paper.filePath) extractKeys(paper.filePath);
+  if (paper.fileName) extractKeys(paper.fileName);
+
+  return Array.from(keys).filter(Boolean);
+}
+
+/**
  * Generates an authentic MJPRU University Question Paper document content
  */
 export function generateQuestionPaperHtml(paper: QuestionPaper, pageNum = 1): string {

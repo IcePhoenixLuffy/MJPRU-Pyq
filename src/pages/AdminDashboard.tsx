@@ -77,6 +77,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const [activeTab, setActiveTab] = useState<'overview' | 'departments' | 'subjects' | 'papers' | 'supabase'>('overview');
 
   const [toastMessage, setToastMessage] = useState<{ text: string; type: 'success' | 'error' } | null>(null);
+  const [paperPendingDelete, setPaperPendingDelete] = useState<QuestionPaper | null>(null);
+  const [isDeletingPaper, setIsDeletingPaper] = useState<boolean>(false);
 
   const showToast = (text: string, type: 'success' | 'error' = 'success') => {
     setToastMessage({ text, type });
@@ -489,9 +491,39 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   };
 
   const handleDeletePaper = async (id: string, name: string) => {
-    if (window.confirm(`Delete question paper "${name}"?`)) {
-      await onDeletePaper(id);
-      showToast(`Question paper deleted.`);
+    const target = papers.find((p) => p.id === id);
+    if (target) {
+      setPaperPendingDelete(target);
+    } else {
+      try {
+        const res = await onDeletePaper(id);
+        if (res) {
+          showToast(`Question paper deleted successfully.`, 'success');
+        } else {
+          showToast(`Failed to delete paper.`, 'error');
+        }
+      } catch (err: any) {
+        showToast(`Delete failed: ${err.message || 'Permission denied'}`, 'error');
+      }
+    }
+  };
+
+  const confirmDeletePaper = async () => {
+    if (!paperPendingDelete) return;
+    setIsDeletingPaper(true);
+    try {
+      const res = await onDeletePaper(paperPendingDelete.id);
+      if (res) {
+        showToast(`Question paper "${paperPendingDelete.subjectName || paperPendingDelete.fileName}" deleted permanently.`, 'success');
+      } else {
+        showToast('Failed to delete question paper. Please verify admin privileges.', 'error');
+      }
+    } catch (err: any) {
+      console.error('Delete paper error:', err);
+      showToast(`Delete failed: ${err.message || 'Unable to delete from Supabase'}`, 'error');
+    } finally {
+      setIsDeletingPaper(false);
+      setPaperPendingDelete(null);
     }
   };
 
@@ -1512,6 +1544,77 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               <pre className="p-4 bg-slate-900 text-slate-100 rounded-2xl text-xs font-mono overflow-x-auto max-h-96 shadow-inner">
                 {SUPABASE_SQL_SETUP}
               </pre>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Permanent Delete Confirmation Dialog */}
+      {paperPendingDelete && (
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-in fade-in duration-200"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="delete-dialog-title"
+        >
+          <div className="w-full max-w-md bg-white border border-slate-200 rounded-3xl p-6 shadow-2xl space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="p-3 bg-red-100 text-red-600 rounded-2xl shrink-0">
+                <Trash2 className="w-6 h-6" />
+              </div>
+              <div>
+                <h3 id="delete-dialog-title" className="text-base font-bold text-slate-900">
+                  Delete Question Paper?
+                </h3>
+                <p className="text-xs text-slate-500 font-medium">
+                  This action is permanent and cannot be undone.
+                </p>
+              </div>
+            </div>
+
+            <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-2xl space-y-1.5 text-xs">
+              <div className="font-bold text-slate-900">
+                {paperPendingDelete.subjectCode} &bull; {paperPendingDelete.subjectName}
+              </div>
+              <div className="text-slate-600 font-mono text-[11px] truncate">
+                File: {paperPendingDelete.fileName}
+              </div>
+              <div className="text-slate-500 font-medium text-[11px]">
+                {paperPendingDelete.departmentName} &bull; Semester {paperPendingDelete.semesterNumber} &bull; {paperPendingDelete.examinationYear} ({paperPendingDelete.examinationType})
+              </div>
+            </div>
+
+            <p className="text-xs text-slate-600 leading-relaxed font-medium">
+              This will permanently delete the PDF file from the Supabase Storage bucket (<code>pyq-papers</code>) and remove the corresponding database record.
+            </p>
+
+            <div className="flex items-center justify-end gap-2.5 pt-2">
+              <button
+                type="button"
+                disabled={isDeletingPaper}
+                onClick={() => setPaperPendingDelete(null)}
+                className="px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 hover:bg-slate-100 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                disabled={isDeletingPaper}
+                onClick={confirmDeletePaper}
+                className="px-4 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-xs font-bold text-white transition-all shadow-sm flex items-center gap-2 disabled:opacity-50"
+              >
+                {isDeletingPaper ? (
+                  <>
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    <span>Deleting from Storage...</span>
+                  </>
+                ) : (
+                  <>
+                    <Trash2 className="w-3.5 h-3.5" />
+                    <span>Delete Permanently</span>
+                  </>
+                )}
+              </button>
             </div>
           </div>
         </div>
