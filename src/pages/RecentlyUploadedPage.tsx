@@ -111,8 +111,14 @@ export const RecentlyUploadedPage: React.FC<RecentlyUploadedPageProps> = ({
       {filtered.length === 0 ? (
         <div className="text-center py-16 bg-white/90 border border-slate-200/90 rounded-3xl p-8 shadow-xs">
           <FileText className="w-10 h-10 text-slate-400 mx-auto mb-3" />
-          <h3 className="text-base font-bold text-slate-800">No recently uploaded papers match your criteria</h3>
-          <p className="text-xs text-slate-500 mt-1">Try resetting the department or search filter.</p>
+          <h3 className="text-base font-bold text-slate-800">
+            {papers.length === 0 ? 'No question papers uploaded yet' : 'No recently uploaded papers match your criteria'}
+          </h3>
+          <p className="text-xs text-slate-500 mt-1">
+            {papers.length === 0
+              ? 'New examination question papers will appear here in chronological order once uploaded through the Admin Portal.'
+              : 'Try resetting the department or search filter.'}
+          </p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">

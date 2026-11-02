@@ -1,7 +1,7 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
 // Environment variables with SSR / test runner safe check
-const env = typeof import.meta !== 'undefined' && import.meta.env ? import.meta.env : {};
+const env = (typeof import.meta !== 'undefined' && import.meta.env ? import.meta.env : {}) as Record<string, string | undefined>;
 const supabaseUrl = env.VITE_SUPABASE_URL || '';
 const supabaseAnonKey = env.VITE_SUPABASE_ANON_KEY || '';
 
@@ -25,6 +25,19 @@ export const supabase: SupabaseClient | null = isSupabaseConfigured()
     })
   : null;
 
+export const OFFICIAL_ADMIN_EMAIL = 'admin@mjpru.ac.in';
+
+/**
+ * Checks whether an authenticated Supabase user is the authorized administrator.
+ * Matches official university administrator email or assigned admin role.
+ */
+export const isAuthorizedAdminUser = (user: { email?: string; app_metadata?: Record<string, any>; user_metadata?: Record<string, any> } | null | undefined): boolean => {
+  if (!user || !user.email) return false;
+  const emailMatches = user.email.trim().toLowerCase() === OFFICIAL_ADMIN_EMAIL.toLowerCase();
+  const roleMatches = user.app_metadata?.role === 'admin' || user.user_metadata?.role === 'admin';
+  return emailMatches || roleMatches;
+};
+
 /**
  * Complete SQL Migration Script for Supabase SQL Editor
  * Users can copy and run this in Supabase -> SQL Editor
@@ -32,6 +45,7 @@ export const supabase: SupabaseClient | null = isSupabaseConfigured()
 export const SUPABASE_SQL_SETUP = `-- ==============================================================================
 -- MJPRU PYQ Database Schema & Security Setup
 -- University: M.J.P. Rohilkhand University, Bareilly (U.P.)
+-- Authorized Administrator: admin@mjpru.ac.in
 -- ==============================================================================
 
 -- 1. Enable UUID Extension
@@ -135,15 +149,33 @@ CREATE POLICY "Public subjects read" ON public.subjects FOR SELECT USING (true);
 CREATE POLICY "Public question papers read" ON public.question_papers FOR SELECT USING (true);
 CREATE POLICY "Public profiles read" ON public.profiles FOR SELECT USING (true);
 
--- Authenticated Admin write access
+-- Authenticated Admin WRITE access restricted strictly to admin@mjpru.ac.in or role 'admin'
+DROP POLICY IF EXISTS "Admin write departments" ON public.departments;
 CREATE POLICY "Admin write departments" ON public.departments 
-  FOR ALL USING (auth.role() = 'authenticated');
+  FOR ALL USING (
+    auth.role() = 'authenticated' AND (
+      auth.jwt() ->> 'email' = 'admin@mjpru.ac.in' OR 
+      (auth.jwt() -> 'app_metadata' ->> 'role') = 'admin'
+    )
+  );
 
+DROP POLICY IF EXISTS "Admin write subjects" ON public.subjects;
 CREATE POLICY "Admin write subjects" ON public.subjects 
-  FOR ALL USING (auth.role() = 'authenticated');
+  FOR ALL USING (
+    auth.role() = 'authenticated' AND (
+      auth.jwt() ->> 'email' = 'admin@mjpru.ac.in' OR 
+      (auth.jwt() -> 'app_metadata' ->> 'role') = 'admin'
+    )
+  );
 
+DROP POLICY IF EXISTS "Admin write papers" ON public.question_papers;
 CREATE POLICY "Admin write papers" ON public.question_papers 
-  FOR ALL USING (auth.role() = 'authenticated');
+  FOR ALL USING (
+    auth.role() = 'authenticated' AND (
+      auth.jwt() ->> 'email' = 'admin@mjpru.ac.in' OR 
+      (auth.jwt() -> 'app_metadata' ->> 'role') = 'admin'
+    )
+  );
 
 -- 10. Storage Bucket Setup for PDF Files
 -- Create 'pyq-papers' bucket:
@@ -152,13 +184,38 @@ VALUES ('pyq-papers', 'pyq-papers', true)
 ON CONFLICT (id) DO NOTHING;
 
 -- Storage RLS: Anyone can view and download PDF files
+DROP POLICY IF EXISTS "Public PDF Access" ON storage.objects;
 CREATE POLICY "Public PDF Access" ON storage.objects
   FOR SELECT USING (bucket_id = 'pyq-papers');
 
--- Storage RLS: Authenticated users can upload and delete PDFs
+-- Storage RLS: Admin only uploads, updates, and deletes
+DROP POLICY IF EXISTS "Admin Upload PDF" ON storage.objects;
 CREATE POLICY "Admin Upload PDF" ON storage.objects
-  FOR INSERT WITH CHECK (bucket_id = 'pyq-papers' AND auth.role() = 'authenticated');
+  FOR INSERT WITH CHECK (
+    bucket_id = 'pyq-papers' AND 
+    auth.role() = 'authenticated' AND (
+      auth.jwt() ->> 'email' = 'admin@mjpru.ac.in' OR 
+      (auth.jwt() -> 'app_metadata' ->> 'role') = 'admin'
+    )
+  );
 
+DROP POLICY IF EXISTS "Admin Update PDF" ON storage.objects;
+CREATE POLICY "Admin Update PDF" ON storage.objects
+  FOR UPDATE USING (
+    bucket_id = 'pyq-papers' AND 
+    auth.role() = 'authenticated' AND (
+      auth.jwt() ->> 'email' = 'admin@mjpru.ac.in' OR 
+      (auth.jwt() -> 'app_metadata' ->> 'role') = 'admin'
+    )
+  );
+
+DROP POLICY IF EXISTS "Admin Delete PDF" ON storage.objects;
 CREATE POLICY "Admin Delete PDF" ON storage.objects
-  FOR DELETE USING (bucket_id = 'pyq-papers' AND auth.role() = 'authenticated');
+  FOR DELETE USING (
+    bucket_id = 'pyq-papers' AND 
+    auth.role() = 'authenticated' AND (
+      auth.jwt() ->> 'email' = 'admin@mjpru.ac.in' OR 
+      (auth.jwt() -> 'app_metadata' ->> 'role') = 'admin'
+    )
+  );
 `;

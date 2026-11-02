@@ -366,19 +366,25 @@ export const PyqLibraryPage: React.FC<PyqLibraryPageProps> = ({
                 <FileText className="w-7 h-7" />
               </div>
               <div className="max-w-md mx-auto">
-                <h3 className="text-base font-bold text-slate-800">No question papers match your filters</h3>
+                <h3 className="text-base font-bold text-slate-800">
+                  {papers.length === 0 ? 'No question papers uploaded yet' : 'No question papers match your filters'}
+                </h3>
                 <p className="text-xs text-slate-500 mt-1 font-medium">
-                  Try broadening your search query, selecting another semester or exam type, or resetting filters.
+                  {papers.length === 0
+                    ? 'The question paper repository is currently empty. Authenticated administrators can upload official examination papers through the Admin Portal.'
+                    : 'Try broadening your search query, selecting another semester or exam type, or resetting filters.'}
                 </p>
-                <div className="pt-4">
-                  <button
-                    onClick={handleResetFilters}
-                    className="px-5 py-2.5 bg-gradient-to-r from-blue-50 to-cyan-50 border border-blue-200 text-[#0e0fed] font-extrabold text-xs rounded-xl transition-all magnetic-target"
-                    data-magnetic="true"
-                  >
-                    Reset All Filters
-                  </button>
-                </div>
+                {papers.length > 0 && activeFilterCount > 0 && (
+                  <div className="pt-4">
+                    <button
+                      onClick={handleResetFilters}
+                      className="px-5 py-2.5 bg-gradient-to-r from-blue-50 to-cyan-50 border border-blue-200 text-[#0e0fed] font-extrabold text-xs rounded-xl transition-all magnetic-target"
+                      data-magnetic="true"
+                    >
+                      Reset All Filters
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           ) : viewMode === 'grid' ? (

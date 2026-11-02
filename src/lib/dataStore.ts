@@ -607,170 +607,9 @@ export const INITIAL_SUBJECTS: Subject[] = [
   { id: 'sub-ei-sem8-proj', departmentId: 'dept-eie', semesterId: 'sem-8', subjectName: 'Major Project/Internship', subjectCode: 'EL-402P', paperCode: '26326', category: 'Project', credits: 12, createdAt: '2024-01-01' },
 ];
 
-export const INITIAL_PAPERS: QuestionPaper[] = [
-  {
-    id: 'paper-1',
-    departmentId: 'dept-csit',
-    subjectId: 'sub-csit-sem3-3',
-    academicYearId: 'year-2',
-    semesterId: 'sem-3',
-    examinationYear: 2024,
-    examinationType: 'Regular',
-    filePath: '/papers/mjpru_cs205t_2024.pdf',
-    fileName: 'MJPRU_CS205T_DataStructure_2024.pdf',
-    fileSizeBytes: 245000,
-    pageCount: 2,
-    description: 'End Semester Regular Examination 2024 covering AVL Trees, Graphs, B-Trees, and recursion.',
-    uploadedAt: '2024-10-15T09:30:00.000Z',
-    downloadCount: 342,
-  },
-  {
-    id: 'paper-2',
-    departmentId: 'dept-csit',
-    subjectId: 'sub-csit-sem5-5',
-    academicYearId: 'year-3',
-    semesterId: 'sem-5',
-    examinationYear: 2023,
-    examinationType: 'Regular',
-    filePath: '/papers/mjpru_cs309t_2023.pdf',
-    fileName: 'MJPRU_CS309T_OperatingSystems_2023.pdf',
-    fileSizeBytes: 210000,
-    pageCount: 2,
-    description: 'Semester 5 Official Paper covering Process Scheduling, Deadlock Avoidance, Semaphores, and Paging.',
-    uploadedAt: '2024-09-20T11:00:00.000Z',
-    downloadCount: 289,
-  },
-  {
-    id: 'paper-3',
-    departmentId: 'dept-csit',
-    subjectId: 'sub-csit-sem3-1',
-    academicYearId: 'year-2',
-    semesterId: 'sem-3',
-    examinationYear: 2024,
-    examinationType: 'Regular',
-    filePath: '/papers/mjpru_cs201t_2024.pdf',
-    fileName: 'MJPRU_CS201T_DBMS_2024.pdf',
-    fileSizeBytes: 198000,
-    pageCount: 2,
-    description: 'Normalization (BCNF, 4NF), Relational Algebra queries, and ACID transaction recovery.',
-    uploadedAt: '2024-10-02T14:15:00.000Z',
-    downloadCount: 412,
-  },
-  {
-    id: 'paper-4',
-    departmentId: 'dept-csai',
-    subjectId: 'sub-ai-2',
-    academicYearId: 'year-2',
-    semesterId: 'sem-4',
-    examinationYear: 2024,
-    examinationType: 'Regular',
-    filePath: '/papers/mjpru_bai401_2024.pdf',
-    fileName: 'MJPRU_BAI401_AI_Foundations_2024.pdf',
-    fileSizeBytes: 280000,
-    pageCount: 2,
-    description: 'Heuristic Search (A*, AO*), First-Order Logic resolution, and Expert System inference.',
-    uploadedAt: '2024-10-18T10:00:00.000Z',
-    downloadCount: 310,
-  },
-  {
-    id: 'paper-5',
-    departmentId: 'dept-csai',
-    subjectId: 'sub-ai-3',
-    academicYearId: 'year-3',
-    semesterId: 'sem-5',
-    examinationYear: 2023,
-    examinationType: 'Back Paper',
-    filePath: '/papers/mjpru_bai501_2023_back.pdf',
-    fileName: 'MJPRU_BAI501_MachineLearning_2023_BP.pdf',
-    fileSizeBytes: 312000,
-    pageCount: 2,
-    description: 'Back Paper examination for SVM, Random Forests, Gradient Descent convergence, and Clustering.',
-    uploadedAt: '2024-08-11T16:20:00.000Z',
-    downloadCount: 167,
-  },
-  {
-    id: 'paper-6',
-    departmentId: 'dept-ece',
-    subjectId: 'sub-ece-sem3-1',
-    academicYearId: 'year-2',
-    semesterId: 'sem-3',
-    examinationYear: 2023,
-    examinationType: 'Regular',
-    filePath: '/papers/mjpru_ec201t_2023.pdf',
-    fileName: 'MJPRU_EC201T_ElectronicsEngineeringMaterials_2023.pdf',
-    fileSizeBytes: 265000,
-    pageCount: 2,
-    description: 'Official Semester 3 Paper covering Dielectric Properties, Magnetic Materials, Semiconductor band theory, and Hall Effect.',
-    uploadedAt: '2024-07-04T12:00:00.000Z',
-    downloadCount: 195,
-  },
-  {
-    id: 'paper-7',
-    departmentId: 'dept-ee',
-    subjectId: 'sub-ee-sem3-3',
-    academicYearId: 'year-2',
-    semesterId: 'sem-3',
-    examinationYear: 2024,
-    examinationType: 'Regular',
-    filePath: '/papers/mjpru_ee201n_2024.pdf',
-    fileName: 'MJPRU_EE201N_NetworkAnalysis_2024.pdf',
-    fileSizeBytes: 220000,
-    pageCount: 2,
-    description: 'Thevenin, Norton, Superposition theorems, Laplace transforms in two-port network synthesis.',
-    uploadedAt: '2024-09-30T08:45:00.000Z',
-    downloadCount: 230,
-  },
-  {
-    id: 'paper-8',
-    departmentId: 'dept-me',
-    subjectId: 'sub-me-sem3-3',
-    academicYearId: 'year-2',
-    semesterId: 'sem-3',
-    examinationYear: 2024,
-    examinationType: 'Regular',
-    filePath: '/papers/mjpru_me205t_2024.pdf',
-    fileName: 'MJPRU_ME205T_FluidMechanics_2024.pdf',
-    fileSizeBytes: 275000,
-    pageCount: 2,
-    description: 'First & Second Laws, Fluid Kinematics, Bernoulli theorem, Navier-Stokes, and boundary layer analysis.',
-    uploadedAt: '2024-10-22T13:10:00.000Z',
-    downloadCount: 278,
-  },
-  {
-    id: 'paper-9',
-    departmentId: 'dept-ce',
-    subjectId: 'sub-che-sem3-2',
-    academicYearId: 'year-2',
-    semesterId: 'sem-3',
-    examinationYear: 2023,
-    examinationType: 'Regular',
-    filePath: '/papers/mjpru_ce201_2023.pdf',
-    fileName: 'MJPRU_CE201_FluidParticleMechanics_2023.pdf',
-    fileSizeBytes: 235000,
-    pageCount: 2,
-    description: 'Dimensional analysis, Bernoulli equation, boundary layer, packed and fluidized beds.',
-    uploadedAt: '2024-06-19T10:30:00.000Z',
-    downloadCount: 140,
-  },
-  {
-    id: 'paper-10',
-    departmentId: 'dept-eie',
-    subjectId: 'sub-ei-sem5-5',
-    academicYearId: 'year-3',
-    semesterId: 'sem-5',
-    examinationYear: 2024,
-    examinationType: 'Regular',
-    filePath: '/papers/mjpru_ee301t_2024.pdf',
-    fileName: 'MJPRU_EE301T_ControlSystems_2024.pdf',
-    fileSizeBytes: 245000,
-    pageCount: 2,
-    description: 'Control Systems (EE-301T / Paper Code 23441): Root Locus techniques, Bode plots, Phase & Gain Margins, and state transition matrices.',
-    uploadedAt: '2024-10-25T15:00:00.000Z',
-    downloadCount: 184,
-  },
-];
+export const INITIAL_PAPERS: QuestionPaper[] = [];
 
-const LOCAL_STORAGE_KEY = 'mjpru_pyq_platform_data_v8';
+const LOCAL_STORAGE_KEY = 'mjpru_pyq_platform_data_v10';
 
 interface StoredData {
   departments: Department[];
@@ -794,11 +633,29 @@ export class DataStore {
     if (this.isInitialized) return;
 
     try {
-      // Check v8 or migrate from v7/v6/v5/v4/v3/v2
-      let stored = localStorage.getItem(LOCAL_STORAGE_KEY);
-      if (!stored) {
-        stored = localStorage.getItem('mjpru_pyq_platform_data_v7') || localStorage.getItem('mjpru_pyq_platform_data_v6') || localStorage.getItem('mjpru_pyq_platform_data_v5') || localStorage.getItem('mjpru_pyq_platform_data_v4') || localStorage.getItem('mjpru_pyq_platform_data_v3') || localStorage.getItem('mjpru_pyq_platform_data_v2');
+      // Purge old local storage versions that stored demo/sample papers
+      if (typeof localStorage !== 'undefined') {
+        const legacyKeys = [
+          'mjpru_pyq_platform_data_v8',
+          'mjpru_pyq_platform_data_v7',
+          'mjpru_pyq_platform_data_v6',
+          'mjpru_pyq_platform_data_v5',
+          'mjpru_pyq_platform_data_v4',
+          'mjpru_pyq_platform_data_v3',
+          'mjpru_pyq_platform_data_v2',
+          'mjpru_pyq_platform_data_v1',
+          'mjpru_pyq_platform_data',
+        ];
+        legacyKeys.forEach((key) => {
+          try {
+            localStorage.removeItem(key);
+          } catch {
+            // ignore
+          }
+        });
       }
+
+      const stored = typeof localStorage !== 'undefined' ? localStorage.getItem(LOCAL_STORAGE_KEY) : null;
 
       if (stored) {
         const parsed: StoredData = JSON.parse(stored);
@@ -920,113 +777,21 @@ export class DataStore {
 
         this.subjects = [...otherSubjects, ...mergedCsitSubjects, ...eeOfficialSubjects, ...eceOfficialSubjects, ...mergedCheSubjects, ...mergedMeSubjects, ...mergedEiSubjects];
 
-        // Migrate any papers that referenced the old placeholder subject ids
-        this.papers = (parsed.papers || INITIAL_PAPERS).map((p) => {
-          if (p.subjectId === 'sub-cs-1' || p.subjectId === 'sub-cs-3') {
-            return {
-              ...p,
-              subjectId: 'sub-csit-sem3-3',
-              subjectCode: 'CS-205T',
-              subjectName: 'Data Structure',
-              academicYearId: 'year-2',
-              semesterId: 'sem-3',
-              fileName: 'MJPRU_CS205T_DataStructure_2024.pdf',
-              filePath: '/papers/mjpru_cs205t_2024.pdf',
-            };
-          }
-          if (p.subjectId === 'sub-cs-5') {
-            return {
-              ...p,
-              subjectId: 'sub-csit-sem5-5',
-              subjectCode: 'CS-309T',
-              subjectName: 'Operating Systems',
-              academicYearId: 'year-3',
-              semesterId: 'sem-5',
-              fileName: 'MJPRU_CS309T_OperatingSystems_2023.pdf',
-              filePath: '/papers/mjpru_cs309t_2023.pdf',
-            };
-          }
-          if (p.subjectId === 'sub-cs-6') {
-            return {
-              ...p,
-              subjectId: 'sub-csit-sem3-1',
-              subjectCode: 'CS-201T',
-              subjectName: 'Data Base Management System',
-              academicYearId: 'year-2',
-              semesterId: 'sem-3',
-              fileName: 'MJPRU_CS201T_DBMS_2024.pdf',
-              filePath: '/papers/mjpru_cs201t_2024.pdf',
-            };
-          }
-          if (p.subjectId === 'sub-ee-1' || p.subjectId === 'sub-ee-3') {
-            return {
-              ...p,
-              subjectId: 'sub-ee-sem3-3',
-              subjectCode: 'EE-201N',
-              subjectName: 'Network Analysis & Synthesis',
-            };
-          }
-          if (p.subjectId === 'sub-ec-1' || p.subjectId === 'sub-ec-2' || p.subjectId === 'sub-ec-3') {
-            return {
-              ...p,
-              subjectId: 'sub-ece-sem3-1',
-              subjectCode: 'EC-201T',
-              subjectName: 'Electronics engineering materials',
-              fileName: 'MJPRU_EC201T_ElectronicsEngineeringMaterials_2023.pdf',
-              filePath: '/papers/mjpru_ec201t_2023.pdf',
-            };
-          }
-          if (p.subjectId === 'sub-che-1' || p.subjectId === 'sub-che-2') {
-            return {
-              ...p,
-              subjectId: 'sub-che-sem3-2',
-              subjectCode: 'CE-201',
-              subjectName: 'Fluid and Particle Mechanics',
-              academicYearId: 'year-2',
-              semesterId: 'sem-3',
-              fileName: 'MJPRU_CE201_FluidParticleMechanics_2023.pdf',
-              filePath: '/papers/mjpru_ce201_2023.pdf',
-            };
-          }
-          if (p.subjectId === 'sub-me-1' || p.subjectId === 'sub-me-2') {
-            return {
-              ...p,
-              subjectId: 'sub-me-sem3-3',
-              subjectCode: 'ME-205T',
-              subjectName: 'Fluid Mechanics',
-              academicYearId: 'year-2',
-              semesterId: 'sem-3',
-              fileName: 'MJPRU_ME205T_FluidMechanics_2024.pdf',
-              filePath: '/papers/mjpru_me205t_2024.pdf',
-            };
-          }
-          if (p.subjectId === 'sub-eie-1' || p.subjectId === 'sub-eie-2') {
-            return {
-              ...p,
-              subjectId: 'sub-ei-sem5-5',
-              subjectCode: 'EE-301T',
-              subjectName: 'Control Systems',
-              paperCode: '23441',
-              academicYearId: 'year-3',
-              semesterId: 'sem-5',
-              fileName: 'MJPRU_EE301T_ControlSystems_2024.pdf',
-              filePath: '/papers/mjpru_ee301t_2024.pdf',
-            };
-          }
-          return p;
-        });
+        // Clean library starts with 0 demo papers; exclude any old demo paper-1..10 IDs
+        const demoIdSet = new Set(['paper-1', 'paper-2', 'paper-3', 'paper-4', 'paper-5', 'paper-6', 'paper-7', 'paper-8', 'paper-9', 'paper-10']);
+        this.papers = (parsed.papers || []).filter((p) => !demoIdSet.has(p.id));
 
         this.saveToStorage();
       } else {
         this.departments = [...INITIAL_DEPARTMENTS];
         this.subjects = [...INITIAL_SUBJECTS];
-        this.papers = [...INITIAL_PAPERS];
+        this.papers = [];
         this.saveToStorage();
       }
     } catch {
       this.departments = [...INITIAL_DEPARTMENTS];
       this.subjects = [...INITIAL_SUBJECTS];
-      this.papers = [...INITIAL_PAPERS];
+      this.papers = [];
     }
 
     this.isInitialized = true;
@@ -1034,6 +799,7 @@ export class DataStore {
   }
 
   private saveToStorage() {
+    if (typeof localStorage === 'undefined') return;
     try {
       const data: StoredData = {
         departments: this.departments,

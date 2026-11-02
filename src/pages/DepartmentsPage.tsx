@@ -936,10 +936,10 @@ export const DepartmentsPage: React.FC<DepartmentsPageProps> = ({
                 <div className="text-center py-10 px-4 bg-slate-50 border border-dashed border-slate-200 rounded-2xl space-y-2">
                   <FileText className="w-10 h-10 text-slate-400 mx-auto" />
                   <h4 className="text-sm font-black text-slate-800">
-                    Question papers will be available soon.
+                    No question papers uploaded yet
                   </h4>
                   <p className="text-xs text-slate-600 max-w-sm mx-auto font-medium">
-                    No digitized previous year question papers have been archived for {activeSubjectModal.subjectCode} yet. Faculty members and department administrators can upload question papers through the Admin Portal.
+                    No digitized previous year question papers have been uploaded for {activeSubjectModal.subjectCode} yet. Faculty members and department administrators can upload question papers through the Admin Portal.
                   </p>
                 </div>
               ) : (

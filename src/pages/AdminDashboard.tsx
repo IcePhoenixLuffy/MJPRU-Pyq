@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   ShieldCheck, 
   Layers, 
@@ -15,11 +15,20 @@ import {
   Lock, 
   Eye, 
   GraduationCap,
-  FileText
+  FileText,
+  Loader2,
+  CheckCircle2
 } from 'lucide-react';
 import { Department, Subject, QuestionPaper, AcademicYear, Semester, ExaminationType } from '../types';
 import { isValidPdfFile, slugify } from '../utils/helpers';
-import { SUPABASE_SQL_SETUP, isSupabaseConfigured } from '../lib/supabase';
+import { 
+  SUPABASE_SQL_SETUP, 
+  isSupabaseConfigured, 
+  supabase, 
+  OFFICIAL_ADMIN_EMAIL, 
+  isAuthorizedAdminUser 
+} from '../lib/supabase';
+import type { User } from '@supabase/supabase-js';
 
 interface AdminDashboardProps {
   departments: Department[];
@@ -58,9 +67,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   onViewPaper,
 }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const [adminEmail, setAdminEmail] = useState('admin@mjpru.ac.in');
-  const [adminPassword, setAdminPassword] = useState('admin123');
-  const [authError, setAuthError] = useState('');
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [isCheckingAuth, setIsCheckingAuth] = useState<boolean>(true);
+  const [adminEmail, setAdminEmail] = useState<string>('');
+  const [adminPassword, setAdminPassword] = useState<string>('');
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [authError, setAuthError] = useState<string>('');
 
   const [activeTab, setActiveTab] = useState<'overview' | 'departments' | 'subjects' | 'papers' | 'supabase'>('overview');
 
@@ -70,6 +82,72 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     setToastMessage({ text, type });
     setTimeout(() => setToastMessage(null), 3500);
   };
+
+  // Inspect existing session on mount
+  useEffect(() => {
+    let isMounted = true;
+
+    const checkSession = async () => {
+      if (!supabase) {
+        if (isMounted) setIsCheckingAuth(false);
+        return;
+      }
+
+      try {
+        const { data, error } = await supabase.auth.getSession();
+        if (error) {
+          console.warn('Session check error:', error.message);
+        }
+
+        const session = data?.session;
+        if (session?.user && isMounted) {
+          if (isAuthorizedAdminUser(session.user)) {
+            setIsAuthenticated(true);
+            setCurrentUser(session.user);
+            setAdminEmail(session.user.email || OFFICIAL_ADMIN_EMAIL);
+          } else {
+            // An ordinary user was logged in: deny access and terminate session
+            await supabase.auth.signOut();
+            setIsAuthenticated(false);
+            setCurrentUser(null);
+            setAuthError('Access Denied: Only authorized administrator accounts (admin@mjpru.ac.in) have access.');
+          }
+        }
+      } catch (err) {
+        console.error('Auth verification error:', err);
+      } finally {
+        if (isMounted) setIsCheckingAuth(false);
+      }
+    };
+
+    checkSession();
+
+    // Listen to real-time auth state changes
+    let subscription: { unsubscribe: () => void } | null = null;
+    if (supabase) {
+      const { data } = supabase.auth.onAuthStateChange(async (_event, session) => {
+        if (!isMounted) return;
+        if (session?.user) {
+          if (isAuthorizedAdminUser(session.user)) {
+            setIsAuthenticated(true);
+            setCurrentUser(session.user);
+          } else {
+            setIsAuthenticated(false);
+            setCurrentUser(null);
+          }
+        } else {
+          setIsAuthenticated(false);
+          setCurrentUser(null);
+        }
+      });
+      subscription = data.subscription;
+    }
+
+    return () => {
+      isMounted = false;
+      if (subscription) subscription.unsubscribe();
+    };
+  }, []);
 
   // Department Form
   const [editingDeptId, setEditingDeptId] = useState<string | null>(null);
@@ -107,14 +185,86 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   // SQL Copy State
   const [copiedSql, setCopiedSql] = useState(false);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (adminEmail && adminPassword.length >= 6) {
+    setAuthError('');
+    setIsSubmitting(true);
+
+    const emailTrimmed = adminEmail.trim();
+
+    if (!emailTrimmed || !adminPassword) {
+      setAuthError('Please enter both your administrator email and password.');
+      setIsSubmitting(false);
+      return;
+    }
+
+    if (!supabase || !isSupabaseConfigured()) {
+      setAuthError('Supabase backend is not configured with credentials. Check environment settings.');
+      setIsSubmitting(false);
+      return;
+    }
+
+    try {
+      // Connect to existing Supabase Authentication account
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: emailTrimmed,
+        password: adminPassword,
+      });
+
+      if (error) {
+        if (error.message.toLowerCase().includes('invalid login credentials')) {
+          setAuthError('Invalid credentials. Please verify your password for ' + emailTrimmed + ' and try again.');
+        } else if (error.message.toLowerCase().includes('email not confirmed')) {
+          setAuthError('This administrator account email has not been confirmed yet in Supabase Authentication.');
+        } else {
+          setAuthError(error.message || 'Authentication failed. Please check credentials and try again.');
+        }
+        setIsSubmitting(false);
+        return;
+      }
+
+      if (!data.user) {
+        setAuthError('Authentication succeeded but user profile was not returned.');
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Check authorization: Ordinary users are strictly denied
+      if (!isAuthorizedAdminUser(data.user)) {
+        await supabase.auth.signOut();
+        setIsAuthenticated(false);
+        setCurrentUser(null);
+        setAuthError(`Access Denied: The account "${data.user.email}" is not an authorized university administrator. Only ${OFFICIAL_ADMIN_EMAIL} is granted access.`);
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Authorized administrator login successful
       setIsAuthenticated(true);
+      setCurrentUser(data.user);
+      setAdminPassword(''); // Never retain password in state
+      showToast(`Welcome back! Authenticated as ${data.user.email}.`);
+    } catch (err: any) {
+      setAuthError(err?.message || 'An unexpected error occurred during login.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      if (supabase) {
+        await supabase.auth.signOut();
+      }
+    } catch (err) {
+      console.error('Logout error:', err);
+    } finally {
+      setIsAuthenticated(false);
+      setCurrentUser(null);
+      setAdminEmail('');
+      setAdminPassword('');
       setAuthError('');
-      showToast('Logged in successfully as Administrator.');
-    } else {
-      setAuthError('Please enter valid administrator credentials.');
+      showToast('Signed out successfully from Administrator Console.');
     }
   };
 
@@ -273,43 +423,69 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
     const interval = setInterval(() => {
       setUploadProgress((prev) => {
-        if (prev >= 90) {
+        if (prev >= 85) {
           clearInterval(interval);
-          return 90;
+          return 85;
         }
-        return prev + 25;
+        return prev + 20;
       });
-    }, 150);
+    }, 120);
 
-    setTimeout(async () => {
+    try {
+      let finalFilePath = `/papers/${slugify(fileName)}`;
+
+      // Upload to Supabase Storage bucket 'pyq-papers' if connected and file provided
+      if (isSupabaseConfigured() && supabase && selectedFile) {
+        try {
+          const timestamp = Date.now();
+          const cleanKey = `${slugify(subCode)}_${paperExamYear}_${slugify(paperExamType)}_${timestamp}.pdf`;
+          const { data: uploadRes, error: uploadErr } = await supabase.storage
+            .from('pyq-papers')
+            .upload(cleanKey, selectedFile, {
+              contentType: 'application/pdf',
+              upsert: true,
+            });
+
+          if (uploadErr) {
+            console.warn('Supabase storage upload notice:', uploadErr.message);
+          } else if (uploadRes) {
+            const { data: publicRes } = supabase.storage
+              .from('pyq-papers')
+              .getPublicUrl(uploadRes.path);
+            finalFilePath = publicRes?.publicUrl || uploadRes.path;
+          }
+        } catch (storageErr) {
+          console.warn('Storage operation failed, falling back to local paper path:', storageErr);
+        }
+      }
+
       clearInterval(interval);
       setUploadProgress(100);
 
-      try {
-        await onAddPaper({
-          departmentId: paperDeptId,
-          academicYearId: paperYearId,
-          semesterId: paperSemId,
-          subjectId: paperSubjectId,
-          examinationYear: Number(paperExamYear),
-          examinationType: paperExamType,
-          filePath: `/papers/${slugify(fileName)}`,
-          fileName,
-          fileSizeBytes: selectedFile ? selectedFile.size : 256000,
-          pageCount: 2,
-          description: paperDescription || `Official university question paper for ${subCode}.`,
-        });
+      await onAddPaper({
+        departmentId: paperDeptId,
+        academicYearId: paperYearId,
+        semesterId: paperSemId,
+        subjectId: paperSubjectId,
+        examinationYear: Number(paperExamYear),
+        examinationType: paperExamType,
+        filePath: finalFilePath,
+        fileName,
+        fileSizeBytes: selectedFile ? selectedFile.size : 256000,
+        pageCount: 2,
+        description: paperDescription || `Official university question paper for ${subCode}.`,
+      });
 
-        setIsUploading(false);
-        setUploadProgress(0);
-        setSelectedFile(null);
-        setPaperDescription('');
-        showToast(`Question Paper for ${subCode} (${paperExamYear}) uploaded successfully.`);
-      } catch {
-        setIsUploading(false);
-        showToast('Failed to upload question paper.', 'error');
-      }
-    }, 700);
+      setIsUploading(false);
+      setUploadProgress(0);
+      setSelectedFile(null);
+      setPaperDescription('');
+      showToast(`Question Paper for ${subCode} (${paperExamYear}) uploaded successfully.`);
+    } catch {
+      clearInterval(interval);
+      setIsUploading(false);
+      showToast('Failed to upload question paper.', 'error');
+    }
   };
 
   const handleDeletePaper = async (id: string, name: string) => {
@@ -326,8 +502,21 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     showToast('Supabase SQL schema copied to clipboard!');
   };
 
+  // Session verification loader
+  if (isCheckingAuth) {
+    return (
+      <div className="max-w-md mx-auto px-4 py-24 text-center">
+        <div className="p-8 rounded-3xl bg-white/95 border border-slate-200/90 shadow-xl backdrop-blur-md space-y-4">
+          <Loader2 className="w-8 h-8 animate-spin text-[#0e0fed] mx-auto" />
+          <h2 className="text-base font-bold text-slate-800">Verifying Administrator Session</h2>
+          <p className="text-xs text-slate-500">Connecting with Supabase Authentication...</p>
+        </div>
+      </div>
+    );
+  }
+
   // -------------------------------------------------------------
-  // LOGIN SCREEN (LIGHT GRADIENT THEME)
+  // LOGIN SCREEN (LIGHT GRADIENT THEME & REAL SUPABASE AUTH)
   // -------------------------------------------------------------
   if (!isAuthenticated) {
     return (
@@ -345,9 +534,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             </div>
 
             {authError && (
-              <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-xs text-red-600 flex items-center gap-2">
-                <AlertCircle className="w-4 h-4 shrink-0" />
-                <span>{authError}</span>
+              <div className="p-3.5 bg-red-50 border border-red-200 rounded-xl text-xs text-red-600 flex items-start gap-2.5">
+                <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+                <span className="font-medium leading-relaxed">{authError}</span>
               </div>
             )}
 
@@ -357,10 +546,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 <input
                   type="email"
                   required
+                  disabled={isSubmitting}
                   value={adminEmail}
                   onChange={(e) => setAdminEmail(e.target.value)}
-                  placeholder="admin@mjpru.ac.in"
-                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:border-[#0e0fed] focus:ring-2 focus:ring-[#0e0fed]/20 font-medium"
+                  placeholder="Enter admin email"
+                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:border-[#0e0fed] focus:ring-2 focus:ring-[#0e0fed]/20 font-medium disabled:opacity-60"
                 />
               </div>
 
@@ -369,25 +559,35 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 <input
                   type="password"
                   required
+                  disabled={isSubmitting}
                   value={adminPassword}
                   onChange={(e) => setAdminPassword(e.target.value)}
-                  placeholder="••••••••"
-                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:border-[#0e0fed] focus:ring-2 focus:ring-[#0e0fed]/20 font-medium"
+                  placeholder="Enter your administrator password"
+                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:border-[#0e0fed] focus:ring-2 focus:ring-[#0e0fed]/20 font-medium disabled:opacity-60"
                 />
               </div>
 
               <button
                 type="submit"
-                className="w-full py-3 bg-gradient-to-r from-[#0e0fed] to-[#2563eb] text-white font-extrabold text-xs rounded-xl hover:opacity-95 transition-all shadow-md active:scale-95 magnetic-target"
+                disabled={isSubmitting}
+                className="w-full py-3 bg-gradient-to-r from-[#0e0fed] to-[#2563eb] text-white font-extrabold text-xs rounded-xl hover:opacity-95 transition-all shadow-md active:scale-95 magnetic-target disabled:opacity-60 disabled:cursor-not-allowed"
                 data-magnetic="true"
               >
-                Sign In to Admin Portal
+                {isSubmitting ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <span>Signing in with Supabase...</span>
+                  </span>
+                ) : (
+                  <span>Sign In to Admin Portal</span>
+                )}
               </button>
             </form>
 
             <div className="pt-2 border-t border-slate-100 text-center">
-              <span className="text-[11px] text-slate-500 font-semibold">
-                Default credentials pre-filled for university demo access.
+              <span className="text-[11px] text-slate-600 font-semibold block flex items-center justify-center gap-1">
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 inline" />
+                <span>Protected by Supabase Authentication</span>
               </span>
             </div>
           </div>
@@ -432,8 +632,14 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           <h1 className="text-2xl sm:text-3xl font-black text-slate-900 mt-1">
             MJPRU PYQ <span className="gradient-text-primary">Management System</span>
           </h1>
-          <p className="text-xs text-slate-600 mt-1 font-semibold">
-            Logged in as <span className="text-[#0e0fed] font-mono font-bold">{adminEmail}</span>
+          <p className="text-xs text-slate-600 mt-1 font-semibold flex items-center gap-1.5">
+            <span>Logged in as</span>
+            <span className="text-[#0e0fed] font-mono font-bold bg-blue-50 px-2 py-0.5 rounded-md border border-blue-100">
+              {currentUser?.email || adminEmail}
+            </span>
+            <span title="Authorized Administrator" className="inline-flex items-center">
+              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+            </span>
           </p>
         </div>
 
@@ -448,7 +654,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           </button>
 
           <button
-            onClick={() => setIsAuthenticated(false)}
+            onClick={handleLogout}
             className="flex items-center gap-1.5 px-4 py-2 bg-red-50 border border-red-200 hover:bg-red-100 text-red-700 rounded-xl text-xs font-extrabold transition-all magnetic-target active:scale-95"
             data-magnetic="true"
           >
@@ -1204,44 +1410,54 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               Uploaded Question Papers ({papers.length})
             </h2>
 
-            <div className="max-h-[650px] overflow-y-auto space-y-2.5 pr-1">
-              {papers.map((paper) => (
-                <div
-                  key={paper.id}
-                  className="p-3.5 bg-white border border-slate-200/90 rounded-2xl flex items-center justify-between gap-3 text-xs shadow-2xs"
-                >
-                  <div className="min-w-0 space-y-1">
-                    <div className="flex items-center gap-2">
-                      <span className="font-mono font-bold text-[#0e0fed]">{paper.subjectCode}</span>
-                      <span className="font-bold text-slate-900 truncate">{paper.subjectName}</span>
+            {papers.length === 0 ? (
+              <div className="p-8 bg-slate-50 border border-dashed border-slate-200 rounded-2xl text-center space-y-1.5">
+                <FileText className="w-8 h-8 text-slate-400 mx-auto" />
+                <div className="text-xs font-bold text-slate-700">No question papers uploaded yet</div>
+                <p className="text-[11px] text-slate-500">
+                  Use the upload form on the left to add official PDF question papers to the library.
+                </p>
+              </div>
+            ) : (
+              <div className="max-h-[650px] overflow-y-auto space-y-2.5 pr-1">
+                {papers.map((paper) => (
+                  <div
+                    key={paper.id}
+                    className="p-3.5 bg-white border border-slate-200/90 rounded-2xl flex items-center justify-between gap-3 text-xs shadow-2xs"
+                  >
+                    <div className="min-w-0 space-y-1">
+                      <div className="flex items-center gap-2">
+                        <span className="font-mono font-bold text-[#0e0fed]">{paper.subjectCode}</span>
+                        <span className="font-bold text-slate-900 truncate">{paper.subjectName}</span>
+                      </div>
+                      <div className="text-[11px] text-slate-500 font-medium">
+                        {paper.departmentName} &bull; Sem {paper.semesterNumber} &bull; {paper.examinationYear} ({paper.examinationType})
+                      </div>
                     </div>
-                    <div className="text-[11px] text-slate-500 font-medium">
-                      {paper.departmentName} &bull; Sem {paper.semesterNumber} &bull; {paper.examinationYear} ({paper.examinationType})
+
+                    <div className="flex items-center gap-1.5 shrink-0">
+                      <button
+                        onClick={() => onViewPaper(paper)}
+                        className="p-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors magnetic-target"
+                        title="Preview PDF"
+                        data-magnetic="true"
+                      >
+                        <Eye className="w-3.5 h-3.5" />
+                      </button>
+
+                      <button
+                        onClick={() => handleDeletePaper(paper.id, paper.subjectName || '')}
+                        className="p-1.5 rounded-xl bg-red-50 hover:bg-red-100 text-red-600 transition-colors magnetic-target"
+                        title="Delete Question Paper"
+                        data-magnetic="true"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
                     </div>
                   </div>
-
-                  <div className="flex items-center gap-1.5 shrink-0">
-                    <button
-                      onClick={() => onViewPaper(paper)}
-                      className="p-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors magnetic-target"
-                      title="Preview PDF"
-                      data-magnetic="true"
-                    >
-                      <Eye className="w-3.5 h-3.5" />
-                    </button>
-
-                    <button
-                      onClick={() => handleDeletePaper(paper.id, paper.subjectName || '')}
-                      className="p-1.5 rounded-xl bg-red-50 hover:bg-red-100 text-red-600 transition-colors magnetic-target"
-                      title="Delete Question Paper"
-                      data-magnetic="true"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       )}
