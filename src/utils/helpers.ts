@@ -166,3 +166,61 @@ export function getAvailableExamYears(papers: QuestionPaper[] = []): number[] {
 
   return Array.from(yearSet).sort((a, b) => b - a);
 }
+
+/**
+ * Generates an idempotent, canonical composite key for a question paper.
+ * Uniquely identifies a paper by Department, Semester, Subject, Examination Year, and Exam Type.
+ */
+export function getPaperCompositeKey(paper: {
+  departmentId: string;
+  semesterId: string;
+  subjectId?: string;
+  subjectCode?: string;
+  examinationYear: number | string;
+  examinationType?: string;
+}): string {
+  const dept = (paper.departmentId || '').trim().toLowerCase();
+  const sem = (paper.semesterId || '').trim().toLowerCase();
+  const sub = (paper.subjectCode || paper.subjectId || '').trim().toUpperCase();
+  const yr = String(paper.examinationYear || '').trim();
+  const type = (paper.examinationType || 'Regular').trim().toLowerCase();
+  return `${dept}::${sem}::${sub}::${yr}::${type}`;
+}
+
+/**
+ * Deduplicates an array of question papers by their composite key.
+ * Keeps the most authoritative record (prefers Supabase DB UUID rows, newer timestamps).
+ */
+export function deduplicateQuestionPapers(papers: QuestionPaper[]): QuestionPaper[] {
+  const map = new Map<string, QuestionPaper>();
+  for (const paper of papers) {
+    const key = getPaperCompositeKey(paper);
+    const existing = map.get(key);
+    if (!existing) {
+      map.set(key, paper);
+    } else {
+      const isCurrentUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(paper.id);
+      const isExistingUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(existing.id);
+      const currentUpload = new Date(paper.uploadedAt || 0).getTime();
+      const existingUpload = new Date(existing.uploadedAt || 0).getTime();
+
+      if (isCurrentUuid && !isExistingUuid) {
+        if (existingUpload > currentUpload) {
+          map.set(key, { ...existing, id: paper.id });
+        } else {
+          map.set(key, paper);
+        }
+      } else if (!isCurrentUuid && isExistingUuid) {
+        if (currentUpload >= existingUpload) {
+          map.set(key, { ...paper, id: existing.id });
+        }
+      } else {
+        if (currentUpload >= existingUpload) {
+          map.set(key, paper);
+        }
+      }
+    }
+  }
+  return Array.from(map.values());
+}
+

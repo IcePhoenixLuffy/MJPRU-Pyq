@@ -1,5 +1,5 @@
 import { Department, AcademicYear, Semester, Subject, QuestionPaper, FilterState, SystemStatistics, ExaminationType } from '../types';
-import { filterQuestionPapers, calculateStatistics, slugify } from '../utils/helpers';
+import { filterQuestionPapers, calculateStatistics, slugify, getPaperCompositeKey, deduplicateQuestionPapers } from '../utils/helpers';
 import { supabase, isSupabaseConfigured } from './supabase';
 import { resolvePdfUrl, getStorageKeysForPaper } from '../utils/pdfGenerator';
 
@@ -794,7 +794,8 @@ export class DataStore {
 
         // Clean library starts with 0 demo papers; exclude any old demo paper-1..10 IDs
         const demoIdSet = new Set(['paper-1', 'paper-2', 'paper-3', 'paper-4', 'paper-5', 'paper-6', 'paper-7', 'paper-8', 'paper-9', 'paper-10']);
-        this.papers = (parsed.papers || []).filter((p) => !demoIdSet.has(p.id));
+        const rawPapers = (parsed.papers || []).filter((p) => !demoIdSet.has(p.id));
+        this.papers = deduplicateQuestionPapers(rawPapers);
 
         this.saveToStorage();
       } else {
@@ -1063,6 +1064,7 @@ export class DataStore {
 
     try {
       const papersMap = new Map<string, QuestionPaper>();
+      const compositeSeen = new Map<string, string>(); // compositeKey -> paperId
 
       // 1. Fetch from Supabase database table 'question_papers'
       try {
@@ -1081,6 +1083,7 @@ export class DataStore {
               return;
             }
 
+            const targetSub = this.subjects.find((s) => s.id === row.subject_id);
             const resolvedUrl = resolvePdfUrl(row.file_path);
             const paper: QuestionPaper = {
               id: row.id,
@@ -1097,15 +1100,52 @@ export class DataStore {
               description: row.description || '',
               downloadCount: row.download_count || 0,
               uploadedAt: row.uploaded_at || new Date().toISOString(),
+              subjectCode: targetSub?.subjectCode,
+              subjectName: targetSub?.subjectName,
             };
-            papersMap.set(paper.id, paper);
+
+            const compKey = getPaperCompositeKey(paper);
+            if (!compositeSeen.has(compKey)) {
+              compositeSeen.set(compKey, paper.id);
+              papersMap.set(paper.id, paper);
+            }
           });
         }
       } catch (dbFetchErr) {
         console.warn('Supabase DB papers fetch fallback:', dbFetchErr);
       }
 
-      // 2. Fetch all uploaded files from Supabase Storage bucket 'pyq-papers'
+      // 2. Include active local repository papers (user uploads in current session)
+      this.papers.forEach((p) => {
+        if (
+          p.filePath &&
+          !this.deletedStorageKeys.has(p.id) &&
+          !this.deletedStorageKeys.has(p.fileName) &&
+          !this.deletedStorageKeys.has(p.filePath)
+        ) {
+          const compKey = getPaperCompositeKey(p);
+          if (!compositeSeen.has(compKey)) {
+            compositeSeen.set(compKey, p.id);
+            papersMap.set(p.id, p);
+          } else {
+            // If already seen by DB, update in-memory fields if user re-uploaded with newer file
+            const existingId = compositeSeen.get(compKey);
+            if (existingId && papersMap.has(existingId)) {
+              const existingPaper = papersMap.get(existingId)!;
+              const pTime = new Date(p.uploadedAt || 0).getTime();
+              const existingTime = new Date(existingPaper.uploadedAt || 0).getTime();
+              if (pTime > existingTime) {
+                existingPaper.filePath = p.filePath;
+                existingPaper.fileName = p.fileName;
+                existingPaper.fileSizeBytes = p.fileSizeBytes;
+                existingPaper.uploadedAt = p.uploadedAt;
+              }
+            }
+          }
+        }
+      });
+
+      // 3. Fetch all uploaded files from Supabase Storage bucket 'pyq-papers' (only for uncatalogued orphan files)
       try {
         const { data: storageFiles, error: storageErr } = await supabase.storage
           .from('pyq-papers')
@@ -1129,59 +1169,46 @@ export class DataStore {
 
             if (this.deletedStorageKeys.has(publicUrl)) return;
 
-            // Check if already in papersMap by file path or file name
-            let matched = false;
+            // Check if already accounted for in papersMap
+            let alreadyAccounted = false;
             for (const [, p] of papersMap.entries()) {
-              if (p.filePath.includes(file.name) || p.fileName === file.name || p.filePath === publicUrl) {
-                matched = true;
+              if (
+                p.filePath === publicUrl ||
+                p.filePath.includes(file.name) ||
+                p.fileName === file.name
+              ) {
+                alreadyAccounted = true;
                 break;
               }
             }
+            if (alreadyAccounted) return;
 
-            if (!matched) {
-              // Parse department and course details from structured file name
-              // Format: ${deptCode}_${semSlug}_${subCode}_${examYear}_${examType}_${timestamp}.pdf
-              // or legacy format: ${subCode}_${examYear}_${examType}_${timestamp}.pdf
-              const clean = file.name.replace(/\.pdf$/i, '');
-              const parts = clean.split('_');
-              let deptCode = '';
-              let semNumber = 0;
-              let subCode = '';
-              let examYear = 2025;
-              let examType: ExaminationType = 'End-Term';
+            // Parse metadata from structured file name
+            // Format: ${deptCode}_${semSlug}_${subCode}_${examYear}_${examType}_${timestamp}.pdf
+            // or legacy format: ${subCode}_${examYear}_${examType}_${timestamp}.pdf
+            const clean = file.name.replace(/\.pdf$/i, '');
+            const parts = clean.split('_');
+            let deptCode = '';
+            let semNumber = 0;
+            let subCode = '';
+            let examYear = 2025;
+            let examType: ExaminationType = 'Regular';
 
-              if (parts.length >= 4) {
-                // Check if first token is department code (e.g. csit, ee, me, ece, ch, ei)
-                const first = parts[0].toLowerCase();
-                const matchedDept = this.departments.find((d) => d.code.toLowerCase() === first || slugify(d.code) === first || d.id === first);
-                if (matchedDept) {
-                  deptCode = matchedDept.code;
-                  const semToken = parts[1].toLowerCase();
-                  if (semToken.startsWith('sem')) {
-                    semNumber = parseInt(semToken.replace('sem', ''), 10) || 0;
-                  }
-                  subCode = parts[2].toUpperCase();
-                  examYear = parseInt(parts[3], 10) || 2025;
-                  if (parts[4]) {
-                    const rawType = parts[4].toLowerCase();
-                    if (rawType.includes('back')) examType = 'Back Paper';
-                    else if (rawType.includes('carry')) examType = 'Carry Over';
-                    else if (rawType.includes('improve')) examType = 'Improvement';
-                    else if (rawType.includes('mid')) examType = 'Mid-Term';
-                    else if (rawType.includes('end')) examType = 'End-Term';
-                    else examType = 'Regular';
-                  }
+            if (parts.length >= 4) {
+              const first = parts[0].toLowerCase();
+              const matchedDept = this.departments.find(
+                (d) => d.code.toLowerCase() === first || slugify(d.code) === first || d.id === first
+              );
+              if (matchedDept) {
+                deptCode = matchedDept.code;
+                const semToken = parts[1].toLowerCase();
+                if (semToken.startsWith('sem')) {
+                  semNumber = parseInt(semToken.replace('sem', ''), 10) || 0;
                 }
-              }
-
-              if (!subCode && parts.length >= 1) {
-                subCode = parts[0].toUpperCase();
-                if (parts.length >= 2) {
-                  const parsedYear = parseInt(parts[1], 10);
-                  if (!isNaN(parsedYear) && parsedYear >= 2000) examYear = parsedYear;
-                }
-                if (parts.length >= 3) {
-                  const rawType = parts[2].toLowerCase();
+                subCode = parts[2].toUpperCase();
+                examYear = parseInt(parts[3], 10) || 2025;
+                if (parts[4]) {
+                  const rawType = parts[4].toLowerCase();
                   if (rawType.includes('back')) examType = 'Back Paper';
                   else if (rawType.includes('carry')) examType = 'Carry Over';
                   else if (rawType.includes('improve')) examType = 'Improvement';
@@ -1190,43 +1217,72 @@ export class DataStore {
                   else examType = 'Regular';
                 }
               }
+            }
 
-              // Match department strictly
-              const targetDept = deptCode
-                ? this.departments.find((d) => d.code.toLowerCase() === deptCode.toLowerCase())
-                : null;
+            if (!subCode && parts.length >= 1) {
+              subCode = parts[0].toUpperCase();
+              if (parts.length >= 2) {
+                const parsedYear = parseInt(parts[1], 10);
+                if (!isNaN(parsedYear) && parsedYear >= 2000) examYear = parsedYear;
+              }
+              if (parts.length >= 3) {
+                const rawType = parts[2].toLowerCase();
+                if (rawType.includes('back')) examType = 'Back Paper';
+                else if (rawType.includes('carry')) examType = 'Carry Over';
+                else if (rawType.includes('improve')) examType = 'Improvement';
+                else if (rawType.includes('mid')) examType = 'Mid-Term';
+                else if (rawType.includes('end')) examType = 'End-Term';
+                else examType = 'Regular';
+              }
+            }
 
-              // Find target subject strictly within that department
-              const targetSub = targetDept
-                ? this.subjects.find((s) => s.departmentId === targetDept.id && s.subjectCode.toLowerCase() === subCode.toLowerCase())
-                : this.subjects.find((s) => s.subjectCode.toLowerCase() === subCode.toLowerCase());
+            const targetDept = deptCode
+              ? this.departments.find((d) => d.code.toLowerCase() === deptCode.toLowerCase())
+              : null;
 
-              if (targetSub) {
-                const deptId = targetSub.departmentId;
-                const semId = targetSub.semesterId;
-                const yearId = targetSub.academicYearId || 'year-1';
-                const fileSize = (file.metadata as any)?.size || (file as any).size || 440665;
+            const targetSub = targetDept
+              ? this.subjects.find((s) => s.departmentId === targetDept.id && s.subjectCode.toLowerCase() === subCode.toLowerCase())
+              : this.subjects.find((s) => s.subjectCode.toLowerCase() === subCode.toLowerCase());
 
-                const paperObj: QuestionPaper = {
-                  id: file.id || `storage-${file.name}`,
-                  departmentId: deptId,
-                  subjectId: targetSub.id,
-                  academicYearId: yearId,
-                  semesterId: semId,
-                  examinationYear: examYear,
-                  examinationType: examType,
-                  filePath: publicUrl,
-                  fileName: file.name,
-                  fileSizeBytes: fileSize,
-                  pageCount: 2,
-                  description: `Examination question paper for ${targetSub.subjectName} (${subCode}).`,
-                  downloadCount: 0,
-                  uploadedAt: file.created_at || new Date().toISOString(),
-                  subjectCode: targetSub.subjectCode,
-                  subjectName: targetSub.subjectName,
-                };
+            if (targetSub) {
+              const deptId = targetSub.departmentId;
+              const semId = targetSub.semesterId;
+              const yearId = targetSub.academicYearId || 'year-1';
+              const fileSize = (file.metadata as any)?.size || (file as any).size || 256000;
 
+              const paperObj: QuestionPaper = {
+                id: file.id || `storage-${file.name}`,
+                departmentId: deptId,
+                subjectId: targetSub.id,
+                academicYearId: yearId,
+                semesterId: semId,
+                examinationYear: examYear,
+                examinationType: examType,
+                filePath: publicUrl,
+                fileName: file.name,
+                fileSizeBytes: fileSize,
+                pageCount: 2,
+                description: `Examination question paper for ${targetSub.subjectName} (${subCode}).`,
+                downloadCount: 0,
+                uploadedAt: file.created_at || new Date().toISOString(),
+                subjectCode: targetSub.subjectCode,
+                subjectName: targetSub.subjectName,
+              };
+
+              // Prevent duplicates: verify compositeKey not already registered
+              const compKey = getPaperCompositeKey(paperObj);
+              if (!compositeSeen.has(compKey)) {
+                compositeSeen.set(compKey, paperObj.id);
                 papersMap.set(paperObj.id, paperObj);
+              } else {
+                // If existing record has a placeholder/local path, update it to the live storage URL
+                const existingId = compositeSeen.get(compKey);
+                if (existingId && papersMap.has(existingId)) {
+                  const existingPaper = papersMap.get(existingId)!;
+                  if (!existingPaper.filePath.startsWith('http')) {
+                    existingPaper.filePath = publicUrl;
+                  }
+                }
               }
             }
           });
@@ -1235,20 +1291,7 @@ export class DataStore {
         console.warn('Supabase storage files sync fallback:', storageListErr);
       }
 
-      // Include any user papers in memory that have a valid filePath and are not deleted
-      this.papers.forEach((p) => {
-        if (
-          p.filePath &&
-          !papersMap.has(p.id) &&
-          !this.deletedStorageKeys.has(p.id) &&
-          !this.deletedStorageKeys.has(p.fileName) &&
-          !this.deletedStorageKeys.has(p.filePath)
-        ) {
-          papersMap.set(p.id, p);
-        }
-      });
-
-      this.papers = Array.from(papersMap.values());
+      this.papers = deduplicateQuestionPapers(Array.from(papersMap.values()));
       this.hydratePaperMetadata();
       this.saveToStorage();
     } catch (err) {
@@ -1277,19 +1320,33 @@ export class DataStore {
     const targetSub = this.subjects.find((s) => s.id === paper.subjectId);
     const subCode = targetSub?.subjectCode || paper.subjectCode;
 
-    // Check if an existing paper record exists for this EXACT department, academic year, semester, subject, examination year, and examination type
-    const existingIndex = this.papers.findIndex((p) =>
-      p.departmentId === paper.departmentId &&
-      p.semesterId === paper.semesterId &&
-      (p.subjectId === paper.subjectId || (subCode && p.subjectCode && p.subjectCode.trim().toLowerCase() === subCode.trim().toLowerCase())) &&
-      p.examinationYear === paper.examinationYear &&
-      p.examinationType === paper.examinationType
-    );
+    // Canonical composite key for strict idempotency
+    const targetCompKey = getPaperCompositeKey({
+      departmentId: paper.departmentId,
+      semesterId: paper.semesterId,
+      subjectId: paper.subjectId,
+      subjectCode: subCode,
+      examinationYear: paper.examinationYear,
+      examinationType: paper.examinationType,
+    });
+
+    // Check if an existing paper record exists for this EXACT department, semester, subject, examination year, and examination type
+    const existingIndex = this.papers.findIndex((p) => {
+      const pSubCode = this.subjects.find((s) => s.id === p.subjectId)?.subjectCode || p.subjectCode;
+      return getPaperCompositeKey({
+        departmentId: p.departmentId,
+        semesterId: p.semesterId,
+        subjectId: p.subjectId,
+        subjectCode: pSubCode,
+        examinationYear: p.examinationYear,
+        examinationType: p.examinationType,
+      }) === targetCompKey;
+    });
 
     let finalPaper: QuestionPaper;
 
     if (existingIndex !== -1) {
-      // Replace / re-upload: update the existing department paper record
+      // Replace / re-upload: update the existing department paper record in place
       const existing = this.papers[existingIndex];
       finalPaper = {
         ...existing,
@@ -1297,6 +1354,8 @@ export class DataStore {
         filePath: resolvedPath,
         id: existing.id,
         uploadedAt: new Date().toISOString(),
+        subjectCode: subCode,
+        subjectName: targetSub?.subjectName || paper.subjectName,
       };
       this.papers[existingIndex] = finalPaper;
     } else {
@@ -1307,9 +1366,14 @@ export class DataStore {
         id: `paper-${Date.now()}`,
         uploadedAt: new Date().toISOString(),
         downloadCount: 0,
+        subjectCode: subCode,
+        subjectName: targetSub?.subjectName || paper.subjectName,
       };
       this.papers.unshift(finalPaper);
     }
+
+    // Always enforce deduplication in memory
+    this.papers = deduplicateQuestionPapers(this.papers);
 
     // Un-tombstone new keys if this file was re-uploaded
     const newKeys = getStorageKeysForPaper(finalPaper);
@@ -1320,7 +1384,6 @@ export class DataStore {
 
     if (isSupabaseConfigured() && supabase) {
       try {
-        const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(finalPaper.id);
         const payload: Record<string, any> = {
           department_id: finalPaper.departmentId,
           subject_id: finalPaper.subjectId,
@@ -1336,10 +1399,29 @@ export class DataStore {
           uploaded_at: finalPaper.uploadedAt,
         };
 
-        if (existingIndex !== -1 && isUuid) {
-          await supabase.from('question_papers').update(payload).eq('id', finalPaper.id);
+        // Check if record already exists in Supabase by composite tuple
+        const { data: existingRows } = await supabase
+          .from('question_papers')
+          .select('id')
+          .eq('department_id', finalPaper.departmentId)
+          .eq('semester_id', finalPaper.semesterId)
+          .eq('subject_id', finalPaper.subjectId)
+          .eq('examination_year', finalPaper.examinationYear)
+          .eq('examination_type', finalPaper.examinationType)
+          .limit(1);
+
+        if (existingRows && existingRows.length > 0) {
+          const existingDbId = existingRows[0].id;
+          finalPaper.id = existingDbId;
+          const targetIdx = this.papers.findIndex((p) => p === finalPaper || p.id === existingDbId || getPaperCompositeKey(p) === targetCompKey);
+          if (targetIdx !== -1) {
+            this.papers[targetIdx].id = existingDbId;
+          }
+          await supabase.from('question_papers').update(payload).eq('id', existingDbId);
         } else {
+          const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(finalPaper.id);
           if (isUuid) payload.id = finalPaper.id;
+
           const { data: insertedData, error: insertErr } = await supabase
             .from('question_papers')
             .insert(payload)
@@ -1348,6 +1430,10 @@ export class DataStore {
 
           if (insertedData && insertedData.id) {
             finalPaper.id = insertedData.id;
+            const targetIdx = this.papers.findIndex((p) => p === finalPaper || getPaperCompositeKey(p) === targetCompKey);
+            if (targetIdx !== -1) {
+              this.papers[targetIdx].id = insertedData.id;
+            }
           }
           if (insertErr) {
             console.warn('Supabase add question paper notice:', insertErr.message);
@@ -1358,6 +1444,7 @@ export class DataStore {
       }
     }
 
+    this.papers = deduplicateQuestionPapers(this.papers);
     this.saveToStorage();
     this.hydratePaperMetadata();
     return finalPaper;

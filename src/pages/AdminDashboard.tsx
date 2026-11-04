@@ -190,6 +190,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [uploadProgress, setUploadProgress] = useState<number>(0);
   const [isUploading, setIsUploading] = useState<boolean>(false);
+  const isUploadingRef = React.useRef<boolean>(false);
 
   // Paper Management Filters
   const [paperFilterDeptId, setPaperFilterDeptId] = useState<string>('all');
@@ -203,6 +204,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const [editPaperDescription, setEditPaperDescription] = useState<string>('');
   const [editPaperFile, setEditPaperFile] = useState<File | null>(null);
   const [isUpdatingPaper, setIsUpdatingPaper] = useState<boolean>(false);
+  const isUpdatingPaperRef = React.useRef<boolean>(false);
 
   // SQL Copy State
   const [copiedSql, setCopiedSql] = useState(false);
@@ -429,11 +431,19 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
   const handlePaperSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isUploadingRef.current || isUploading) return;
+
     if (!paperDeptId || !paperYearId || !paperSemId || !paperSubjectId) {
       showToast('Please select Department, Academic Year, Semester, and Subject.', 'error');
       return;
     }
 
+    if (!selectedFile) {
+      showToast('Please select a valid PDF file to upload.', 'error');
+      return;
+    }
+
+    isUploadingRef.current = true;
     setIsUploading(true);
     setUploadProgress(20);
 
@@ -443,14 +453,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     const deptSlug = slugify(targetDept?.code || paperDeptId);
     const semSlug = `sem${targetSem?.semesterNumber || 1}`;
     const subCode = targetSubject?.subjectCode || 'BT-000';
-    const fileName = selectedFile 
-      ? selectedFile.name 
-      : `MJPRU_${deptSlug}_${subCode}_${paperExamYear}_${paperExamType}.pdf`;
+    const fileName = selectedFile.name;
 
-    const interval = setInterval(() => {
+    let interval: NodeJS.Timeout | null = null;
+    interval = setInterval(() => {
       setUploadProgress((prev) => {
         if (prev >= 85) {
-          clearInterval(interval);
+          if (interval) clearInterval(interval);
           return 85;
         }
         return prev + 20;
@@ -485,7 +494,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         }
       }
 
-      clearInterval(interval);
+      if (interval) clearInterval(interval);
       setUploadProgress(100);
 
       await onAddPaper({
@@ -497,22 +506,27 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         examinationType: paperExamType,
         filePath: finalFilePath,
         fileName,
-        fileSizeBytes: selectedFile ? selectedFile.size : 256000,
+        fileSizeBytes: selectedFile.size,
         pageCount: 2,
         description: paperDescription || `University question paper for ${subCode}.`,
         subjectCode: targetSubject?.subjectCode || subCode,
         subjectName: targetSubject?.subjectName,
       });
 
-      setIsUploading(false);
-      setUploadProgress(0);
       setSelectedFile(null);
       setPaperDescription('');
+      const fileInput = document.getElementById('paper-file-input') as HTMLInputElement | null;
+      if (fileInput) fileInput.value = '';
+
       showToast(`Question Paper for ${targetDept?.code || 'Dept'} ${subCode} (${paperExamYear}) uploaded successfully.`);
     } catch {
-      clearInterval(interval);
-      setIsUploading(false);
+      if (interval) clearInterval(interval);
       showToast('Failed to upload question paper.', 'error');
+    } finally {
+      if (interval) clearInterval(interval);
+      isUploadingRef.current = false;
+      setIsUploading(false);
+      setUploadProgress(0);
     }
   };
 
@@ -563,7 +577,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
   const handleSavePaperEdit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!editingPaper) return;
+    if (!editingPaper || isUpdatingPaperRef.current || isUpdatingPaper) return;
+    isUpdatingPaperRef.current = true;
     setIsUpdatingPaper(true);
     try {
       let updatedFilePath = editingPaper.filePath;
@@ -617,6 +632,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     } catch (err: any) {
       showToast(err?.message || 'Failed to update question paper.', 'error');
     } finally {
+      isUpdatingPaperRef.current = false;
       setIsUpdatingPaper(false);
     }
   };
@@ -1536,10 +1552,17 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               <button
                 type="submit"
                 disabled={isUploading}
-                className="w-full py-3 bg-[#0e0fed] disabled:opacity-50 text-white font-bold text-xs rounded-xl hover:bg-blue-700 transition-all shadow-sm magnetic-target"
+                className="w-full py-3 bg-[#0e0fed] disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold text-xs rounded-xl hover:bg-blue-700 transition-all shadow-sm flex items-center justify-center gap-2 magnetic-target"
                 data-magnetic="true"
               >
-                {isUploading ? 'Uploading to Repository...' : 'Upload Question Paper'}
+                {isUploading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin text-white" />
+                    <span>Uploading to Repository...</span>
+                  </>
+                ) : (
+                  'Upload Question Paper'
+                )}
               </button>
             </form>
           </div>
