@@ -23,7 +23,7 @@ import {
   X
 } from 'lucide-react';
 import { Department, Subject, QuestionPaper, AcademicYear, Semester, ExaminationType } from '../types';
-import { isValidPdfFile, slugify, getAvailableExamYears } from '../utils/helpers';
+import { isValidPdfFile, slugify, getAvailableExamYears, formatBytes } from '../utils/helpers';
 import { 
   SUPABASE_SQL_SETUP, 
   isSupabaseConfigured, 
@@ -201,6 +201,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const [editPaperExamYear, setEditPaperExamYear] = useState<number>(2026);
   const [editPaperExamType, setEditPaperExamType] = useState<ExaminationType>('Regular');
   const [editPaperDescription, setEditPaperDescription] = useState<string>('');
+  const [editPaperFile, setEditPaperFile] = useState<File | null>(null);
   const [isUpdatingPaper, setIsUpdatingPaper] = useState<boolean>(false);
 
   // SQL Copy State
@@ -436,11 +437,15 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     setIsUploading(true);
     setUploadProgress(20);
 
+    const targetDept = departments.find((d) => d.id === paperDeptId);
+    const targetSem = semesters.find((s) => s.id === paperSemId);
     const targetSubject = subjects.find((s) => s.id === paperSubjectId);
+    const deptSlug = slugify(targetDept?.code || paperDeptId);
+    const semSlug = `sem${targetSem?.semesterNumber || 1}`;
     const subCode = targetSubject?.subjectCode || 'BT-000';
     const fileName = selectedFile 
       ? selectedFile.name 
-      : `MJPRU_${subCode}_${paperExamYear}_${paperExamType}.pdf`;
+      : `MJPRU_${deptSlug}_${subCode}_${paperExamYear}_${paperExamType}.pdf`;
 
     const interval = setInterval(() => {
       setUploadProgress((prev) => {
@@ -455,11 +460,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     try {
       let finalFilePath = `/papers/${slugify(fileName)}`;
 
-      // Upload to Supabase Storage bucket 'pyq-papers' if connected and file provided
+      // Upload to Supabase Storage bucket 'pyq-papers' with department prefix
       if (isSupabaseConfigured() && supabase && selectedFile) {
         try {
           const timestamp = Date.now();
-          const cleanKey = `${slugify(subCode)}_${paperExamYear}_${slugify(paperExamType)}_${timestamp}.pdf`;
+          const cleanKey = `${deptSlug}_${semSlug}_${slugify(subCode)}_${paperExamYear}_${slugify(paperExamType)}_${timestamp}.pdf`;
           const { data: uploadRes, error: uploadErr } = await supabase.storage
             .from('pyq-papers')
             .upload(cleanKey, selectedFile, {
@@ -495,13 +500,15 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         fileSizeBytes: selectedFile ? selectedFile.size : 256000,
         pageCount: 2,
         description: paperDescription || `University question paper for ${subCode}.`,
+        subjectCode: targetSubject?.subjectCode || subCode,
+        subjectName: targetSubject?.subjectName,
       });
 
       setIsUploading(false);
       setUploadProgress(0);
       setSelectedFile(null);
       setPaperDescription('');
-      showToast(`Question Paper for ${subCode} (${paperExamYear}) uploaded successfully.`);
+      showToast(`Question Paper for ${targetDept?.code || 'Dept'} ${subCode} (${paperExamYear}) uploaded successfully.`);
     } catch {
       clearInterval(interval);
       setIsUploading(false);
@@ -551,6 +558,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     setEditPaperExamYear(paper.examinationYear);
     setEditPaperExamType(paper.examinationType);
     setEditPaperDescription(paper.description || '');
+    setEditPaperFile(null);
   };
 
   const handleSavePaperEdit = async (e: React.FormEvent) => {
@@ -558,13 +566,54 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     if (!editingPaper) return;
     setIsUpdatingPaper(true);
     try {
+      let updatedFilePath = editingPaper.filePath;
+      let updatedFileName = editingPaper.fileName;
+      let updatedFileSize = editingPaper.fileSizeBytes;
+
+      if (editPaperFile) {
+        updatedFileName = editPaperFile.name;
+        updatedFileSize = editPaperFile.size;
+
+        if (isSupabaseConfigured() && supabase) {
+          try {
+            const dept = departments.find((d) => d.id === editingPaper.departmentId);
+            const sem = semesters.find((s) => s.id === editingPaper.semesterId);
+            const deptSlug = slugify(dept?.code || editingPaper.departmentId);
+            const semSlug = `sem${sem?.semesterNumber || 1}`;
+            const subCode = editingPaper.subjectCode || 'BT-000';
+            const timestamp = Date.now();
+            const cleanKey = `${deptSlug}_${semSlug}_${slugify(subCode)}_${editPaperExamYear}_${slugify(editPaperExamType)}_${timestamp}.pdf`;
+
+            const { data: uploadRes, error: uploadErr } = await supabase.storage
+              .from('pyq-papers')
+              .upload(cleanKey, editPaperFile, {
+                contentType: 'application/pdf',
+                upsert: true,
+              });
+
+            if (!uploadErr && uploadRes) {
+              const { data: publicRes } = supabase.storage
+                .from('pyq-papers')
+                .getPublicUrl(uploadRes.path);
+              updatedFilePath = publicRes?.publicUrl || uploadRes.path;
+            }
+          } catch (storageErr) {
+            console.warn('Supabase storage replacement upload notice:', storageErr);
+          }
+        }
+      }
+
       await onUpdatePaper(editingPaper.id, {
         examinationYear: editPaperExamYear,
         examinationType: editPaperExamType,
         description: editPaperDescription,
+        filePath: updatedFilePath,
+        fileName: updatedFileName,
+        fileSizeBytes: updatedFileSize,
       });
-      showToast(`Question Paper updated successfully (Year: ${editPaperExamYear}).`, 'success');
+      showToast(`Question Paper updated successfully for ${editingPaper.departmentName || 'department'} (Year: ${editPaperExamYear}).`, 'success');
       setEditingPaper(null);
+      setEditPaperFile(null);
     } catch (err: any) {
       showToast(err?.message || 'Failed to update question paper.', 'error');
     } finally {
@@ -1857,6 +1906,30 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   placeholder="e.g. End Semester Examination paper with answer key"
                   className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:border-[#0e0fed]"
                 />
+              </div>
+
+              <div className="space-y-1.5 p-3 rounded-2xl bg-slate-50 border border-slate-200">
+                <label className="text-xs font-bold text-slate-700 block">
+                  Replace PDF Document <span className="font-normal text-slate-500">(Optional)</span>
+                </label>
+                <input
+                  type="file"
+                  accept="application/pdf"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0] || null;
+                    setEditPaperFile(file);
+                  }}
+                  className="w-full text-xs text-slate-700 file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-blue-100 file:text-[#0e0fed] hover:file:bg-blue-200 cursor-pointer"
+                />
+                {editPaperFile ? (
+                  <p className="text-[11px] text-emerald-700 font-bold">
+                    New file selected: {editPaperFile.name} ({formatBytes(editPaperFile.size)})
+                  </p>
+                ) : (
+                  <p className="text-[11px] text-slate-500">
+                    Leave blank to keep current PDF file ({editingPaper.fileName}).
+                  </p>
+                )}
               </div>
 
               <div className="flex items-center justify-end gap-2.5 pt-2">

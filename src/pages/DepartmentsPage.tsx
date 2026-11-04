@@ -84,12 +84,8 @@ export const DepartmentsPage: React.FC<DepartmentsPageProps> = ({
   const isSemesterWiseDept = activeDept?.code === 'EE' || activeDept?.code === 'ECE' || activeDept?.code === 'CSIT' || activeDept?.code === 'CH' || activeDept?.code === 'CHE' || activeDept?.code === 'ME' || activeDept?.code === 'BME' || activeDept?.code === 'EI' || activeDept?.code === 'EIE';
 
   const activeDeptSubjects = subjects.filter((s) => s.departmentId === activeDept?.id);
-  const activeDeptPapers = papers.filter((p) => {
-    if (p.departmentId === activeDept?.id) return true;
-    return activeDeptSubjects.some((s) =>
-      s.subjectCode.toLowerCase() === p.subjectCode?.toLowerCase() && s.semesterId === p.semesterId
-    );
-  });
+  // Strictly isolate papers to the active department - never pull papers from other departments
+  const activeDeptPapers = papers.filter((p) => p.departmentId === activeDept?.id);
 
   // CSIT 16-Course Elective Catalogue (all electives belonging to CSIT)
   const csitElectives = activeDept?.code === 'CSIT'
@@ -122,12 +118,22 @@ export const DepartmentsPage: React.FC<DepartmentsPageProps> = ({
     return activeDeptPapers.filter((p) => p.semesterId === semId);
   };
 
+  // Strictly return question papers matching this department and this subject
   const getPapersForSubject = (subId: string) => {
     const targetSub = activeDeptSubjects.find((s) => s.id === subId);
+    if (!targetSub || !activeDept) return [];
     return papers.filter((p) => {
+      // Must strictly belong to the current active department
+      if (p.departmentId !== activeDept.id) return false;
+      // Match by subjectId directly
       if (p.subjectId === subId) return true;
-      if (targetSub && p.subjectCode && p.subjectCode.toLowerCase() === targetSub.subjectCode.toLowerCase()) {
-        if (p.semesterId === targetSub.semesterId) return true;
+      // Match by subjectCode and semester within this same department
+      if (
+        p.subjectCode &&
+        p.subjectCode.trim().toLowerCase() === targetSub.subjectCode.trim().toLowerCase() &&
+        p.semesterId === targetSub.semesterId
+      ) {
+        return true;
       }
       return false;
     });

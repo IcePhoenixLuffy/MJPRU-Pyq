@@ -128,10 +128,20 @@ CREATE TABLE IF NOT EXISTS public.profiles (
 CREATE INDEX IF NOT EXISTS idx_papers_department ON public.question_papers(department_id);
 CREATE INDEX IF NOT EXISTS idx_papers_subject ON public.question_papers(subject_id);
 CREATE INDEX IF NOT EXISTS idx_papers_semester ON public.question_papers(semester_id);
+CREATE INDEX IF NOT EXISTS idx_papers_dept_subject ON public.question_papers(department_id, subject_id);
 CREATE INDEX IF NOT EXISTS idx_papers_exam_year ON public.question_papers(examination_year DESC);
 CREATE INDEX IF NOT EXISTS idx_papers_exam_type ON public.question_papers(examination_type);
 CREATE INDEX IF NOT EXISTS idx_subjects_department ON public.subjects(department_id);
 CREATE INDEX IF NOT EXISTS idx_subjects_code ON public.subjects(subject_code);
+-- Unique constraint ensuring each question paper is strictly isolated to its department, semester, subject, and exam year
+CREATE UNIQUE INDEX IF NOT EXISTS idx_unique_dept_paper_record ON public.question_papers(
+  department_id, 
+  academic_year_id, 
+  semester_id, 
+  subject_id, 
+  examination_year, 
+  examination_type
+);
 
 -- 9. Row Level Security (RLS) Policies
 ALTER TABLE public.departments ENABLE ROW LEVEL SECURITY;
