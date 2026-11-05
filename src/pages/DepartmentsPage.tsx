@@ -23,7 +23,13 @@ import {
   Clock
 } from 'lucide-react';
 import { Department, QuestionPaper, Subject, AcademicYear, Semester } from '../types';
-import { formatBytes, getAvailableExamYears } from '../utils/helpers';
+import { 
+  formatBytes, 
+  getAvailableAcademicSessions, 
+  formatSessionOrYear, 
+  formatSessionOptionLabel, 
+  isSessionMatch 
+} from '../utils/helpers';
 
 interface DepartmentsPageProps {
   departments: Department[];
@@ -230,7 +236,7 @@ export const DepartmentsPage: React.FC<DepartmentsPageProps> = ({
   const filteredSubjectPapers = activeSubjectModal
     ? getPapersForSubject(activeSubjectModal.id).filter((p) => {
         if (subjectExamYearFilter === 'all') return true;
-        return p.examinationYear.toString() === subjectExamYearFilter;
+        return isSessionMatch(p.examinationYear, subjectExamYearFilter);
       })
     : [];
 
@@ -907,7 +913,7 @@ export const DepartmentsPage: React.FC<DepartmentsPageProps> = ({
                                 <span className="font-bold text-slate-900 truncate">{paper.subjectName}</span>
                               </div>
                               <div className="text-slate-600 text-[11px] mt-0.5 font-medium">
-                                Sem {paper.semesterNumber} &bull; Year {paper.examinationYear} ({paper.examinationType})
+                                Sem {paper.semesterNumber} &bull; Session {formatSessionOrYear(paper.examinationYear)} ({paper.examinationType})
                               </div>
                             </div>
 
@@ -1006,16 +1012,16 @@ export const DepartmentsPage: React.FC<DepartmentsPageProps> = ({
               </span>
 
               <div className="flex items-center gap-2">
-                <span className="text-xs text-slate-600 font-bold">Filter Year:</span>
+                <span className="text-xs text-slate-600 font-bold">Filter Session:</span>
                 <select
                   value={subjectExamYearFilter}
                   onChange={(e) => setSubjectExamYearFilter(e.target.value)}
                   className="px-2.5 py-1 bg-white border border-slate-300 rounded-lg text-xs font-semibold text-slate-800 focus:outline-none focus:border-[#0e0fed]"
                 >
-                  <option value="all">All Years</option>
-                  {getAvailableExamYears(papers).map((yr) => (
-                    <option key={yr} value={yr.toString()}>
-                      {yr}
+                  <option value="all">All Sessions</option>
+                  {getAvailableAcademicSessions(papers).map((sess) => (
+                    <option key={sess} value={sess}>
+                      {formatSessionOptionLabel(sess)}
                     </option>
                   ))}
                 </select>
@@ -1044,7 +1050,7 @@ export const DepartmentsPage: React.FC<DepartmentsPageProps> = ({
                       <div className="space-y-1">
                         <div className="flex items-center gap-2">
                           <span className="font-mono text-xs font-black text-[#0e0fed] bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
-                            {paper.examinationYear}
+                            {formatSessionOrYear(paper.examinationYear)}
                           </span>
                           <span className="text-xs font-bold text-slate-900">
                             {paper.examinationType} Examination

@@ -98,6 +98,10 @@ ALTER TABLE public.subjects ADD COLUMN IF NOT EXISTS category TEXT DEFAULT 'Theo
 ALTER TABLE public.subjects ADD COLUMN IF NOT EXISTS elective_group TEXT;
 ALTER TABLE public.subjects ADD COLUMN IF NOT EXISTS note TEXT;
 
+-- Migration: Upgrade question_papers examination_year to support academic sessions (e.g. '2025–26') while preserving all existing records
+ALTER TABLE public.question_papers ALTER COLUMN examination_year TYPE TEXT USING examination_year::TEXT;
+ALTER TABLE public.question_papers DROP CONSTRAINT IF EXISTS question_papers_examination_year_check;
+
 -- 6. Question Papers Table
 CREATE TABLE IF NOT EXISTS public.question_papers (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -105,7 +109,7 @@ CREATE TABLE IF NOT EXISTS public.question_papers (
   subject_id UUID NOT NULL REFERENCES public.subjects(id) ON DELETE CASCADE,
   academic_year_id UUID NOT NULL REFERENCES public.academic_years(id) ON DELETE CASCADE,
   semester_id UUID NOT NULL REFERENCES public.semesters(id) ON DELETE CASCADE,
-  examination_year INT NOT NULL CHECK (examination_year >= 2000),
+  examination_year TEXT NOT NULL,
   examination_type TEXT NOT NULL DEFAULT 'Regular' CHECK (examination_type IN ('Regular', 'Back Paper', 'Carry Over', 'Improvement', 'Mid-Term', 'End-Term')),
   file_path TEXT NOT NULL,
   file_name TEXT NOT NULL,

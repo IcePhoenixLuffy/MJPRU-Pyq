@@ -14,7 +14,7 @@ import {
 } from 'lucide-react';
 import { QuestionPaper } from '../../types';
 import { resolvePdfUrl, downloadQuestionPaperPdf } from '../../utils/pdfGenerator';
-import { formatBytes } from '../../utils/helpers';
+import { formatBytes, formatSessionOrYear } from '../../utils/helpers';
 
 interface PdfViewerModalProps {
   paper: QuestionPaper | null;
@@ -89,7 +89,7 @@ export const PdfViewerModal: React.FC<PdfViewerModalProps> = ({
               <div className="flex items-center gap-2 text-xs text-slate-600 font-semibold mt-0.5">
                 <span>{paper.departmentName}</span>
                 <span>&bull;</span>
-                <span className="font-mono text-[#0e0fed] font-bold">{paper.examinationYear} ({paper.examinationType})</span>
+                <span className="font-mono text-[#0e0fed] font-bold">{formatSessionOrYear(paper.examinationYear)} ({paper.examinationType})</span>
               </div>
             </div>
           </div>
@@ -155,7 +155,7 @@ export const PdfViewerModal: React.FC<PdfViewerModalProps> = ({
             </span>
             <span className="flex items-center gap-1.5 text-slate-700">
               <Calendar className="w-3.5 h-3.5 text-amber-600" />
-              Year {paper.examinationYear}
+              Session {formatSessionOrYear(paper.examinationYear)}
             </span>
             <span className="flex items-center gap-1.5 text-slate-700">
               <Layers className="w-3.5 h-3.5 text-emerald-600" />

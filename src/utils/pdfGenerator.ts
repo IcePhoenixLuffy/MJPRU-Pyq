@@ -1,5 +1,6 @@
 import { QuestionPaper } from '../types';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
+import { formatSessionOrYear } from './helpers';
 
 /**
  * Resolves a paper's filePath to a fully accessible URL for preview and download.
@@ -82,7 +83,7 @@ export function generateQuestionPaperHtml(paper: QuestionPaper, pageNum = 1): st
   const dept = paper.departmentName || 'Engineering & Technology';
   const subName = paper.subjectName || 'Engineering Subject';
   const subCode = paper.subjectCode || 'BT-401';
-  const year = paper.examinationYear || 2024;
+  const year = formatSessionOrYear(paper.examinationYear) || '2025–26';
   const examType = paper.examinationType || 'Regular';
   const sem = paper.semesterNumber ? `Semester ${paper.semesterNumber}` : 'Odd Semester';
 

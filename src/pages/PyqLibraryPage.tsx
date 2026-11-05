@@ -12,7 +12,13 @@ import {
   SlidersHorizontal
 } from 'lucide-react';
 import { Department, AcademicYear, Semester, Subject, QuestionPaper, FilterState, ExaminationType } from '../types';
-import { formatBytes, filterQuestionPapers, getAvailableExamYears } from '../utils/helpers';
+import { 
+  formatBytes, 
+  filterQuestionPapers, 
+  getAvailableAcademicSessions, 
+  formatSessionOrYear, 
+  formatSessionOptionLabel 
+} from '../utils/helpers';
 
 interface PyqLibraryPageProps {
   departments: Department[];
@@ -78,8 +84,8 @@ export const PyqLibraryPage: React.FC<PyqLibraryPageProps> = ({
     });
   }, [filters.departmentId, filters.semesterId, subjects]);
 
-  const availableExamYears = useMemo(() => {
-    return getAvailableExamYears(papers);
+  const availableAcademicSessions = useMemo(() => {
+    return getAvailableAcademicSessions(papers);
   }, [papers]);
 
   const examTypes: ExaminationType[] = [
@@ -293,18 +299,18 @@ export const PyqLibraryPage: React.FC<PyqLibraryPageProps> = ({
             </select>
           </div>
 
-          {/* Examination Year Select */}
+          {/* Academic Session Select */}
           <div className="space-y-1.5">
-            <label className="text-xs font-bold text-slate-800">Examination Year</label>
+            <label className="text-xs font-bold text-slate-800">Academic Session</label>
             <select
               value={filters.examinationYear}
               onChange={(e) => handleFilterChange('examinationYear', e.target.value)}
               className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:border-[#0e0fed]"
             >
-              <option value="all">All Examination Years</option>
-              {availableExamYears.map((yr) => (
-                <option key={yr} value={yr.toString()}>
-                  Year {yr}
+              <option value="all">All Sessions</option>
+              {availableAcademicSessions.map((sess) => (
+                <option key={sess} value={sess}>
+                  {formatSessionOptionLabel(sess)}
                 </option>
               ))}
             </select>
@@ -337,7 +343,7 @@ export const PyqLibraryPage: React.FC<PyqLibraryPageProps> = ({
             >
               <option value="newest">Recently Uploaded First</option>
               <option value="oldest">Oldest First</option>
-              <option value="year_desc">Exam Year (2024 to 2020)</option>
+              <option value="year_desc">Academic Session (Newest First)</option>
               <option value="downloads">Most Downloaded</option>
             </select>
           </div>
@@ -433,7 +439,7 @@ export const PyqLibraryPage: React.FC<PyqLibraryPageProps> = ({
                         <div className="flex items-center gap-2.5 text-slate-500 text-[11px] font-semibold">
                           <span>Sem {paper.semesterNumber}</span>
                           <span>&bull;</span>
-                          <span>Year {paper.examinationYear}</span>
+                          <span>Session {formatSessionOrYear(paper.examinationYear)}</span>
                           <span>&bull;</span>
                           <span>{formatBytes(paper.fileSizeBytes)}</span>
                         </div>
@@ -487,7 +493,7 @@ export const PyqLibraryPage: React.FC<PyqLibraryPageProps> = ({
                         {paper.examinationType}
                       </span>
                       <span className="text-xs text-slate-600 font-mono font-bold">
-                        Exam Year: {paper.examinationYear}
+                        Session: {formatSessionOrYear(paper.examinationYear)}
                       </span>
                     </div>
 

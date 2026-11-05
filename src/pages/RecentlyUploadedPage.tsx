@@ -8,7 +8,7 @@ import {
   Search 
 } from 'lucide-react';
 import { QuestionPaper, Department } from '../types';
-import { formatBytes } from '../utils/helpers';
+import { formatBytes, formatSessionOrYear } from '../utils/helpers';
 
 interface RecentlyUploadedPageProps {
   papers: QuestionPaper[];
@@ -163,7 +163,7 @@ export const RecentlyUploadedPage: React.FC<RecentlyUploadedPageProps> = ({
                     <div className="flex flex-wrap items-center gap-2 text-slate-500 text-[11px] font-semibold">
                       <span className="px-1.5 py-0.5 bg-slate-100 rounded text-slate-700">Sem {paper.semesterNumber}</span>
                       <span>&bull;</span>
-                      <span className="px-1.5 py-0.5 bg-slate-100 rounded text-slate-700">Year {paper.examinationYear}</span>
+                      <span className="px-1.5 py-0.5 bg-blue-50 text-[#0e0fed] font-bold rounded">Session {formatSessionOrYear(paper.examinationYear)}</span>
                       <span>&bull;</span>
                       <span className="px-1.5 py-0.5 bg-emerald-50 text-emerald-700 font-bold rounded">{paper.examinationType}</span>
                       <span>&bull;</span>

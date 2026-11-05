@@ -19,7 +19,7 @@ import {
 } from 'lucide-react';
 import { Department, QuestionPaper, SystemStatistics } from '../types';
 import { GlobalSearchBar } from '../components/common/GlobalSearchBar';
-import { formatBytes } from '../utils/helpers';
+import { formatBytes, formatSessionOrYear } from '../utils/helpers';
 
 interface HomePageProps {
   departments: Department[];
@@ -355,7 +355,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                     <div className="flex items-center gap-2.5 text-slate-500 text-[11px] font-semibold">
                       <span>Sem {paper.semesterNumber}</span>
                       <span>&bull;</span>
-                      <span>Year {paper.examinationYear}</span>
+                      <span>Session {formatSessionOrYear(paper.examinationYear)}</span>
                       <span>&bull;</span>
                       <span>{formatBytes(paper.fileSizeBytes)}</span>
                     </div>

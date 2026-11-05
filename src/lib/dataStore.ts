@@ -1191,7 +1191,7 @@ export class DataStore {
             let deptCode = '';
             let semNumber = 0;
             let subCode = '';
-            let examYear = 2025;
+            let examYear: number | string = '2025–26';
             let examType: ExaminationType = 'Regular';
 
             if (parts.length >= 4) {
@@ -1206,7 +1206,14 @@ export class DataStore {
                   semNumber = parseInt(semToken.replace('sem', ''), 10) || 0;
                 }
                 subCode = parts[2].toUpperCase();
-                examYear = parseInt(parts[3], 10) || 2025;
+                const sessionMatch = parts[3]?.match(/^(\d{4})[–—\-](\d{2})$/);
+                if (sessionMatch) {
+                  examYear = `${sessionMatch[1]}–${sessionMatch[2]}`;
+                } else {
+                  const parsedYear = parseInt(parts[3], 10);
+                  if (!isNaN(parsedYear) && parsedYear >= 2000) examYear = parsedYear;
+                  else if (parts[3]) examYear = parts[3];
+                }
                 if (parts[4]) {
                   const rawType = parts[4].toLowerCase();
                   if (rawType.includes('back')) examType = 'Back Paper';
@@ -1222,8 +1229,14 @@ export class DataStore {
             if (!subCode && parts.length >= 1) {
               subCode = parts[0].toUpperCase();
               if (parts.length >= 2) {
-                const parsedYear = parseInt(parts[1], 10);
-                if (!isNaN(parsedYear) && parsedYear >= 2000) examYear = parsedYear;
+                const sessionMatch = parts[1]?.match(/^(\d{4})[–—\-](\d{2})$/);
+                if (sessionMatch) {
+                  examYear = `${sessionMatch[1]}–${sessionMatch[2]}`;
+                } else {
+                  const parsedYear = parseInt(parts[1], 10);
+                  if (!isNaN(parsedYear) && parsedYear >= 2000) examYear = parsedYear;
+                  else if (parts[1]) examYear = parts[1];
+                }
               }
               if (parts.length >= 3) {
                 const rawType = parts[2].toLowerCase();

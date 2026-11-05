@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Search, X, ArrowRight } from 'lucide-react';
 import { QuestionPaper } from '../../types';
+import { formatSessionOrYear, normalizeAcademicSession } from '../../utils/helpers';
 
 interface GlobalSearchBarProps {
   onSearchSubmit: (query: string) => void;
@@ -46,7 +47,9 @@ export const GlobalSearchBar: React.FC<GlobalSearchBarProps> = ({
           const matchSub = paper.subjectName?.toLowerCase().includes(trimmed);
           const matchCode = paper.subjectCode?.toLowerCase().includes(trimmed);
           const matchDept = paper.departmentName?.toLowerCase().includes(trimmed);
-          const matchYear = paper.examinationYear.toString().includes(trimmed);
+          const rawYear = String(paper.examinationYear || '').toLowerCase();
+          const normYear = normalizeAcademicSession(paper.examinationYear).toLowerCase();
+          const matchYear = rawYear.includes(trimmed) || normYear.includes(trimmed);
           const matchSem = `semester ${paper.semesterNumber}`.includes(trimmed);
           return matchSub || matchCode || matchDept || matchYear || matchSem;
         })
@@ -155,7 +158,7 @@ export const GlobalSearchBar: React.FC<GlobalSearchBarProps> = ({
                     <span className="text-slate-300">&bull;</span>
                     <span className="font-semibold text-slate-700">Sem {paper.semesterNumber}</span>
                     <span className="text-slate-300">&bull;</span>
-                    <span className="font-mono text-slate-600">{paper.examinationYear} ({paper.examinationType})</span>
+                    <span className="font-mono text-slate-600">{formatSessionOrYear(paper.examinationYear)} ({paper.examinationType})</span>
                   </div>
                 </div>
 

@@ -23,7 +23,17 @@ import {
   X
 } from 'lucide-react';
 import { Department, Subject, QuestionPaper, AcademicYear, Semester, ExaminationType } from '../types';
-import { isValidPdfFile, slugify, getAvailableExamYears, formatBytes } from '../utils/helpers';
+import { 
+  isValidPdfFile, 
+  slugify, 
+  getAvailableAcademicSessions, 
+  formatSessionOrYear, 
+  formatSessionOptionLabel, 
+  normalizeAcademicSession, 
+  isSessionMatch, 
+  isAcademicSession,
+  formatBytes 
+} from '../utils/helpers';
 import { 
   SUPABASE_SQL_SETUP, 
   isSupabaseConfigured, 
@@ -176,15 +186,15 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const [subjectFilterDeptId, setSubjectFilterDeptId] = useState('all');
   const [subjectFilterQuery, setSubjectFilterQuery] = useState('');
 
-  // Dynamic available exam years (includes 2026, future years, and historical records)
-  const availableExamYears = getAvailableExamYears(papers);
+  // Dynamic available academic sessions (includes future sessions e.g. 2026–27, 2027–28, current, and historical/legacy records)
+  const availableAcademicSessions = getAvailableAcademicSessions(papers);
 
   // PYQ Upload Form
   const [paperDeptId, setPaperDeptId] = useState(departments[0]?.id || '');
   const [paperYearId, setPaperYearId] = useState(academicYears[0]?.id || '');
   const [paperSemId, setPaperSemId] = useState(semesters[0]?.id || '');
   const [paperSubjectId, setPaperSubjectId] = useState('');
-  const [paperExamYear, setPaperExamYear] = useState<number>(() => Math.max(new Date().getFullYear(), 2026));
+  const [paperExamYear, setPaperExamYear] = useState<string>(() => availableAcademicSessions[0] || '2025–26');
   const [paperExamType, setPaperExamType] = useState<ExaminationType>('Regular');
   const [paperDescription, setPaperDescription] = useState('');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -199,7 +209,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
   // Paper Edit Modal State
   const [editingPaper, setEditingPaper] = useState<QuestionPaper | null>(null);
-  const [editPaperExamYear, setEditPaperExamYear] = useState<number>(2026);
+  const [editPaperExamYear, setEditPaperExamYear] = useState<string>('2025–26');
   const [editPaperExamType, setEditPaperExamType] = useState<ExaminationType>('Regular');
   const [editPaperDescription, setEditPaperDescription] = useState<string>('');
   const [editPaperFile, setEditPaperFile] = useState<File | null>(null);
@@ -473,7 +483,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       if (isSupabaseConfigured() && supabase && selectedFile) {
         try {
           const timestamp = Date.now();
-          const cleanKey = `${deptSlug}_${semSlug}_${slugify(subCode)}_${paperExamYear}_${slugify(paperExamType)}_${timestamp}.pdf`;
+          const cleanKey = `${deptSlug}_${semSlug}_${slugify(subCode)}_${slugify(String(paperExamYear))}_${slugify(paperExamType)}_${timestamp}.pdf`;
           const { data: uploadRes, error: uploadErr } = await supabase.storage
             .from('pyq-papers')
             .upload(cleanKey, selectedFile, {
@@ -502,7 +512,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         academicYearId: paperYearId,
         semesterId: paperSemId,
         subjectId: paperSubjectId,
-        examinationYear: Number(paperExamYear),
+        examinationYear: normalizeAcademicSession(paperExamYear),
         examinationType: paperExamType,
         filePath: finalFilePath,
         fileName,
@@ -518,7 +528,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       const fileInput = document.getElementById('paper-file-input') as HTMLInputElement | null;
       if (fileInput) fileInput.value = '';
 
-      showToast(`Question Paper for ${targetDept?.code || 'Dept'} ${subCode} (${paperExamYear}) uploaded successfully.`);
+      showToast(`Question Paper for ${targetDept?.code || 'Dept'} ${subCode} (Session: ${paperExamYear}) uploaded successfully.`);
     } catch {
       if (interval) clearInterval(interval);
       showToast('Failed to upload question paper.', 'error');
@@ -569,7 +579,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
   const handleStartEditPaper = (paper: QuestionPaper) => {
     setEditingPaper(paper);
-    setEditPaperExamYear(paper.examinationYear);
+    const initialSession = isAcademicSession(paper.examinationYear)
+      ? normalizeAcademicSession(paper.examinationYear)
+      : (availableAcademicSessions.find((s) => s.includes('2025') || s.includes('2026')) || availableAcademicSessions[0] || '2025–26');
+    setEditPaperExamYear(initialSession);
     setEditPaperExamType(paper.examinationType);
     setEditPaperDescription(paper.description || '');
     setEditPaperFile(null);
@@ -597,7 +610,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             const semSlug = `sem${sem?.semesterNumber || 1}`;
             const subCode = editingPaper.subjectCode || 'BT-000';
             const timestamp = Date.now();
-            const cleanKey = `${deptSlug}_${semSlug}_${slugify(subCode)}_${editPaperExamYear}_${slugify(editPaperExamType)}_${timestamp}.pdf`;
+            const cleanKey = `${deptSlug}_${semSlug}_${slugify(subCode)}_${slugify(String(editPaperExamYear))}_${slugify(editPaperExamType)}_${timestamp}.pdf`;
 
             const { data: uploadRes, error: uploadErr } = await supabase.storage
               .from('pyq-papers')
@@ -619,14 +632,14 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       }
 
       await onUpdatePaper(editingPaper.id, {
-        examinationYear: editPaperExamYear,
+        examinationYear: normalizeAcademicSession(editPaperExamYear),
         examinationType: editPaperExamType,
         description: editPaperDescription,
         filePath: updatedFilePath,
         fileName: updatedFileName,
         fileSizeBytes: updatedFileSize,
       });
-      showToast(`Question Paper updated successfully for ${editingPaper.departmentName || 'department'} (Year: ${editPaperExamYear}).`, 'success');
+      showToast(`Question Paper updated successfully for ${editingPaper.departmentName || 'department'} (Session: ${editPaperExamYear}).`, 'success');
       setEditingPaper(null);
       setEditPaperFile(null);
     } catch (err: any) {
@@ -639,16 +652,21 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
   const filteredPapers = papers.filter((paper) => {
     if (paperFilterDeptId !== 'all' && paper.departmentId !== paperFilterDeptId) return false;
-    if (paperFilterYear !== 'all' && String(paper.examinationYear) !== paperFilterYear) return false;
+    if (paperFilterYear !== 'all' && !isSessionMatch(paper.examinationYear, paperFilterYear)) return false;
     if (paperFilterQuery.trim()) {
       const q = paperFilterQuery.toLowerCase();
       const matchSub = (paper.subjectName || '').toLowerCase().includes(q);
       const matchCode = (paper.subjectCode || '').toLowerCase().includes(q);
-      const matchYear = String(paper.examinationYear).includes(q);
-      if (!matchSub && !matchCode && !matchYear) return false;
+      const yrStr = String(paper.examinationYear || '').toLowerCase();
+      const normYr = normalizeAcademicSession(paper.examinationYear).toLowerCase();
+      const matchYear = yrStr.includes(q) || normYr.includes(q);
+      const matchType = paper.examinationType.toLowerCase().includes(q);
+      if (!matchSub && !matchCode && !matchYear && !matchType) return false;
     }
     return true;
   });
+
+  const legacyPapers = papers.filter((p) => !isAcademicSession(p.examinationYear));
 
   const handleCopySql = () => {
     navigator.clipboard.writeText(SUPABASE_SQL_SETUP);
@@ -1492,15 +1510,15 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-700">Exam Year</label>
+                  <label className="text-xs font-bold text-slate-700">Academic Session</label>
                   <select
                     value={paperExamYear}
-                    onChange={(e) => setPaperExamYear(Number(e.target.value))}
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:border-[#0e0fed]"
+                    onChange={(e) => setPaperExamYear(e.target.value)}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:outline-none focus:border-[#0e0fed]"
                   >
-                    {availableExamYears.map((yr) => (
-                      <option key={yr} value={yr}>
-                        Year {yr}
+                    {availableAcademicSessions.map((sess) => (
+                      <option key={sess} value={sess}>
+                        {formatSessionOptionLabel(sess)}
                       </option>
                     ))}
                   </select>
@@ -1577,6 +1595,42 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               </h2>
             </div>
 
+            {/* Legacy calendar-year records report banner */}
+            {legacyPapers.length > 0 && (
+              <div className="p-4 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200/90 rounded-2xl space-y-2.5 shadow-2xs">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 font-black text-amber-900 text-xs">
+                    <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />
+                    <span>{legacyPapers.length} Question Paper{legacyPapers.length > 1 ? 's' : ''} Need Academic Session Assignment</span>
+                  </div>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-200/70 text-amber-900 font-mono">
+                    Action Required
+                  </span>
+                </div>
+                <p className="text-[11px] text-amber-800 leading-relaxed font-medium">
+                  The following {legacyPapers.length} record{legacyPapers.length > 1 ? 's were' : ' was'} previously stored with legacy calendar-year data ({Array.from(new Set(legacyPapers.map(p => String(p.examinationYear)))).join(', ')}). All files and database entries remain safe and preserved. Click <strong>Edit</strong> on any paper below to assign its official Academic Session (e.g. Session 2025–26 or Session 2026–27):
+                </p>
+                <div className="flex flex-wrap gap-2 pt-0.5">
+                  {legacyPapers.slice(0, 5).map((lp) => (
+                    <button
+                      key={lp.id}
+                      type="button"
+                      onClick={() => handleStartEditPaper(lp)}
+                      className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-white border border-amber-300 rounded-lg text-xs font-bold text-amber-900 hover:bg-amber-100 transition-colors shadow-2xs"
+                    >
+                      <Edit3 className="w-3 h-3 text-amber-700" />
+                      <span>{lp.subjectCode} ({lp.subjectName})</span>
+                    </button>
+                  ))}
+                  {legacyPapers.length > 5 && (
+                    <span className="text-[11px] text-amber-700 font-semibold self-center">
+                      +{legacyPapers.length - 5} more
+                    </span>
+                  )}
+                </div>
+              </div>
+            )}
+
             {/* Filter and Search Bar for Paper Management */}
             {papers.length > 0 && (
               <div className="p-3 bg-white border border-slate-200/90 rounded-2xl space-y-2 shadow-2xs">
@@ -1618,10 +1672,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                       onChange={(e) => setPaperFilterYear(e.target.value)}
                       className="px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:outline-none focus:border-[#0e0fed]"
                     >
-                      <option value="all">All Exam Years</option>
-                      {availableExamYears.map((yr) => (
-                        <option key={yr} value={String(yr)}>
-                          Year {yr}
+                      <option value="all">All Sessions</option>
+                      {availableAcademicSessions.map((sess) => (
+                        <option key={sess} value={sess}>
+                          {formatSessionOptionLabel(sess)}
                         </option>
                       ))}
                     </select>
@@ -1674,9 +1728,15 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                         <span>&bull;</span>
                         <span>Sem {paper.semesterNumber}</span>
                         <span>&bull;</span>
-                        <span className={`px-1.5 py-0.5 rounded-md font-bold ${paper.examinationYear >= 2026 ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-slate-100 text-slate-700'}`}>
-                          {paper.examinationYear}
-                        </span>
+                        {isAcademicSession(paper.examinationYear) ? (
+                          <span className="px-1.5 py-0.5 rounded-md font-bold bg-blue-50 text-[#0e0fed] border border-blue-200">
+                            Session {paper.examinationYear}
+                          </span>
+                        ) : (
+                          <span className="px-1.5 py-0.5 rounded-md font-bold bg-amber-100 text-amber-900 border border-amber-300">
+                            Session Needed (Recorded as {paper.examinationYear})
+                          </span>
+                        )}
                         <span>({paper.examinationType})</span>
                       </div>
                     </div>
@@ -1803,7 +1863,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 File: {paperPendingDelete.fileName}
               </div>
               <div className="text-slate-500 font-medium text-[11px]">
-                {paperPendingDelete.departmentName} &bull; Semester {paperPendingDelete.semesterNumber} &bull; {paperPendingDelete.examinationYear} ({paperPendingDelete.examinationType})
+                {paperPendingDelete.departmentName} &bull; Semester {paperPendingDelete.semesterNumber} &bull; {formatSessionOrYear(paperPendingDelete.examinationYear)} ({paperPendingDelete.examinationType})
               </div>
             </div>
 
@@ -1886,18 +1946,30 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               </div>
             </div>
 
+            {!isAcademicSession(editingPaper.examinationYear) && (
+              <div className="p-3 bg-amber-50 border border-amber-200 rounded-2xl text-xs text-amber-900 space-y-1">
+                <div className="font-bold flex items-center gap-1.5 text-amber-950">
+                  <AlertCircle className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+                  <span>Legacy Record: Previously recorded with calendar year "{editingPaper.examinationYear}"</span>
+                </div>
+                <p className="text-[11px] text-amber-800 leading-relaxed font-medium">
+                  Please assign this question paper to its official Academic Session (e.g. Session 2025–26) from the dropdown below and click <strong>Save Changes</strong>.
+                </p>
+              </div>
+            )}
+
             <form onSubmit={handleSavePaperEdit} className="space-y-3.5 text-xs">
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-700">Exam Year</label>
+                  <label className="text-xs font-bold text-slate-700">Academic Session</label>
                   <select
                     value={editPaperExamYear}
-                    onChange={(e) => setEditPaperExamYear(Number(e.target.value))}
+                    onChange={(e) => setEditPaperExamYear(e.target.value)}
                     className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:outline-none focus:border-[#0e0fed]"
                   >
-                    {availableExamYears.map((yr) => (
-                      <option key={yr} value={yr}>
-                        Year {yr}
+                    {availableAcademicSessions.map((sess) => (
+                      <option key={sess} value={sess}>
+                        {formatSessionOptionLabel(sess)}
                       </option>
                     ))}
                   </select>

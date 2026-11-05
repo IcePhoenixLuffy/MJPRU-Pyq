@@ -28,9 +28,9 @@ export function filterQuestionPapers(
       if (paper.subjectId !== filters.subjectId) return false;
     }
 
-    // Exam Year filter
+    // Exam Year / Academic Session filter
     if (filters.examinationYear && filters.examinationYear !== 'all') {
-      if (paper.examinationYear.toString() !== filters.examinationYear.toString()) {
+      if (!isSessionMatch(paper.examinationYear, filters.examinationYear)) {
         return false;
       }
     }
@@ -46,7 +46,9 @@ export function filterQuestionPapers(
       const matchSubject = paper.subjectName?.toLowerCase().includes(q) ?? false;
       const matchCode = paper.subjectCode?.toLowerCase().includes(q) ?? false;
       const matchDept = paper.departmentName?.toLowerCase().includes(q) ?? false;
-      const matchYear = paper.examinationYear.toString().includes(q);
+      const yrStr = String(paper.examinationYear || '').toLowerCase();
+      const normYr = normalizeAcademicSession(paper.examinationYear).toLowerCase();
+      const matchYear = yrStr.includes(q) || normYr.includes(q);
       const matchDesc = paper.description?.toLowerCase().includes(q) ?? false;
       const matchType = paper.examinationType.toLowerCase().includes(q);
 
@@ -63,7 +65,7 @@ export function filterQuestionPapers(
       case 'downloads':
         return b.downloadCount - a.downloadCount;
       case 'year_desc':
-        return b.examinationYear - a.examinationYear;
+        return sortAcademicSessionsDesc(a.examinationYear, b.examinationYear);
       case 'newest':
       default:
         return new Date(b.uploadedAt).getTime() - new Date(a.uploadedAt).getTime();
@@ -103,10 +105,132 @@ export function slugify(text: string): string {
     .toString()
     .toLowerCase()
     .trim()
+    .replace(/[–—]/g, '-')
     .replace(/\s+/g, '-')
     .replace(/&/g, '-and-')
     .replace(/[^\w-]+/g, '')
     .replace(/--+/g, '-');
+}
+
+/**
+ * Formats a 4-digit start year into standard academic session notation (e.g. 2025 -> "2025–26").
+ */
+export function formatAcademicSession(startYear: number): string {
+  const endYearShort = String((startYear + 1) % 100).padStart(2, '0');
+  return `${startYear}–${endYearShort}`;
+}
+
+/**
+ * Normalizes an academic session or calendar year string into canonical representation.
+ * Converts "2025-26", "2025—26" to "2025–26" with uniform en-dash.
+ * Preserves legacy calendar years (e.g. 2026, 2025) as-is.
+ */
+export function normalizeAcademicSession(val: string | number | undefined | null): string {
+  if (val === undefined || val === null) return '';
+  const str = String(val).trim();
+  const sessionMatch = str.match(/^(\d{4})[–—\-](\d{2})$/);
+  if (sessionMatch) {
+    return `${sessionMatch[1]}–${sessionMatch[2]}`;
+  }
+  return str;
+}
+
+/**
+ * Checks whether a value represents an academic session formatted as YYYY–YY (e.g., 2025–26 or 2025-26).
+ */
+export function isAcademicSession(val: string | number | undefined | null): boolean {
+  if (val === undefined || val === null) return false;
+  const str = String(val).trim();
+  return /^(\d{4})[–—\-](\d{2})$/.test(str);
+}
+
+/**
+ * Checks if a question paper's examination session/year matches a selected filter.
+ * Case-insensitive and hyphen/en-dash agnostic.
+ */
+export function isSessionMatch(
+  paperVal: string | number | undefined | null,
+  filterVal: string | number | undefined | null
+): boolean {
+  if (!filterVal || filterVal === 'all') return true;
+  if (!paperVal) return false;
+  const normPaper = normalizeAcademicSession(paperVal).toLowerCase();
+  const normFilter = normalizeAcademicSession(filterVal).toLowerCase();
+  return normPaper === normFilter;
+}
+
+/**
+ * Sorts academic sessions descending.
+ * Future sessions (e.g. 2027–28) > 2026–27 > 2025–26 > 2024–25, etc.
+ */
+export function sortAcademicSessionsDesc(
+  a: string | number | undefined | null,
+  b: string | number | undefined | null
+): number {
+  const strA = normalizeAcademicSession(a);
+  const strB = normalizeAcademicSession(b);
+  const startA = parseInt(strA.slice(0, 4), 10) || 0;
+  const startB = parseInt(strB.slice(0, 4), 10) || 0;
+  if (startA !== startB) return startB - startA;
+  return strB.localeCompare(strA);
+}
+
+/**
+ * Friendly display helper for cards, badges, and modals.
+ * Returns the canonical session format (e.g. "2025–26").
+ */
+export function formatSessionOrYear(value: number | string | undefined | null): string {
+  if (!value) return '';
+  return normalizeAcademicSession(value);
+}
+
+/**
+ * Generates label for dropdown options.
+ * Exclusively uses "Session YYYY–YY" format with no calendar year options.
+ * E.g. "2025–26" -> "Session 2025–26"
+ */
+export function formatSessionOptionLabel(value: string | number): string {
+  const norm = normalizeAcademicSession(value);
+  return `Session ${norm}`;
+}
+
+/**
+ * Dynamic, future-proof academic session generator.
+ * Strictly generates ONLY academic sessions in descending order:
+ * - Future academic sessions (e.g. 2027–28, 2026–27) so admins never need code changes
+ * - Current and historical academic sessions down to 2017–18
+ * - Includes valid academic sessions present in uploaded papers
+ * - Excludes single calendar years completely so no calendar-year options appear anywhere.
+ */
+export function getAvailableAcademicSessions(papers: QuestionPaper[] = []): string[] {
+  const currentYear = new Date().getFullYear();
+  // Include future sessions (at least currentYear + 1, e.g. 2027-28 when currentYear is 2026)
+  const maxStartYear = Math.max(currentYear + 1, 2027);
+  const minBaseStartYear = 2017;
+
+  const sessionSet = new Set<string>();
+
+  for (let yr = maxStartYear; yr >= minBaseStartYear; yr--) {
+    sessionSet.add(formatAcademicSession(yr));
+  }
+
+  // Include ONLY valid academic sessions from existing papers (never calendar years)
+  for (const paper of papers) {
+    if (paper.examinationYear !== undefined && paper.examinationYear !== null) {
+      if (isAcademicSession(paper.examinationYear)) {
+        sessionSet.add(normalizeAcademicSession(paper.examinationYear));
+      }
+    }
+  }
+
+  return Array.from(sessionSet).sort(sortAcademicSessionsDesc);
+}
+
+/**
+ * Backward compatibility alias for getAvailableAcademicSessions.
+ */
+export function getAvailableExamYears(papers: QuestionPaper[] = []): string[] {
+  return getAvailableAcademicSessions(papers);
 }
 
 /**
@@ -140,36 +264,8 @@ export function isValidPdfFile(file: File): { valid: boolean; error?: string } {
 }
 
 /**
- * Dynamic, future-proof examination years generator.
- * Automatically includes:
- * - Next year (currentYear + 1) for upcoming examination scheduling
- * - Current calendar year (e.g. 2026)
- * - All historical university examination years down to 2018
- * - Any additional examination years present in uploaded question papers
- */
-export function getAvailableExamYears(papers: QuestionPaper[] = []): number[] {
-  const currentYear = new Date().getFullYear();
-  const maxYear = Math.max(currentYear + 1, 2026);
-  const minBaseYear = 2018;
-
-  const yearSet = new Set<number>();
-  for (let yr = maxYear; yr >= minBaseYear; yr--) {
-    yearSet.add(yr);
-  }
-
-  // Preserve all examination years from existing papers
-  for (const paper of papers) {
-    if (typeof paper.examinationYear === 'number' && !isNaN(paper.examinationYear) && paper.examinationYear >= 1990) {
-      yearSet.add(paper.examinationYear);
-    }
-  }
-
-  return Array.from(yearSet).sort((a, b) => b - a);
-}
-
-/**
  * Generates an idempotent, canonical composite key for a question paper.
- * Uniquely identifies a paper by Department, Semester, Subject, Examination Year, and Exam Type.
+ * Uniquely identifies a paper by Department, Semester, Subject, Examination Year/Session, and Exam Type.
  */
 export function getPaperCompositeKey(paper: {
   departmentId: string;
@@ -182,7 +278,7 @@ export function getPaperCompositeKey(paper: {
   const dept = (paper.departmentId || '').trim().toLowerCase();
   const sem = (paper.semesterId || '').trim().toLowerCase();
   const sub = (paper.subjectCode || paper.subjectId || '').trim().toUpperCase();
-  const yr = String(paper.examinationYear || '').trim();
+  const yr = normalizeAcademicSession(paper.examinationYear).toLowerCase();
   const type = (paper.examinationType || 'Regular').trim().toLowerCase();
   return `${dept}::${sem}::${sub}::${yr}::${type}`;
 }

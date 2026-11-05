@@ -50,7 +50,7 @@ export interface QuestionPaper {
   subjectId: string;
   academicYearId: string;
   semesterId: string;
-  examinationYear: number;
+  examinationYear: number | string;
   examinationType: ExaminationType;
   filePath: string;
   fileName: string;
