@@ -48,6 +48,18 @@ export const PyqLibraryPage: React.FC<PyqLibraryPageProps> = ({
     sortBy: 'newest',
   });
 
+  React.useEffect(() => {
+    if (initialDepartmentId && initialDepartmentId !== filters.departmentId) {
+      setFilters((prev) => ({ ...prev, departmentId: initialDepartmentId }));
+    }
+  }, [initialDepartmentId]);
+
+  React.useEffect(() => {
+    if (initialQuery !== undefined && initialQuery !== filters.searchQuery) {
+      setFilters((prev) => ({ ...prev, searchQuery: initialQuery }));
+    }
+  }, [initialQuery]);
+
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
 

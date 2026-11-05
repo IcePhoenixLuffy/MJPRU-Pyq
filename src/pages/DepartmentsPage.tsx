@@ -34,6 +34,16 @@ interface DepartmentsPageProps {
   onSelectDepartmentForLibrary: (deptId: string) => void;
   onViewPaper: (paper: QuestionPaper) => void;
   onDownloadPaper?: (paper: QuestionPaper) => void;
+  // Navigation & browser history props
+  currentDeptId?: string | null;
+  currentYearId?: string;
+  currentSemesterId?: string;
+  currentSubjectId?: string | null;
+  onDepartmentChange?: (deptId: string) => void;
+  onYearChange?: (yearId: string) => void;
+  onSemesterChange?: (semId: string) => void;
+  onOpenSubject?: (subject: Subject) => void;
+  onCloseSubject?: () => void;
 }
 
 const getDeptIcon = (iconName: string) => {
@@ -58,22 +68,100 @@ export const DepartmentsPage: React.FC<DepartmentsPageProps> = ({
   onSelectDepartmentForLibrary,
   onViewPaper,
   onDownloadPaper,
+  currentDeptId,
+  currentYearId,
+  currentSemesterId,
+  currentSubjectId,
+  onDepartmentChange,
+  onYearChange,
+  onSemesterChange,
+  onOpenSubject,
+  onCloseSubject,
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedDeptId, setSelectedDeptId] = useState<string | null>(
     // Default to Electrical Engineering if available, else first
-    departments.find((d) => d.code === 'EE')?.id || departments[0]?.id || null
+    currentDeptId || departments.find((d) => d.code === 'EE')?.id || departments[0]?.id || null
   );
 
   // Semester-wise navigation states
-  const [selectedYearId, setSelectedYearId] = useState<string>('all'); // 'all', 'year-1', 'year-2', 'year-3', 'year-4'
-  const [selectedSemesterId, setSelectedSemesterId] = useState<string>('all'); // 'all', 'sem-1' ... 'sem-8'
+  const [selectedYearId, setSelectedYearId] = useState<string>(currentYearId || 'all'); // 'all', 'year-1', 'year-2', 'year-3', 'year-4'
+  const [selectedSemesterId, setSelectedSemesterId] = useState<string>(currentSemesterId || 'all'); // 'all', 'sem-1' ... 'sem-8'
   const [activeSubjectModal, setActiveSubjectModal] = useState<Subject | null>(null);
   const [subjectExamYearFilter, setSubjectExamYearFilter] = useState<string>('all');
   const [showCsitCatalogueModal, setShowCsitCatalogueModal] = useState<boolean>(false);
   const [csitCatalogueSearch, setCsitCatalogueSearch] = useState<string>('');
   const [showMeCatalogueModal, setShowMeCatalogueModal] = useState<boolean>(false);
   const [meCatalogueSearch, setMeCatalogueSearch] = useState<string>('');
+
+  // Synchronize with external navigation changes (browser back/forward or direct URLs)
+  React.useEffect(() => {
+    if (currentDeptId) {
+      setSelectedDeptId(currentDeptId);
+    }
+  }, [currentDeptId]);
+
+  React.useEffect(() => {
+    setSelectedYearId(currentYearId || 'all');
+  }, [currentYearId]);
+
+  React.useEffect(() => {
+    setSelectedSemesterId(currentSemesterId || 'all');
+  }, [currentSemesterId]);
+
+  React.useEffect(() => {
+    if (currentSubjectId) {
+      const match = subjects.find(
+        (s) =>
+          s.id === currentSubjectId ||
+          s.subjectCode.toLowerCase() === currentSubjectId.toLowerCase()
+      );
+      if (match) {
+        setActiveSubjectModal(match);
+      }
+    } else {
+      setActiveSubjectModal(null);
+    }
+  }, [currentSubjectId, subjects]);
+
+  const handleDepartmentSelect = (deptId: string) => {
+    setSelectedDeptId(deptId);
+    setSelectedYearId('all');
+    setSelectedSemesterId('all');
+    if (onDepartmentChange) {
+      onDepartmentChange(deptId);
+    }
+  };
+
+  const handleYearSelect = (yearId: string) => {
+    setSelectedYearId(yearId);
+    setSelectedSemesterId('all');
+    if (onYearChange) {
+      onYearChange(yearId);
+    }
+  };
+
+  const handleSemesterSelect = (semId: string) => {
+    setSelectedSemesterId(semId);
+    if (onSemesterChange) {
+      onSemesterChange(semId);
+    }
+  };
+
+  const handleOpenSubjectModal = (subject: Subject) => {
+    setActiveSubjectModal(subject);
+    if (onOpenSubject) {
+      onOpenSubject(subject);
+    }
+  };
+
+  const handleCloseSubjectModal = () => {
+    setActiveSubjectModal(null);
+    setSubjectExamYearFilter('all');
+    if (onCloseSubject) {
+      onCloseSubject();
+    }
+  };
 
   const filteredDepts = departments.filter((d) => {
     const q = searchQuery.toLowerCase();
@@ -202,11 +290,7 @@ export const DepartmentsPage: React.FC<DepartmentsPageProps> = ({
               return (
                 <button
                   key={dept.id}
-                  onClick={() => {
-                    setSelectedDeptId(dept.id);
-                    setSelectedYearId('all');
-                    setSelectedSemesterId('all');
-                  }}
+                  onClick={() => handleDepartmentSelect(dept.id)}
                   className={`w-full text-left p-4 rounded-2xl border transition-all flex items-center justify-between gap-3 magnetic-target relative overflow-hidden ${
                     isSelected
                       ? 'bg-gradient-to-r from-blue-50/95 via-cyan-50/90 to-emerald-50/80 border-[#0e0fed] shadow-md ring-2 ring-[#0e0fed]/25'
@@ -392,10 +476,7 @@ export const DepartmentsPage: React.FC<DepartmentsPageProps> = ({
 
                     <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
                       <button
-                        onClick={() => {
-                          setSelectedYearId('all');
-                          setSelectedSemesterId('all');
-                        }}
+                        onClick={() => handleYearSelect('all')}
                         className={`p-2.5 rounded-xl text-xs font-black transition-all border magnetic-target text-center ${
                           selectedYearId === 'all'
                             ? 'bg-[#0e0fed] text-white border-[#0e0fed] shadow-sm'
@@ -413,10 +494,7 @@ export const DepartmentsPage: React.FC<DepartmentsPageProps> = ({
                         return (
                           <button
                             key={yr.id}
-                            onClick={() => {
-                              setSelectedYearId(yr.id);
-                              setSelectedSemesterId('all');
-                            }}
+                            onClick={() => handleYearSelect(yr.id)}
                             className={`p-2.5 rounded-xl text-xs font-black transition-all border magnetic-target text-center flex flex-col items-center justify-center ${
                               isYearActive
                                 ? 'bg-gradient-to-r from-[#0e0fed] to-[#2563eb] text-white border-[#0e0fed] shadow-sm'
@@ -444,7 +522,7 @@ export const DepartmentsPage: React.FC<DepartmentsPageProps> = ({
                       </span>
                       {selectedSemesterId !== 'all' && (
                         <button
-                          onClick={() => setSelectedSemesterId('all')}
+                          onClick={() => handleSemesterSelect('all')}
                           className="text-xs text-[#0e0fed] hover:underline font-extrabold"
                         >
                           View All Semesters
@@ -465,7 +543,7 @@ export const DepartmentsPage: React.FC<DepartmentsPageProps> = ({
                         return (
                           <button
                             key={sem.id}
-                            onClick={() => setSelectedSemesterId(isSelectedSem ? 'all' : sem.id)}
+                            onClick={() => handleSemesterSelect(isSelectedSem ? 'all' : sem.id)}
                             className={`p-3.5 rounded-2xl border text-left transition-all relative overflow-hidden flex flex-col justify-between magnetic-target ${
                               isSelectedSem
                                 ? 'bg-gradient-to-br from-blue-50/95 via-cyan-50/90 to-emerald-50/90 border-[#0e0fed] shadow-md ring-2 ring-[#0e0fed]/20'
@@ -564,7 +642,7 @@ export const DepartmentsPage: React.FC<DepartmentsPageProps> = ({
                                       subject={subject}
                                       semNumber={sem.semesterNumber}
                                       paperCount={getPapersForSubject(subject.id).length}
-                                      onOpenSubjectPapers={() => setActiveSubjectModal(subject)}
+                                      onOpenSubjectPapers={() => handleOpenSubjectModal(subject)}
                                     />
                                   ))}
                                 </div>
@@ -596,7 +674,7 @@ export const DepartmentsPage: React.FC<DepartmentsPageProps> = ({
                                         subject={subject}
                                         semNumber={sem.semesterNumber}
                                         paperCount={getPapersForSubject(subject.id).length}
-                                        onOpenSubjectPapers={() => setActiveSubjectModal(subject)}
+                                        onOpenSubjectPapers={() => handleOpenSubjectModal(subject)}
                                       />
                                     ))}
                                   </div>
@@ -705,7 +783,7 @@ export const DepartmentsPage: React.FC<DepartmentsPageProps> = ({
                                       subject={subject}
                                       semNumber={sem.semesterNumber}
                                       paperCount={getPapersForSubject(subject.id).length}
-                                      onOpenSubjectPapers={() => setActiveSubjectModal(subject)}
+                                      onOpenSubjectPapers={() => handleOpenSubjectModal(subject)}
                                     />
                                   ))}
                                 </div>
@@ -904,10 +982,7 @@ export const DepartmentsPage: React.FC<DepartmentsPageProps> = ({
               </div>
 
               <button
-                onClick={() => {
-                  setActiveSubjectModal(null);
-                  setSubjectExamYearFilter('all');
-                }}
+                onClick={handleCloseSubjectModal}
                 className="p-2 rounded-xl text-slate-400 hover:text-slate-800 hover:bg-slate-100 transition-colors magnetic-target"
                 data-magnetic="true"
                 aria-label="Close modal"
@@ -1017,7 +1092,7 @@ export const DepartmentsPage: React.FC<DepartmentsPageProps> = ({
                 MJPRU PYQ &bull; Independent Question Paper Library
               </span>
               <button
-                onClick={() => setActiveSubjectModal(null)}
+                onClick={handleCloseSubjectModal}
                 className="font-black text-[#0e0fed] hover:underline"
               >
                 Close
@@ -1110,8 +1185,8 @@ export const DepartmentsPage: React.FC<DepartmentsPageProps> = ({
                       <div
                         key={subject.id}
                         onClick={() => {
-                          setActiveSubjectModal(subject);
                           setShowCsitCatalogueModal(false);
+                          handleOpenSubjectModal(subject);
                         }}
                         className="p-4 rounded-2xl bg-white border border-slate-200 hover:border-[#0e0fed] hover:shadow-md transition-all cursor-pointer group magnetic-target flex flex-col justify-between"
                         data-magnetic="true"
@@ -1258,7 +1333,7 @@ export const DepartmentsPage: React.FC<DepartmentsPageProps> = ({
                         key={subject.id}
                         onClick={() => {
                           setShowMeCatalogueModal(false);
-                          setActiveSubjectModal(subject);
+                          handleOpenSubjectModal(subject);
                         }}
                         className="p-4 rounded-2xl bg-white border border-slate-200 hover:border-[#0e0fed] hover:shadow-md transition-all cursor-pointer group magnetic-target flex flex-col justify-between"
                         data-magnetic="true"

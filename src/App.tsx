@@ -17,9 +17,23 @@ import { AdminDashboard } from './pages/AdminDashboard';
 import { dataStore } from './lib/dataStore';
 import { Department, Subject, QuestionPaper, SystemStatistics } from './types';
 import { downloadQuestionPaperPdf } from './utils/pdfGenerator';
+import { 
+  parseRoute, 
+  buildRouteUrl, 
+  getParentRoute, 
+  resolvePaper, 
+  getPageTitle, 
+  NavigationRoute 
+} from './utils/navigation';
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState<string>('home');
+  // Current route parsed from URL
+  const [currentRoute, setCurrentRoute] = useState<NavigationRoute>(() =>
+    parseRoute(window.location.pathname, window.location.search)
+  );
+
+  const activeTab = currentRoute.tab;
+
   const [departments, setDepartments] = useState<Department[]>([]);
   const [subjects, setSubjects] = useState<Subject[]>([]);
   const [papers, setPapers] = useState<QuestionPaper[]>([]);
@@ -31,8 +45,12 @@ export default function App() {
   });
 
   // Selected filters passed to Library
-  const [targetDepartmentId, setTargetDepartmentId] = useState<string>('all');
-  const [targetSearchQuery, setTargetSearchQuery] = useState<string>('');
+  const [targetDepartmentId, setTargetDepartmentId] = useState<string>(
+    currentRoute.deptId || 'all'
+  );
+  const [targetSearchQuery, setTargetSearchQuery] = useState<string>(
+    currentRoute.searchQuery || ''
+  );
 
   // Active viewing paper for PDF Modal
   const [viewingPaper, setViewingPaper] = useState<QuestionPaper | null>(null);
@@ -54,36 +72,181 @@ export default function App() {
     refreshData();
   }, []);
 
+  // Browser navigation engine: handle popstate (Back and Forward buttons)
+  useEffect(() => {
+    // Ensure initial entry has state tracking
+    if (!window.history.state || !(window.history.state as any).isAppHistory) {
+      const initial = parseRoute(window.location.pathname, window.location.search);
+      window.history.replaceState({ isAppHistory: true, route: initial }, '', window.location.href);
+    }
+
+    const onPopState = () => {
+      const poppedRoute = parseRoute(window.location.pathname, window.location.search);
+      setCurrentRoute(poppedRoute);
+
+      if (poppedRoute.deptId) {
+        setTargetDepartmentId(poppedRoute.deptId);
+      }
+      if (poppedRoute.searchQuery !== undefined) {
+        setTargetSearchQuery(poppedRoute.searchQuery);
+      }
+
+      // Close or open PDF modal in sync with URL
+      if (!poppedRoute.paperId) {
+        setViewingPaper(null);
+      } else if (papers.length > 0) {
+        const found = resolvePaper(poppedRoute.paperId, papers);
+        if (found) setViewingPaper(found);
+      }
+    };
+
+    window.addEventListener('popstate', onPopState);
+    return () => window.removeEventListener('popstate', onPopState);
+  }, [papers]);
+
+  // Synchronize viewingPaper when papers data is loaded from dataStore
+  useEffect(() => {
+    if (currentRoute.paperId && !viewingPaper && papers.length > 0) {
+      const found = resolvePaper(currentRoute.paperId, papers);
+      if (found) setViewingPaper(found);
+    }
+  }, [currentRoute.paperId, papers, viewingPaper]);
+
+  // Document Title Synchronization
+  useEffect(() => {
+    const activeDeptObj = departments.find(
+      (d) => d.id === currentRoute.deptId || d.code.toLowerCase() === currentRoute.deptId?.toLowerCase()
+    );
+    const activeSemObj = dataStore.getSemesters().find((s) => s.id === currentRoute.semId);
+    const activeSubObj = subjects.find(
+      (s) => s.id === currentRoute.subjectId || s.subjectCode.toLowerCase() === currentRoute.subjectId?.toLowerCase()
+    );
+
+    document.title = getPageTitle(currentRoute, {
+      deptName: activeDeptObj?.name,
+      deptCode: activeDeptObj?.code,
+      semName: activeSemObj?.name,
+      subName: activeSubObj?.subjectName,
+      subCode: activeSubObj?.subjectCode,
+      paperTitle: viewingPaper?.subjectName || activeSubObj?.subjectName,
+    });
+  }, [currentRoute, departments, subjects, viewingPaper]);
+
+  // Programmatic navigation handler (creates history entries via pushState)
+  const navigate = (
+    next: Partial<NavigationRoute>,
+    options?: { replace?: boolean; scroll?: boolean }
+  ) => {
+    setCurrentRoute((prev) => {
+      const merged: NavigationRoute = {
+        tab: next.tab || prev.tab || 'home',
+        deptId: next.deptId !== undefined ? next.deptId : prev.deptId,
+        yearId: next.yearId !== undefined ? next.yearId : prev.yearId,
+        semId: next.semId !== undefined ? next.semId : prev.semId,
+        subjectId: next.subjectId !== undefined ? next.subjectId : prev.subjectId,
+        paperId: next.paperId !== undefined ? next.paperId : prev.paperId,
+        searchQuery: next.searchQuery !== undefined ? next.searchQuery : prev.searchQuery,
+        isModal: Boolean(next.paperId || next.subjectId),
+      };
+
+      // Reset nested drill-downs when switching tabs
+      if (next.tab && next.tab !== prev.tab) {
+        if (next.tab !== 'departments' && next.tab !== 'library') {
+          merged.deptId = undefined;
+          merged.yearId = undefined;
+          merged.semId = undefined;
+          merged.subjectId = undefined;
+        }
+        if (next.paperId === undefined) {
+          merged.paperId = undefined;
+        }
+      }
+
+      const newUrl = buildRouteUrl(merged);
+      const currentUrl = window.location.pathname + window.location.search;
+      const historyState = { isAppHistory: true, route: merged };
+
+      if (options?.replace) {
+        window.history.replaceState(historyState, '', newUrl);
+      } else if (newUrl !== currentUrl) {
+        window.history.pushState(historyState, '', newUrl);
+      }
+
+      if (merged.deptId) {
+        setTargetDepartmentId(merged.deptId);
+      }
+      if (merged.searchQuery !== undefined) {
+        setTargetSearchQuery(merged.searchQuery);
+      }
+
+      if (options?.scroll !== false && next.tab && next.tab !== prev.tab) {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      return merged;
+    });
+  };
+
+  // Back action helper: pops browser history or steps up to parent route
+  const goBack = () => {
+    if (window.history.state && (window.history.state as any).isAppHistory) {
+      window.history.back();
+    } else {
+      const parent = getParentRoute(currentRoute);
+      if (parent) {
+        navigate(parent, { replace: true });
+      } else {
+        window.history.back();
+      }
+    }
+  };
+
   // Keyboard shortcut Ctrl+K / Cmd+K to jump to search in library
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
         e.preventDefault();
-        setActiveTab('library');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        navigate({ tab: 'library' });
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
+  }, [currentRoute]);
 
   // Handlers
   const handleSelectDepartmentFromHome = (deptId: string) => {
-    setTargetDepartmentId(deptId);
-    setActiveTab('library');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    navigate({
+      tab: 'departments',
+      deptId,
+      yearId: 'all',
+      semId: 'all',
+      subjectId: undefined,
+      paperId: undefined,
+    });
   };
 
   const handleNavigateTab = (tab: string, query?: string) => {
-    if (query !== undefined) {
-      setTargetSearchQuery(query);
-    }
-    setActiveTab(tab);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    navigate({
+      tab: tab as any,
+      searchQuery: query,
+      paperId: undefined,
+      subjectId: undefined,
+    });
   };
 
   const handleViewPaper = (paper: QuestionPaper) => {
     setViewingPaper(paper);
+    navigate({
+      paperId: paper.id,
+    });
+  };
+
+  const handleClosePdfViewer = () => {
+    if (currentRoute.paperId) {
+      goBack();
+    } else {
+      setViewingPaper(null);
+    }
   };
 
   const handleDownloadPaper = (paper: QuestionPaper) => {
@@ -185,10 +348,64 @@ export default function App() {
             papers={papers}
             academicYears={dataStore.getAcademicYears()}
             semesters={dataStore.getSemesters()}
+            currentDeptId={currentRoute.deptId || null}
+            currentYearId={currentRoute.yearId || 'all'}
+            currentSemesterId={currentRoute.semId || 'all'}
+            currentSubjectId={currentRoute.subjectId || null}
+            onDepartmentChange={(deptId) => {
+              navigate({
+                tab: 'departments',
+                deptId,
+                yearId: 'all',
+                semId: 'all',
+                subjectId: undefined,
+                paperId: undefined,
+              });
+            }}
+            onYearChange={(yearId) => {
+              navigate({
+                tab: 'departments',
+                deptId: currentRoute.deptId,
+                yearId,
+                semId: 'all',
+                subjectId: undefined,
+                paperId: undefined,
+              });
+            }}
+            onSemesterChange={(semId) => {
+              navigate({
+                tab: 'departments',
+                deptId: currentRoute.deptId,
+                yearId: currentRoute.yearId || 'all',
+                semId,
+                subjectId: undefined,
+                paperId: undefined,
+              });
+            }}
+            onOpenSubject={(subject) => {
+              navigate({
+                tab: 'departments',
+                deptId: subject.departmentId || currentRoute.deptId,
+                yearId: subject.academicYearId || currentRoute.yearId || 'all',
+                semId: subject.semesterId || currentRoute.semId,
+                subjectId: subject.id,
+                paperId: undefined,
+              });
+            }}
+            onCloseSubject={() => {
+              if (currentRoute.subjectId) {
+                goBack();
+              }
+            }}
             onSelectDepartmentForLibrary={(deptId) => {
-              setTargetDepartmentId(deptId);
-              setActiveTab('library');
-              window.scrollTo({ top: 0, behavior: 'smooth' });
+              navigate({
+                tab: 'library',
+                deptId,
+                yearId: 'all',
+                semId: 'all',
+                subjectId: undefined,
+                paperId: undefined,
+              });
             }}
             onViewPaper={handleViewPaper}
             onDownloadPaper={handleDownloadPaper}
@@ -221,8 +438,7 @@ export default function App() {
         {activeTab === 'about' && (
           <AboutPage
             onNavigateToUpload={() => {
-              setActiveTab('admin');
-              window.scrollTo({ top: 0, behavior: 'smooth' });
+              navigate({ tab: 'admin' });
             }}
           />
         )}
@@ -256,7 +472,7 @@ export default function App() {
       <PdfViewerModal
         paper={viewingPaper}
         isOpen={Boolean(viewingPaper)}
-        onClose={() => setViewingPaper(null)}
+        onClose={handleClosePdfViewer}
         onDownload={handleDownloadPaper}
       />
     </div>
