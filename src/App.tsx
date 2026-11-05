@@ -13,9 +13,7 @@ import { DepartmentsPage } from './pages/DepartmentsPage';
 import { PyqLibraryPage } from './pages/PyqLibraryPage';
 import { RecentlyUploadedPage } from './pages/RecentlyUploadedPage';
 import { AboutPage } from './pages/AboutPage';
-import { ContactPage } from './pages/ContactPage';
 import { AdminDashboard } from './pages/AdminDashboard';
-import { PageTransition } from './components/common/PageTransition';
 import { dataStore } from './lib/dataStore';
 import { Department, Subject, QuestionPaper, SystemStatistics } from './types';
 import { downloadQuestionPaperPdf } from './utils/pdfGenerator';
@@ -328,149 +326,143 @@ export default function App() {
         onOpenSearch={() => handleNavigateTab('library')}
       />
 
-      {/* Main Content Area with Smooth Page Transitions */}
+      {/* Main Content Area */}
       <main className="flex-1">
-        <PageTransition transitionKey={activeTab}>
-          {activeTab === 'home' && (
-            <HomePage
-              departments={departments}
-              recentPapers={papers}
-              allPapers={papers}
-              statistics={statistics}
-              onSelectDepartment={handleSelectDepartmentFromHome}
-              onViewPaper={handleViewPaper}
-              onDownloadPaper={handleDownloadPaper}
-              onNavigateTab={handleNavigateTab}
-            />
-          )}
+        {activeTab === 'home' && (
+          <HomePage
+            departments={departments}
+            recentPapers={papers}
+            allPapers={papers}
+            statistics={statistics}
+            onSelectDepartment={handleSelectDepartmentFromHome}
+            onViewPaper={handleViewPaper}
+            onDownloadPaper={handleDownloadPaper}
+            onNavigateTab={handleNavigateTab}
+          />
+        )}
 
-          {activeTab === 'departments' && (
-            <DepartmentsPage
-              departments={departments}
-              subjects={subjects}
-              papers={papers}
-              academicYears={dataStore.getAcademicYears()}
-              semesters={dataStore.getSemesters()}
-              currentDeptId={currentRoute.deptId || null}
-              currentYearId={currentRoute.yearId || 'all'}
-              currentSemesterId={currentRoute.semId || 'all'}
-              currentSubjectId={currentRoute.subjectId || null}
-              onDepartmentChange={(deptId) => {
-                navigate({
-                  tab: 'departments',
-                  deptId,
-                  yearId: 'all',
-                  semId: 'all',
-                  subjectId: undefined,
-                  paperId: undefined,
-                });
-              }}
-              onYearChange={(yearId) => {
-                navigate({
-                  tab: 'departments',
-                  deptId: currentRoute.deptId,
-                  yearId,
-                  semId: 'all',
-                  subjectId: undefined,
-                  paperId: undefined,
-                });
-              }}
-              onSemesterChange={(semId) => {
-                navigate({
-                  tab: 'departments',
-                  deptId: currentRoute.deptId,
-                  yearId: currentRoute.yearId || 'all',
-                  semId,
-                  subjectId: undefined,
-                  paperId: undefined,
-                });
-              }}
-              onOpenSubject={(subject) => {
-                navigate({
-                  tab: 'departments',
-                  deptId: subject.departmentId || currentRoute.deptId,
-                  yearId: subject.academicYearId || currentRoute.yearId || 'all',
-                  semId: subject.semesterId || currentRoute.semId,
-                  subjectId: subject.id,
-                  paperId: undefined,
-                });
-              }}
-              onCloseSubject={() => {
-                if (currentRoute.subjectId) {
-                  goBack();
-                }
-              }}
-              onSelectDepartmentForLibrary={(deptId) => {
-                navigate({
-                  tab: 'library',
-                  deptId,
-                  yearId: 'all',
-                  semId: 'all',
-                  subjectId: undefined,
-                  paperId: undefined,
-                });
-              }}
-              onViewPaper={handleViewPaper}
-              onDownloadPaper={handleDownloadPaper}
-            />
-          )}
+        {activeTab === 'departments' && (
+          <DepartmentsPage
+            departments={departments}
+            subjects={subjects}
+            papers={papers}
+            academicYears={dataStore.getAcademicYears()}
+            semesters={dataStore.getSemesters()}
+            currentDeptId={currentRoute.deptId || null}
+            currentYearId={currentRoute.yearId || 'all'}
+            currentSemesterId={currentRoute.semId || 'all'}
+            currentSubjectId={currentRoute.subjectId || null}
+            onDepartmentChange={(deptId) => {
+              navigate({
+                tab: 'departments',
+                deptId,
+                yearId: 'all',
+                semId: 'all',
+                subjectId: undefined,
+                paperId: undefined,
+              });
+            }}
+            onYearChange={(yearId) => {
+              navigate({
+                tab: 'departments',
+                deptId: currentRoute.deptId,
+                yearId,
+                semId: 'all',
+                subjectId: undefined,
+                paperId: undefined,
+              });
+            }}
+            onSemesterChange={(semId) => {
+              navigate({
+                tab: 'departments',
+                deptId: currentRoute.deptId,
+                yearId: currentRoute.yearId || 'all',
+                semId,
+                subjectId: undefined,
+                paperId: undefined,
+              });
+            }}
+            onOpenSubject={(subject) => {
+              navigate({
+                tab: 'departments',
+                deptId: subject.departmentId || currentRoute.deptId,
+                yearId: subject.academicYearId || currentRoute.yearId || 'all',
+                semId: subject.semesterId || currentRoute.semId,
+                subjectId: subject.id,
+                paperId: undefined,
+              });
+            }}
+            onCloseSubject={() => {
+              if (currentRoute.subjectId) {
+                goBack();
+              }
+            }}
+            onSelectDepartmentForLibrary={(deptId) => {
+              navigate({
+                tab: 'library',
+                deptId,
+                yearId: 'all',
+                semId: 'all',
+                subjectId: undefined,
+                paperId: undefined,
+              });
+            }}
+            onViewPaper={handleViewPaper}
+            onDownloadPaper={handleDownloadPaper}
+          />
+        )}
 
-          {activeTab === 'library' && (
-            <PyqLibraryPage
-              departments={departments}
-              academicYears={dataStore.getAcademicYears()}
-              semesters={dataStore.getSemesters()}
-              subjects={subjects}
-              papers={papers}
-              onViewPaper={handleViewPaper}
-              onDownloadPaper={handleDownloadPaper}
-              initialDepartmentId={targetDepartmentId}
-              initialQuery={targetSearchQuery}
-            />
-          )}
+        {activeTab === 'library' && (
+          <PyqLibraryPage
+            departments={departments}
+            academicYears={dataStore.getAcademicYears()}
+            semesters={dataStore.getSemesters()}
+            subjects={subjects}
+            papers={papers}
+            onViewPaper={handleViewPaper}
+            onDownloadPaper={handleDownloadPaper}
+            initialDepartmentId={targetDepartmentId}
+            initialQuery={targetSearchQuery}
+          />
+        )}
 
-          {activeTab === 'recent' && (
-            <RecentlyUploadedPage
-              papers={papers}
-              departments={departments}
-              onViewPaper={handleViewPaper}
-              onDownloadPaper={handleDownloadPaper}
-            />
-          )}
+        {activeTab === 'recent' && (
+          <RecentlyUploadedPage
+            papers={papers}
+            departments={departments}
+            onViewPaper={handleViewPaper}
+            onDownloadPaper={handleDownloadPaper}
+          />
+        )}
 
-          {activeTab === 'about' && (
-            <AboutPage
-              onNavigateToUpload={() => {
-                navigate({ tab: 'admin' });
-              }}
-            />
-          )}
+        {activeTab === 'about' && (
+          <AboutPage
+            onNavigateToUpload={() => {
+              navigate({ tab: 'admin' });
+            }}
+          />
+        )}
 
-          {activeTab === 'contact' && (
-            <ContactPage onNavigateTab={handleNavigateTab} />
-          )}
-
-          {activeTab === 'admin' && (
-            <AdminDashboard
-              departments={departments}
-              subjects={subjects}
-              papers={papers}
-              academicYears={dataStore.getAcademicYears()}
-              semesters={dataStore.getSemesters()}
-              onAddDepartment={handleAddDepartment}
-              onUpdateDepartment={handleUpdateDepartment}
-              onDeleteDepartment={handleDeleteDepartment}
-              onAddSubject={handleAddSubject}
-              onUpdateSubject={handleUpdateSubject}
-              onDeleteSubject={handleDeleteSubject}
-              onAddPaper={handleAddPaper}
-              onUpdatePaper={handleUpdatePaper}
-              onDeletePaper={handleDeletePaper}
-              onResetData={handleResetData}
-              onViewPaper={handleViewPaper}
-            />
-          )}
-        </PageTransition>
+        {activeTab === 'admin' && (
+          <AdminDashboard
+            departments={departments}
+            subjects={subjects}
+            papers={papers}
+            academicYears={dataStore.getAcademicYears()}
+            semesters={dataStore.getSemesters()}
+            onAddDepartment={handleAddDepartment}
+            onUpdateDepartment={handleUpdateDepartment}
+            onDeleteDepartment={handleDeleteDepartment}
+            onAddSubject={handleAddSubject}
+            onUpdateSubject={handleUpdateSubject}
+            onDeleteSubject={handleDeleteSubject}
+            onAddPaper={handleAddPaper}
+            onUpdatePaper={handleUpdatePaper}
+            onDeletePaper={handleDeletePaper}
+            onResetData={handleResetData}
+            onViewPaper={handleViewPaper}
+          />
+        )}
       </main>
 
       {/* Footer */}

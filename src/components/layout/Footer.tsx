@@ -82,14 +82,6 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
                   Examination Patterns &amp; Syllabus Guide
                 </button>
               </li>
-              <li>
-                <button 
-                  onClick={() => onNavigate('contact')} 
-                  className="hover:text-[#0e0fed] transition-colors text-left font-bold"
-                >
-                  Contact &amp; Student Helpdesk
-                </button>
-              </li>
             </ul>
           </div>
 
@@ -149,10 +141,6 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
           <div className="flex items-center gap-4">
             <button onClick={() => onNavigate('about')} className="hover:text-slate-800 font-bold">
               Academic Disclaimer
-            </button>
-            <span>&bull;</span>
-            <button onClick={() => onNavigate('contact')} className="hover:text-slate-800 font-bold">
-              Contact
             </button>
             <span>&bull;</span>
             <button onClick={() => onNavigate('admin')} className="hover:text-slate-800 font-bold">

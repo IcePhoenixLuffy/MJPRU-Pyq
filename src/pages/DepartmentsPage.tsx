@@ -30,7 +30,6 @@ import {
   formatSessionOptionLabel, 
   isSessionMatch 
 } from '../utils/helpers';
-import { PageTransition } from '../components/common/PageTransition';
 
 interface DepartmentsPageProps {
   departments: Department[];
@@ -341,11 +340,10 @@ export const DepartmentsPage: React.FC<DepartmentsPageProps> = ({
           </div>
         </div>
 
-        {/* Right Column: Detailed Department View with Page Transition */}
+        {/* Right Column: Detailed Department View */}
         <div className="lg:col-span-8">
           {activeDept ? (
-            <PageTransition transitionKey={`dept-${activeDept.id}`}>
-              <div className="bg-white/95 backdrop-blur-md border border-slate-200/90 rounded-3xl p-6 sm:p-8 space-y-6 shadow-sm relative overflow-hidden">
+            <div className="bg-white/95 backdrop-blur-md border border-slate-200/90 rounded-3xl p-6 sm:p-8 space-y-6 shadow-sm relative overflow-hidden">
               
               {/* Decorative top ribbon */}
               <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-[#8bf0ba] via-[#94f0f1] via-[#0e0fed] via-[#f2b1d8] to-[#ffdc6a]" />
@@ -592,13 +590,11 @@ export const DepartmentsPage: React.FC<DepartmentsPageProps> = ({
                     </div>
                   </div>
 
-                  {/* Render Subjects for Selected Semester or All Semesters with Page Transition */}
+                  {/* Render Subjects for Selected Semester or All Semesters */}
                   <div className="space-y-6 pt-2">
-                    <PageTransition transitionKey={`sem-${selectedSemesterId}-${selectedYearId}`}>
-                      <div className="space-y-6">
-                        {visibleSemesters
-                          .filter((sem) => selectedSemesterId === 'all' || sem.id === selectedSemesterId)
-                          .map((sem) => {
+                    {visibleSemesters
+                      .filter((sem) => selectedSemesterId === 'all' || sem.id === selectedSemesterId)
+                      .map((sem) => {
                         const semSubs = getSubjectsForSemester(sem.id);
                         const theoryCourses = semSubs.filter((s) => s.category === 'Theory' || (!s.category && !s.electiveGroup));
                         
@@ -836,8 +832,6 @@ export const DepartmentsPage: React.FC<DepartmentsPageProps> = ({
                           </div>
                         );
                       })}
-                      </div>
-                    </PageTransition>
                   </div>
 
                 </div>
@@ -938,8 +932,7 @@ export const DepartmentsPage: React.FC<DepartmentsPageProps> = ({
                 </div>
               )}
 
-              </div>
-            </PageTransition>
+            </div>
           ) : (
             <div className="text-center py-16 bg-white/90 border border-slate-200 rounded-3xl text-slate-600 text-sm">
               Select a department on the left to view details.
@@ -954,12 +947,11 @@ export const DepartmentsPage: React.FC<DepartmentsPageProps> = ({
       {/* ========================================================================= */}
       {activeSubjectModal && (
         <div 
-          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-slate-900/60 backdrop-blur-sm"
+          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200"
           role="dialog"
           aria-modal="true"
         >
-          <PageTransition transitionKey={`sub-${activeSubjectModal.id}`} className="w-full max-w-2xl">
-            <div className="relative w-full max-w-2xl bg-white border border-slate-200 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+          <div className="relative w-full max-w-2xl bg-white border border-slate-200 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
             
             {/* Top gradient ribbon */}
             <div className="h-1.5 w-full bg-gradient-to-r from-[#8bf0ba] via-[#94f0f1] via-[#0e0fed] via-[#f2b1d8] to-[#ffdc6a]" />
@@ -1113,8 +1105,7 @@ export const DepartmentsPage: React.FC<DepartmentsPageProps> = ({
               </button>
             </div>
 
-            </div>
-          </PageTransition>
+          </div>
         </div>
       )}
 
@@ -1123,12 +1114,11 @@ export const DepartmentsPage: React.FC<DepartmentsPageProps> = ({
       {/* ========================================================================= */}
       {showCsitCatalogueModal && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-slate-900/60 backdrop-blur-sm"
+          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200"
           role="dialog"
           aria-modal="true"
         >
-          <PageTransition transitionKey="csit-catalogue" className="w-full max-w-4xl">
-            <div className="relative w-full max-w-4xl bg-white border border-slate-200 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+          <div className="relative w-full max-w-4xl bg-white border border-slate-200 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
             {/* Top gradient ribbon */}
             <div className="h-1.5 w-full bg-gradient-to-r from-[#8bf0ba] via-[#94f0f1] via-[#0e0fed] via-[#f2b1d8] to-[#ffdc6a]" />
 
@@ -1276,15 +1266,13 @@ export const DepartmentsPage: React.FC<DepartmentsPageProps> = ({
               </button>
             </div>
           </div>
-          </PageTransition>
         </div>
       )}
 
       {/* Mechanical Engineering 12-Course Departmental Elective Catalogue Modal */}
       {showMeCatalogueModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
-          <PageTransition transitionKey="me-catalogue" className="w-full max-w-4xl">
-            <div className="bg-white border border-slate-200 rounded-3xl max-w-4xl w-full overflow-hidden shadow-2xl space-y-0 flex flex-col max-h-[90vh]">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fadeIn">
+          <div className="bg-white border border-slate-200 rounded-3xl max-w-4xl w-full overflow-hidden shadow-2xl space-y-0 flex flex-col max-h-[90vh]">
             
             {/* Modal Header */}
             <div className="p-6 bg-gradient-to-r from-blue-50/90 via-indigo-50/70 to-cyan-50/80 border-b border-blue-200 flex items-start justify-between gap-4">
@@ -1425,7 +1413,6 @@ export const DepartmentsPage: React.FC<DepartmentsPageProps> = ({
               </button>
             </div>
           </div>
-          </PageTransition>
         </div>
       )}
 

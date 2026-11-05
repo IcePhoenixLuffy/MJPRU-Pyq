@@ -15,7 +15,6 @@ import {
 import { QuestionPaper } from '../../types';
 import { resolvePdfUrl, downloadQuestionPaperPdf } from '../../utils/pdfGenerator';
 import { formatBytes, formatSessionOrYear } from '../../utils/helpers';
-import { PageTransition } from './PageTransition';
 
 interface PdfViewerModalProps {
   paper: QuestionPaper | null;
@@ -67,8 +66,7 @@ export const PdfViewerModal: React.FC<PdfViewerModalProps> = ({
       aria-modal="true"
       aria-labelledby="pdf-modal-title"
     >
-      <PageTransition transitionKey={paper.id} className="w-full max-w-6xl h-[94vh]">
-        <div className="relative w-full max-w-6xl h-[94vh] flex flex-col bg-slate-900 border border-slate-700/80 rounded-3xl shadow-2xl overflow-hidden">
+      <div className="relative w-full max-w-6xl h-[94vh] flex flex-col bg-slate-900 border border-slate-700/80 rounded-3xl shadow-2xl overflow-hidden">
         {/* Top 5-color accent ribbon */}
         <div className="h-1.5 w-full bg-gradient-to-r from-[#8bf0ba] via-[#94f0f1] via-[#0e0fed] via-[#f2b1d8] to-[#ffdc6a]" />
         
@@ -247,7 +245,6 @@ export const PdfViewerModal: React.FC<PdfViewerModalProps> = ({
           </div>
         </footer>
       </div>
-      </PageTransition>
     </div>
   );
 };

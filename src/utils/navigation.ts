@@ -1,7 +1,7 @@
 import { Department, Subject, QuestionPaper } from '../types';
 
 export interface NavigationRoute {
-  tab: 'home' | 'departments' | 'library' | 'recent' | 'about' | 'contact' | 'admin';
+  tab: 'home' | 'departments' | 'library' | 'recent' | 'about' | 'admin';
   deptId?: string;
   yearId?: string;
   semId?: string;
@@ -29,21 +29,12 @@ export function parseRoute(pathname: string, search: string): NavigationRoute {
     tab = 'recent';
   } else if (cleanPath.startsWith('/about')) {
     tab = 'about';
-  } else if (cleanPath.startsWith('/contact')) {
-    tab = 'contact';
   } else if (cleanPath.startsWith('/admin')) {
     tab = 'admin';
   } else {
     const tabParam = params.get('tab')?.toLowerCase();
-    if (
-      tabParam === 'departments' || 
-      tabParam === 'library' || 
-      tabParam === 'recent' || 
-      tabParam === 'about' || 
-      tabParam === 'contact' || 
-      tabParam === 'admin'
-    ) {
-      tab = tabParam as NavigationRoute['tab'];
+    if (tabParam === 'departments' || tabParam === 'library' || tabParam === 'recent' || tabParam === 'about' || tabParam === 'admin') {
+      tab = tabParam;
     }
   }
 
@@ -81,8 +72,6 @@ export function buildRouteUrl(route: NavigationRoute): string {
     basePath = '/recent';
   } else if (route.tab === 'about') {
     basePath = '/about';
-  } else if (route.tab === 'contact') {
-    basePath = '/contact';
   } else if (route.tab === 'admin') {
     basePath = '/admin';
   }
@@ -178,7 +167,7 @@ export function getParentRoute(route: NavigationRoute): NavigationRoute | null {
     };
   }
 
-  if (route.tab === 'recent' || route.tab === 'about' || route.tab === 'contact' || route.tab === 'admin') {
+  if (route.tab === 'recent' || route.tab === 'about' || route.tab === 'admin') {
     if (route.paperId) {
       return {
         ...route,
@@ -316,39 +305,9 @@ export function getPageTitle(
     return `About MJPRU PYQ – Academic Mission & Disclaimer`;
   }
 
-  if (route.tab === 'contact') {
-    return `Contact & Academic Inquiries | MJPRU PYQ`;
-  }
-
   if (route.tab === 'admin') {
     return `Administrator Portal | MJPRU PYQ`;
   }
 
   return base;
 }
-
-/**
- * Calculates a stable page-transition key for top-level navigation.
- * Note: filter criteria, dropdowns, and search queries (q) are deliberately excluded
- * so that changing filters or typing in search inputs does NOT replay page transition animations.
- */
-export function getPageTransitionKey(route: NavigationRoute): string {
-  return route.tab;
-}
-
-/**
- * Checks if a route update is an actual page navigation
- * (e.g. changing tabs, departments, semesters, or opening a subject)
- * rather than just changing search queries or in-page filters.
- */
-export function isPageNavigation(prev: NavigationRoute, next: NavigationRoute): boolean {
-  if (prev.tab !== next.tab) return true;
-  if (prev.tab === 'departments') {
-    if (prev.deptId !== next.deptId) return true;
-    if (prev.semId !== next.semId) return true;
-    if (prev.yearId !== next.yearId) return true;
-    if (prev.subjectId !== next.subjectId) return true;
-  }
-  return false;
-}
-
