@@ -1,7 +1,7 @@
 import { Department, Subject, QuestionPaper } from '../types';
 
 export interface NavigationRoute {
-  tab: 'home' | 'departments' | 'library' | 'recent' | 'about' | 'contact' | 'admin';
+  tab: 'home' | 'departments' | 'library' | 'recent' | 'about' | 'admin';
   deptId?: string;
   yearId?: string;
   semId?: string;
@@ -27,10 +27,8 @@ export function parseRoute(pathname: string, search: string): NavigationRoute {
     tab = 'library';
   } else if (cleanPath.startsWith('/recent')) {
     tab = 'recent';
-  } else if (cleanPath.startsWith('/about')) {
+  } else if (cleanPath.startsWith('/about') || cleanPath.startsWith('/contact')) {
     tab = 'about';
-  } else if (cleanPath.startsWith('/contact')) {
-    tab = 'contact';
   } else if (cleanPath.startsWith('/admin')) {
     tab = 'admin';
   } else {
@@ -40,7 +38,6 @@ export function parseRoute(pathname: string, search: string): NavigationRoute {
       tabParam === 'library' || 
       tabParam === 'recent' || 
       tabParam === 'about' || 
-      tabParam === 'contact' || 
       tabParam === 'admin'
     ) {
       tab = tabParam as NavigationRoute['tab'];
@@ -81,8 +78,6 @@ export function buildRouteUrl(route: NavigationRoute): string {
     basePath = '/recent';
   } else if (route.tab === 'about') {
     basePath = '/about';
-  } else if (route.tab === 'contact') {
-    basePath = '/contact';
   } else if (route.tab === 'admin') {
     basePath = '/admin';
   }

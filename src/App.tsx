@@ -13,7 +13,6 @@ import { DepartmentsPage } from './pages/DepartmentsPage';
 import { PyqLibraryPage } from './pages/PyqLibraryPage';
 import { RecentlyUploadedPage } from './pages/RecentlyUploadedPage';
 import { AboutPage } from './pages/AboutPage';
-import { ContactPage } from './pages/ContactPage';
 import { AdminDashboard } from './pages/AdminDashboard';
 import { PageTransition } from './components/common/PageTransition';
 import { dataStore } from './lib/dataStore';
@@ -444,10 +443,6 @@ export default function App() {
                 navigate({ tab: 'admin' });
               }}
             />
-          )}
-
-          {activeTab === 'contact' && (
-            <ContactPage onNavigateTab={handleNavigateTab} />
           )}
 
           {activeTab === 'admin' && (
