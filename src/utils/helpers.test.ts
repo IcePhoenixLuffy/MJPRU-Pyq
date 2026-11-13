@@ -108,30 +108,93 @@ test('INITIAL_SUBJECTS contains official Electrical Engineering 8-semester struc
   const { INITIAL_SUBJECTS } = await import('../lib/dataStore');
   const eeSubjects = INITIAL_SUBJECTS.filter((s) => s.departmentId === 'dept-ee');
   
-  // Total subjects in EE across Sem 1-8 (7+7+6+6+9+9+6+3 = 53)
-  assert.equal(eeSubjects.length, 53);
+  // Total subjects in EE across Sem 1-8: 8 + 7 + 6 + 6 + 10 + 10 + 16 + 11 = 74
+  assert.equal(eeSubjects.length, 74);
 
-  // Check key subject codes from user request
+  // Check semester distribution
+  assert.equal(eeSubjects.filter((s) => s.semesterId === 'sem-1').length, 8);
+  assert.equal(eeSubjects.filter((s) => s.semesterId === 'sem-2').length, 7);
+  assert.equal(eeSubjects.filter((s) => s.semesterId === 'sem-3').length, 6);
+  assert.equal(eeSubjects.filter((s) => s.semesterId === 'sem-4').length, 6);
+  assert.equal(eeSubjects.filter((s) => s.semesterId === 'sem-5').length, 10);
+  assert.equal(eeSubjects.filter((s) => s.semesterId === 'sem-6').length, 10);
+  assert.equal(eeSubjects.filter((s) => s.semesterId === 'sem-7').length, 16);
+  assert.equal(eeSubjects.filter((s) => s.semesterId === 'sem-8').length, 11);
+
+  // Check key subject codes and reassignments from syllabus audit
   const codes = new Set(eeSubjects.map((s) => s.subjectCode));
   assert.ok(codes.has('PH-101T'));
-  assert.ok(codes.has('EE-103N')); // Circuit Theory
-  assert.ok(codes.has('EL-102T')); // Basic Electronics Engineering
-  assert.ok(codes.has('EE-201N')); // Network Analysis & Synthesis
-  assert.ok(codes.has('EE-204N')); // Electrical Machines-II
-  assert.ok(codes.has('EE-307N')); // Introduction to Electrical Vehicles
-  assert.ok(codes.has('EE-314N')); // SCADA & Energy Management
-  assert.ok(codes.has('EE-401N')); // Protection & Switchgear
-  assert.ok(codes.has('EE-410P')); // Major Project
-  assert.ok(codes.has('EE-412P')); // Internship
-  assert.ok(codes.has('EE-420N')); // MOOC-I
+  assert.ok(codes.has('EE-101T')); // Added Basic Electrical Engineering (Sem 1)
+  assert.ok(codes.has('EE-103N')); // Circuit Theory (Sem 1)
+  assert.ok(codes.has('EI-101T')); // Basic Electronics Engineering (Sem 2, corrected from EL-102T)
+  assert.ok(codes.has('EI-201T')); // Electronic Devices & Circuits (Sem 3, corrected from EL-201T)
+  assert.ok(codes.has('EE-201T')); // Network Analysis & Synthesis (Sem 3, corrected from EE-201N)
+  assert.ok(codes.has('EE-203T')); // Electrical & Electronics Material (Sem 3, corrected from EE-203N)
+  assert.ok(codes.has('EE-205T')); // Electrical Measurement (Sem 3, corrected from EE-205N)
+  assert.ok(codes.has('EE-207T')); // Electrical Machine-I (Sem 3, corrected from EE-207N)
+  assert.ok(codes.has('EI-202T')); // Linear Integrated Circuits (Sem 4, corrected from EL-202T)
+  assert.ok(codes.has('EC-203T')); // Electromagnetic Theory (Sem 4, corrected from EE-208N)
+  assert.ok(codes.has('EE-204T')); // Electrical Machines-II (Sem 4, corrected from EE-204N)
+  assert.ok(codes.has('ME-212T')); // Added Industrial Management (Sem 4)
+  assert.ok(codes.has('EE-305T')); // Power System-I (moved to Sem 5, corrected from EE-206N)
+  assert.ok(codes.has('EE-307T')); // Added Instrumentation (Sem 5)
+  assert.ok(codes.has('EE-302T')); // Power System -II (moved to Sem 6, corrected from EE-305N)
+  assert.ok(codes.has('EE-308T')); // Digital & Non Linear Control System (Sem 6, corrected from EE-308N)
+  assert.ok(codes.has('EE-314N')); // SCADA & Energy Management (Sem 6)
+  assert.ok(codes.has('EE-401T')); // Protection & Switchgear (Sem 7, corrected from EE-401N)
+  assert.ok(codes.has('EE-403T')); // Added High Voltage Engineering (Sem 7)
+  assert.ok(codes.has('HU-402T')); // Added Engineering Economics (Sem 7)
+  assert.ok(codes.has('EE-411T')); // Pool Elective: Non Conventional Energy Sources (Sem 7)
+  assert.ok(codes.has('EE-413T')); // Pool Elective: Neural Networks & Fuzzy Logic (Sem 7)
+  assert.ok(codes.has('EE-415T')); // Pool Elective: Utilization of Electrical Power & Traction (Sem 7)
+  assert.ok(codes.has('HU-449T')); // Open Elective: Principal of Management (Sem 7)
+  assert.ok(codes.has('MA-491T')); // Open Elective: Operations Research (Sem 7)
+  assert.ok(codes.has('CY-491T')); // Open Elective: Charge Transfer in Plasma (Sem 7)
+  assert.ok(codes.has('HU-493T')); // Open Elective: Introduction to Psychology (Sem 7)
+  assert.ok(codes.has('CY-401T')); // Open Elective: Polymeric Materials and their Applications (Sem 7)
+  assert.ok(codes.has('PH-419T')); // Open Elective: Futuristic Materials (Sem 7)
+  assert.ok(codes.has('EE-402T')); // Electric Drives & Control (moved to Sem 8, corrected from EE-402N)
+  assert.ok(codes.has('EE-404T')); // Added Electrical Machine Design (Sem 8)
+  assert.ok(codes.has('EE-406T')); // Pool Elective: E.H.V AC & DC Transmission (Sem 8)
+  assert.ok(codes.has('EE-408T')); // Pool Elective: Power Quality (Sem 8)
+  assert.ok(codes.has('EE-410T')); // Pool Elective: Power System Operation & Control (Sem 8)
+  assert.ok(codes.has('PH-429T')); // Open Elective: Material Imperfection and Applications (Sem 8)
+  assert.ok(codes.has('HU-409T')); // Open Elective: Quantitative Methods in Economics (Sem 8)
+  assert.ok(codes.has('HU-407T')); // Open Elective: Foreign Trade (Sem 8)
+  assert.ok(codes.has('EE-406P')); // Project-II (Sem 8, corrected from EE-410P, credits 10)
+  assert.ok(codes.has('EE-412P')); // Internship (Sem 8)
+  assert.ok(codes.has('EE-420N')); // MOOC-I (Sem 8)
+
+  // Verify Project-II credits and name
+  const project2 = eeSubjects.find((s) => s.id === 'sub-ee-sem8-1');
+  assert.ok(project2);
+  assert.equal(project2.subjectCode, 'EE-406P');
+  assert.equal(project2.subjectName, 'Project-II');
+  assert.equal(project2.credits, 10);
+
+  // Verify Power System I and II semester assignments
+  const ps1 = eeSubjects.find((s) => s.id === 'sub-ee-sem4-5');
+  assert.ok(ps1);
+  assert.equal(ps1.semesterId, 'sem-5');
+  assert.equal(ps1.subjectCode, 'EE-305T');
+
+  const ps2 = eeSubjects.find((s) => s.id === 'sub-ee-sem5-3');
+  assert.ok(ps2);
+  assert.equal(ps2.semesterId, 'sem-6');
+  assert.equal(ps2.subjectCode, 'EE-302T');
+
+  const edc = eeSubjects.find((s) => s.id === 'sub-ee-sem7-2');
+  assert.ok(edc);
+  assert.equal(edc.semesterId, 'sem-8');
+  assert.equal(edc.subjectCode, 'EE-402T');
 });
 
 test('INITIAL_SUBJECTS contains official Electronics & Communication Engineering 8-semester structure with no lab courses', async () => {
   const { INITIAL_SUBJECTS } = await import('../lib/dataStore');
   const eceSubjects = INITIAL_SUBJECTS.filter((s) => s.departmentId === 'dept-ece');
 
-  // Total subjects in ECE across Sem 1-8: 7 + 6 + 6 + 6 + 6 + 6 + 14 + 12 = 63
-  assert.equal(eceSubjects.length, 63);
+  // Total subjects in ECE across Sem 1-8: 7 + 8 + 6 + 6 + 6 + 6 + 14 + 12 = 65
+  assert.equal(eceSubjects.length, 65);
 
   // Check semester-wise distribution
   const sem1 = eceSubjects.filter((s) => s.semesterId === 'sem-1');
@@ -144,7 +207,7 @@ test('INITIAL_SUBJECTS contains official Electronics & Communication Engineering
   const sem8 = eceSubjects.filter((s) => s.semesterId === 'sem-8');
 
   assert.equal(sem1.length, 7);
-  assert.equal(sem2.length, 6);
+  assert.equal(sem2.length, 8);
   assert.equal(sem3.length, 6);
   assert.equal(sem4.length, 6);
   assert.equal(sem5.length, 6);
@@ -159,22 +222,25 @@ test('INITIAL_SUBJECTS contains official Electronics & Communication Engineering
     assert.ok(!sub.subjectName.toLowerCase().includes('laboratory'), `Subject ${sub.subjectName} appears to be a lab`);
   }
 
-  // Check key codes from user request
+  // Check key codes from user request and corrections
   const codes = new Set(eceSubjects.map((s) => s.subjectCode));
   assert.ok(codes.has('PH-101T'));
   assert.ok(codes.has('EE-101T'));
   assert.ok(codes.has('CY-103T'));
-  assert.ok(codes.has('EL-101T'));
+  assert.ok(codes.has('EI-101T')); // Corrected from EL-101T (Sem 2)
+  assert.ok(codes.has('ME-107T')); // Added Engineering Graphics (Sem 2)
+  assert.ok(codes.has('ME-105T')); // Added Basic Mechanical Engineering (Sem 2)
   assert.ok(codes.has('HU-103T'));
   assert.ok(codes.has('EC-201T'));
   assert.ok(codes.has('EC-202T'));
-  assert.ok(codes.has('EC-204T'));
-  assert.ok(codes.has('EI-202T'));
+  assert.ok(codes.has('EC-204T')); // Digital Electronics
+  assert.ok(codes.has('EI-202T')); // Linear Integrated Circuits
+  assert.ok(codes.has('EE-202T')); // Elements of Electrical Machines
   assert.ok(codes.has('EC-301T'));
   assert.ok(codes.has('EC-302T'));
   assert.ok(codes.has('EC-415T'));
   assert.ok(codes.has('EC-403T'));
-  assert.ok(codes.has('EE-405T'));
+  assert.ok(codes.has('EC-405T')); // Microwave Engineering (corrected from EE-405T)
   assert.ok(codes.has('EC-407T')); // Industrial training
   assert.ok(codes.has('EC-409T')); // Seminar
   assert.ok(codes.has('EC-405P')); // Project-I
@@ -183,7 +249,7 @@ test('INITIAL_SUBJECTS contains official Electronics & Communication Engineering
   assert.ok(codes.has('EC-402P')); // Project-II
 
   // Pool Electives (Sem 7 and Sem 8)
-  assert.ok(codes.has('EC-433'));
+  assert.ok(codes.has('EC-433T')); // Digital system design (corrected from EC-433)
   assert.ok(codes.has('EC-452T'));
   assert.ok(codes.has('ME-473T'));
   assert.ok(codes.has('CS-402T'));

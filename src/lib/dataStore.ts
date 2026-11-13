@@ -187,10 +187,12 @@ export const INITIAL_SUBJECTS: Subject[] = [
   // Semester 2 (Theory Courses)
   { id: 'sub-ece-sem2-1', departmentId: 'dept-ece', semesterId: 'sem-2', subjectName: 'Engineering Physics-II', subjectCode: 'PH-102T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
   { id: 'sub-ece-sem2-2', departmentId: 'dept-ece', semesterId: 'sem-2', subjectName: 'Engineering Mathematics-II', subjectCode: 'MA-102T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
-  { id: 'sub-ece-sem2-3', departmentId: 'dept-ece', semesterId: 'sem-2', subjectName: 'Basic Electronics Engineering', subjectCode: 'EL-101T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ece-sem2-3', departmentId: 'dept-ece', semesterId: 'sem-2', subjectName: 'Basic Electronics Engineering', subjectCode: 'EI-101T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
   { id: 'sub-ece-sem2-4', departmentId: 'dept-ece', semesterId: 'sem-2', subjectName: 'Communicative English', subjectCode: 'HU-101T', category: 'Theory', credits: 3, createdAt: '2024-01-01' },
   { id: 'sub-ece-sem2-5', departmentId: 'dept-ece', semesterId: 'sem-2', subjectName: 'Computer Fundamentals & Programming', subjectCode: 'CS-101T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
   { id: 'sub-ece-sem2-6', departmentId: 'dept-ece', semesterId: 'sem-2', subjectName: 'Engineering Economics', subjectCode: 'HU-103T', category: 'Theory', credits: 3, createdAt: '2024-01-01' },
+  { id: 'sub-ece-sem2-me107', departmentId: 'dept-ece', semesterId: 'sem-2', subjectName: 'Engineering Graphics', subjectCode: 'ME-107T', category: 'Theory', credits: 2, createdAt: '2024-01-01' },
+  { id: 'sub-ece-sem2-me105', departmentId: 'dept-ece', semesterId: 'sem-2', subjectName: 'Basic Mechanical Engineering', subjectCode: 'ME-105T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
 
   // Semester 3 (Theory Courses)
   { id: 'sub-ece-sem3-1', departmentId: 'dept-ece', semesterId: 'sem-3', subjectName: 'Electronics engineering materials', subjectCode: 'EC-201T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
@@ -202,11 +204,11 @@ export const INITIAL_SUBJECTS: Subject[] = [
 
   // Semester 4 (Theory Courses)
   { id: 'sub-ece-sem4-1', departmentId: 'dept-ece', semesterId: 'sem-4', subjectName: 'Signal and System', subjectCode: 'EC-202T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
-  { id: 'sub-ece-sem4-2', departmentId: 'dept-ece', semesterId: 'sem-4', subjectName: 'Digital Electronic', subjectCode: 'EC-204T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
-  { id: 'sub-ece-sem4-3', departmentId: 'dept-ece', semesterId: 'sem-4', subjectName: 'Leaner Integrated Circuits', subjectCode: 'EI-202T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ece-sem4-2', departmentId: 'dept-ece', semesterId: 'sem-4', subjectName: 'Digital Electronics', subjectCode: 'EC-204T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ece-sem4-3', departmentId: 'dept-ece', semesterId: 'sem-4', subjectName: 'Linear Integrated Circuits', subjectCode: 'EI-202T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
   { id: 'sub-ece-sem4-4', departmentId: 'dept-ece', semesterId: 'sem-4', subjectName: 'Industrial Management', subjectCode: 'ME-212T', category: 'Theory', credits: 3, createdAt: '2024-01-01' },
   { id: 'sub-ece-sem4-5', departmentId: 'dept-ece', semesterId: 'sem-4', subjectName: 'Computer Organization', subjectCode: 'CS-204T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
-  { id: 'sub-ece-sem4-6', departmentId: 'dept-ece', semesterId: 'sem-4', subjectName: 'Element of Electrical Machines', subjectCode: 'EE-202T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ece-sem4-6', departmentId: 'dept-ece', semesterId: 'sem-4', subjectName: 'Elements of Electrical Machines', subjectCode: 'EE-202T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
 
   // Semester 5 (Theory Courses)
   { id: 'sub-ece-sem5-1', departmentId: 'dept-ece', semesterId: 'sem-5', subjectName: 'Analog Communication Systems', subjectCode: 'EC-301T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
@@ -227,13 +229,13 @@ export const INITIAL_SUBJECTS: Subject[] = [
   // Semester 7 (Theory Courses and Academic Components)
   { id: 'sub-ece-sem7-1', departmentId: 'dept-ece', semesterId: 'sem-7', subjectName: 'Mobile communication', subjectCode: 'EC-415T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
   { id: 'sub-ece-sem7-2', departmentId: 'dept-ece', semesterId: 'sem-7', subjectName: 'VLSI design & circuit', subjectCode: 'EC-403T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
-  { id: 'sub-ece-sem7-3', departmentId: 'dept-ece', semesterId: 'sem-7', subjectName: 'Microwave engineering', subjectCode: 'EE-405T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ece-sem7-3', departmentId: 'dept-ece', semesterId: 'sem-7', subjectName: 'Microwave Engineering', subjectCode: 'EC-405T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
   { id: 'sub-ece-sem7-4', departmentId: 'dept-ece', semesterId: 'sem-7', subjectName: 'Industrial training', subjectCode: 'EC-407T', category: 'Training', credits: 2, createdAt: '2024-01-01' },
   { id: 'sub-ece-sem7-5', departmentId: 'dept-ece', semesterId: 'sem-7', subjectName: 'Seminar', subjectCode: 'EC-409T', category: 'Seminar', credits: 2, createdAt: '2024-01-01' },
   { id: 'sub-ece-sem7-6', departmentId: 'dept-ece', semesterId: 'sem-7', subjectName: 'Project-I', subjectCode: 'EC-405P', category: 'Project', credits: 4, createdAt: '2024-01-01' },
 
   // Semester 7 Pool Elective Options
-  { id: 'sub-ece-sem7-pool-1', departmentId: 'dept-ece', semesterId: 'sem-7', subjectName: 'Digital system design', subjectCode: 'EC-433', category: 'Elective', electiveGroup: 'Pool Elective', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ece-sem7-pool-1', departmentId: 'dept-ece', semesterId: 'sem-7', subjectName: 'Digital system design', subjectCode: 'EC-433T', category: 'Elective', electiveGroup: 'Pool Elective', credits: 4, createdAt: '2024-01-01' },
   { id: 'sub-ece-sem7-pool-2', departmentId: 'dept-ece', semesterId: 'sem-7', subjectName: 'PC Interfacing', subjectCode: 'EC-452T', category: 'Elective', electiveGroup: 'Pool Elective', credits: 4, createdAt: '2024-01-01' },
   { id: 'sub-ece-sem7-pool-3', departmentId: 'dept-ece', semesterId: 'sem-7', subjectName: 'Work Study', subjectCode: 'ME-473T', category: 'Elective', electiveGroup: 'Pool Elective', credits: 4, createdAt: '2024-01-01' },
   { id: 'sub-ece-sem7-pool-4', departmentId: 'dept-ece', semesterId: 'sem-7', subjectName: 'Multimedia', subjectCode: 'CS-402T', category: 'Elective', electiveGroup: 'Pool Elective', credits: 4, createdAt: '2024-01-01' },
@@ -269,6 +271,7 @@ export const INITIAL_SUBJECTS: Subject[] = [
   { id: 'sub-ee-sem1-3', departmentId: 'dept-ee', semesterId: 'sem-1', subjectName: 'Engineering Mathematics-I', subjectCode: 'MA-101T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
   { id: 'sub-ee-sem1-4', departmentId: 'dept-ee', semesterId: 'sem-1', subjectName: 'Communicative English', subjectCode: 'HU-101T', category: 'Theory', credits: 3, createdAt: '2024-01-01' },
   { id: 'sub-ee-sem1-5', departmentId: 'dept-ee', semesterId: 'sem-1', subjectName: 'Computer Fundamentals & Programming', subjectCode: 'CS-101T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ee-sem1-ee101', departmentId: 'dept-ee', semesterId: 'sem-1', subjectName: 'Basic Electrical Engineering', subjectCode: 'EE-101T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
   { id: 'sub-ee-sem1-6', departmentId: 'dept-ee', semesterId: 'sem-1', subjectName: 'Circuit Theory', subjectCode: 'EE-103N', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
   { id: 'sub-ee-sem1-7', departmentId: 'dept-ee', semesterId: 'sem-1', subjectName: 'Manufacturing Techniques', subjectCode: 'ME-101T', category: 'Theory', credits: 3, createdAt: '2024-01-01' },
 
@@ -276,32 +279,33 @@ export const INITIAL_SUBJECTS: Subject[] = [
   { id: 'sub-ee-sem2-1', departmentId: 'dept-ee', semesterId: 'sem-2', subjectName: 'Engineering Physics-II', subjectCode: 'PH-102T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
   { id: 'sub-ee-sem2-2', departmentId: 'dept-ee', semesterId: 'sem-2', subjectName: 'Engineering Mathematics-II', subjectCode: 'MA-102T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
   { id: 'sub-ee-sem2-3', departmentId: 'dept-ee', semesterId: 'sem-2', subjectName: 'Engineering Graphics', subjectCode: 'ME-107T', category: 'Theory', credits: 3, createdAt: '2024-01-01' },
-  { id: 'sub-ee-sem2-4', departmentId: 'dept-ee', semesterId: 'sem-2', subjectName: 'Basic Electronics Engineering', subjectCode: 'EL-102T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ee-sem2-4', departmentId: 'dept-ee', semesterId: 'sem-2', subjectName: 'Basic Electronics Engineering', subjectCode: 'EI-101T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
   { id: 'sub-ee-sem2-5', departmentId: 'dept-ee', semesterId: 'sem-2', subjectName: 'Environments Studies', subjectCode: 'CY-103T', category: 'Theory', credits: 3, createdAt: '2024-01-01' },
   { id: 'sub-ee-sem2-6', departmentId: 'dept-ee', semesterId: 'sem-2', subjectName: 'Fundamentals of Economics', subjectCode: 'HU-103T', category: 'Theory', credits: 3, createdAt: '2024-01-01' },
   { id: 'sub-ee-sem2-7', departmentId: 'dept-ee', semesterId: 'sem-2', subjectName: 'Basic Mechanical Engineering', subjectCode: 'ME-105T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
 
   // Semester 3 (Theory Courses)
   { id: 'sub-ee-sem3-1', departmentId: 'dept-ee', semesterId: 'sem-3', subjectName: 'Engineering Mathematics-III', subjectCode: 'MA-201T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
-  { id: 'sub-ee-sem3-2', departmentId: 'dept-ee', semesterId: 'sem-3', subjectName: 'Analog Electronics', subjectCode: 'EL-201T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
-  { id: 'sub-ee-sem3-3', departmentId: 'dept-ee', semesterId: 'sem-3', subjectName: 'Network Analysis & Synthesis', subjectCode: 'EE-201N', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
-  { id: 'sub-ee-sem3-4', departmentId: 'dept-ee', semesterId: 'sem-3', subjectName: 'Electrical Machines-I', subjectCode: 'EE-203N', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
-  { id: 'sub-ee-sem3-5', departmentId: 'dept-ee', semesterId: 'sem-3', subjectName: 'Electrical Measurement and Instrumentation', subjectCode: 'EE-205N', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
-  { id: 'sub-ee-sem3-6', departmentId: 'dept-ee', semesterId: 'sem-3', subjectName: 'Electrical Engineering Materials', subjectCode: 'EE-207N', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ee-sem3-2', departmentId: 'dept-ee', semesterId: 'sem-3', subjectName: 'Analog Electronics', subjectCode: 'EI-201T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ee-sem3-3', departmentId: 'dept-ee', semesterId: 'sem-3', subjectName: 'Network Analysis & Synthesis', subjectCode: 'EE-201T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ee-sem3-4', departmentId: 'dept-ee', semesterId: 'sem-3', subjectName: 'Electrical Machines-I', subjectCode: 'EE-203T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ee-sem3-5', departmentId: 'dept-ee', semesterId: 'sem-3', subjectName: 'Electrical Measurement', subjectCode: 'EE-205T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ee-sem3-6', departmentId: 'dept-ee', semesterId: 'sem-3', subjectName: 'Electrical Engineering Materials', subjectCode: 'EE-207T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
 
   // Semester 4 (Theory Courses)
-  { id: 'sub-ee-sem4-1', departmentId: 'dept-ee', semesterId: 'sem-4', subjectName: 'Linear Integrated Circuits', subjectCode: 'EL-202T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ee-sem4-1', departmentId: 'dept-ee', semesterId: 'sem-4', subjectName: 'Linear Integrated Circuits', subjectCode: 'EI-202T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
   { id: 'sub-ee-sem4-2', departmentId: 'dept-ee', semesterId: 'sem-4', subjectName: 'Digital Electronics', subjectCode: 'EC-204T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
   { id: 'sub-ee-sem4-3', departmentId: 'dept-ee', semesterId: 'sem-4', subjectName: 'Computer Organization', subjectCode: 'CS-204T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
-  { id: 'sub-ee-sem4-4', departmentId: 'dept-ee', semesterId: 'sem-4', subjectName: 'Electrical Machines-II', subjectCode: 'EE-204N', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
-  { id: 'sub-ee-sem4-5', departmentId: 'dept-ee', semesterId: 'sem-4', subjectName: 'Power System-I', subjectCode: 'EE-206N', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
-  { id: 'sub-ee-sem4-6', departmentId: 'dept-ee', semesterId: 'sem-4', subjectName: 'Electromagnetic Field Theory', subjectCode: 'EE-208N', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ee-sem4-4', departmentId: 'dept-ee', semesterId: 'sem-4', subjectName: 'Electrical Machines-II', subjectCode: 'EE-204T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ee-sem4-me212', departmentId: 'dept-ee', semesterId: 'sem-4', subjectName: 'Industrial Management', subjectCode: 'ME-212T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ee-sem4-6', departmentId: 'dept-ee', semesterId: 'sem-4', subjectName: 'Electromagnetic Theory', subjectCode: 'EC-203T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
 
   // Semester 5 (Theory Courses & Department Elective-I)
-  { id: 'sub-ee-sem5-1', departmentId: 'dept-ee', semesterId: 'sem-5', subjectName: 'Control System', subjectCode: 'EE-301N', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
-  { id: 'sub-ee-sem5-2', departmentId: 'dept-ee', semesterId: 'sem-5', subjectName: 'Power Electronics', subjectCode: 'EE-303N', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
-  { id: 'sub-ee-sem5-3', departmentId: 'dept-ee', semesterId: 'sem-5', subjectName: 'Power System-II', subjectCode: 'EE-305N', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
-  { id: 'sub-ee-sem5-4', departmentId: 'dept-ee', semesterId: 'sem-5', subjectName: 'Microprocessor & their applications', subjectCode: 'EL-301T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ee-sem5-1', departmentId: 'dept-ee', semesterId: 'sem-5', subjectName: 'Control System', subjectCode: 'EE-301T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ee-sem5-2', departmentId: 'dept-ee', semesterId: 'sem-5', subjectName: 'Power Electronics', subjectCode: 'EE-303T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ee-sem4-5', departmentId: 'dept-ee', semesterId: 'sem-5', subjectName: 'Power System-I', subjectCode: 'EE-305T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ee-sem5-ee307', departmentId: 'dept-ee', semesterId: 'sem-5', subjectName: 'Instrumentation', subjectCode: 'EE-307T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ee-sem5-4', departmentId: 'dept-ee', semesterId: 'sem-5', subjectName: 'Microprocessor & their applications', subjectCode: 'EI-301T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
   { id: 'sub-ee-sem5-5', departmentId: 'dept-ee', semesterId: 'sem-5', subjectName: 'Signal & System', subjectCode: 'EC-202T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
   // Department Elective-I Options:
   { id: 'sub-ee-sem5-el1', departmentId: 'dept-ee', semesterId: 'sem-5', subjectName: 'Introduction to Electrical Vehicles', subjectCode: 'EE-307N', category: 'Elective', electiveGroup: 'Department Elective-I', credits: 3, createdAt: '2024-01-01' },
@@ -310,10 +314,11 @@ export const INITIAL_SUBJECTS: Subject[] = [
   { id: 'sub-ee-sem5-el4', departmentId: 'dept-ee', semesterId: 'sem-5', subjectName: 'MOOC Course', subjectCode: 'EE-313N', category: 'Elective', electiveGroup: 'Department Elective-I', credits: 3, createdAt: '2024-01-01' },
 
   // Semester 6 (Theory Courses & Department Elective-II)
-  { id: 'sub-ee-sem6-1', departmentId: 'dept-ee', semesterId: 'sem-6', subjectName: 'Power Plant Engineering', subjectCode: 'EE-304N', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
-  { id: 'sub-ee-sem6-2', departmentId: 'dept-ee', semesterId: 'sem-6', subjectName: 'Computer Simulation of Power System', subjectCode: 'EE-306N', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
-  { id: 'sub-ee-sem6-3', departmentId: 'dept-ee', semesterId: 'sem-6', subjectName: 'Advanced Control System', subjectCode: 'EE-308N', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
-  { id: 'sub-ee-sem6-4', departmentId: 'dept-ee', semesterId: 'sem-6', subjectName: 'Special Purpose Machines', subjectCode: 'EE-310N', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ee-sem5-3', departmentId: 'dept-ee', semesterId: 'sem-6', subjectName: 'Power System -II', subjectCode: 'EE-302T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ee-sem6-1', departmentId: 'dept-ee', semesterId: 'sem-6', subjectName: 'Power Plant Engineering', subjectCode: 'EE-304T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ee-sem6-2', departmentId: 'dept-ee', semesterId: 'sem-6', subjectName: 'Computer Simulation of Power System', subjectCode: 'EE-306T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ee-sem6-3', departmentId: 'dept-ee', semesterId: 'sem-6', subjectName: 'Digital & Non Linear Control System', subjectCode: 'EE-308T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ee-sem6-4', departmentId: 'dept-ee', semesterId: 'sem-6', subjectName: 'Special Purpose Machines', subjectCode: 'EE-310T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
   { id: 'sub-ee-sem6-5', departmentId: 'dept-ee', semesterId: 'sem-6', subjectName: 'Elements of Communication Engg.', subjectCode: 'EC-312T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
   // Department Elective-II Options:
   { id: 'sub-ee-sem6-el1', departmentId: 'dept-ee', semesterId: 'sem-6', subjectName: 'SCADA & Energy Management', subjectCode: 'EE-314N', category: 'Elective', electiveGroup: 'Department Elective-II', credits: 3, createdAt: '2024-01-01' },
@@ -321,16 +326,39 @@ export const INITIAL_SUBJECTS: Subject[] = [
   { id: 'sub-ee-sem6-el3', departmentId: 'dept-ee', semesterId: 'sem-6', subjectName: 'FACTSs and Devices', subjectCode: 'EE-318N', category: 'Elective', electiveGroup: 'Department Elective-II', credits: 3, createdAt: '2024-01-01' },
   { id: 'sub-ee-sem6-el4', departmentId: 'dept-ee', semesterId: 'sem-6', subjectName: 'MOOC Course', subjectCode: 'EE-320N', category: 'Elective', electiveGroup: 'Department Elective-II', credits: 3, createdAt: '2024-01-01' },
 
-  // Semester 7 (Theory Courses, Department Elective-III & Open Elective)
-  { id: 'sub-ee-sem7-1', departmentId: 'dept-ee', semesterId: 'sem-7', subjectName: 'Protection & Switchgear', subjectCode: 'EE-401N', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
-  { id: 'sub-ee-sem7-2', departmentId: 'dept-ee', semesterId: 'sem-7', subjectName: 'Electric Drives & Control', subjectCode: 'EE-402N', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  // Semester 7 (Theory Courses, Department Elective-III, Pool Electives & Open Electives)
+  { id: 'sub-ee-sem7-1', departmentId: 'dept-ee', semesterId: 'sem-7', subjectName: 'Protection & Switchgear', subjectCode: 'EE-401T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ee-sem7-ee403', departmentId: 'dept-ee', semesterId: 'sem-7', subjectName: 'High Voltage Engineering', subjectCode: 'EE-403T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ee-sem7-hu402', departmentId: 'dept-ee', semesterId: 'sem-7', subjectName: 'Engineering Economics', subjectCode: 'HU-402T', category: 'Theory', credits: 3, createdAt: '2024-01-01' },
   { id: 'sub-ee-sem7-3', departmentId: 'dept-ee', semesterId: 'sem-7', subjectName: 'Industrial Training', subjectCode: 'EE-405T', category: 'Training', credits: 2, createdAt: '2024-01-01' },
   { id: 'sub-ee-sem7-4', departmentId: 'dept-ee', semesterId: 'sem-7', subjectName: 'Seminar', subjectCode: 'EE-407T', category: 'Seminar', credits: 2, createdAt: '2024-01-01' },
   { id: 'sub-ee-sem7-el3', departmentId: 'dept-ee', semesterId: 'sem-7', subjectName: 'Department Elective-III', subjectCode: 'Department Elective-III', category: 'Elective', electiveGroup: 'Department Elective-III', note: 'Elective course options determined per academic session guidelines', credits: 3, createdAt: '2024-01-01' },
   { id: 'sub-ee-sem7-oe', departmentId: 'dept-ee', semesterId: 'sem-7', subjectName: 'Open Elective', subjectCode: 'Open Elective', category: 'Elective', electiveGroup: 'Open Elective', note: 'Interdisciplinary open elective course offered across university departments', credits: 3, createdAt: '2024-01-01' },
+  // Semester 7 Pool Electives
+  { id: 'sub-ee-sem7-pool-1', departmentId: 'dept-ee', semesterId: 'sem-7', subjectName: 'Non Conventional Energy Sources', subjectCode: 'EE-411T', category: 'Elective', electiveGroup: 'Pool Elective', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ee-sem7-pool-2', departmentId: 'dept-ee', semesterId: 'sem-7', subjectName: 'Neural Networks & Fuzzy Logic', subjectCode: 'EE-413T', category: 'Elective', electiveGroup: 'Pool Elective', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ee-sem7-pool-3', departmentId: 'dept-ee', semesterId: 'sem-7', subjectName: 'Utilization of Electrical Power & Traction', subjectCode: 'EE-415T', category: 'Elective', electiveGroup: 'Pool Elective', credits: 4, createdAt: '2024-01-01' },
+  // Semester 7 Open Electives
+  { id: 'sub-ee-sem7-open-1', departmentId: 'dept-ee', semesterId: 'sem-7', subjectName: 'Principal of Management', subjectCode: 'HU-449T', category: 'Elective', electiveGroup: 'Open Elective', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ee-sem7-open-2', departmentId: 'dept-ee', semesterId: 'sem-7', subjectName: 'Operations Research', subjectCode: 'MA-491T', category: 'Elective', electiveGroup: 'Open Elective', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ee-sem7-open-3', departmentId: 'dept-ee', semesterId: 'sem-7', subjectName: 'Charge Transfer in Plasma', subjectCode: 'CY-491T', category: 'Elective', electiveGroup: 'Open Elective', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ee-sem7-open-4', departmentId: 'dept-ee', semesterId: 'sem-7', subjectName: 'Introduction to Psychology', subjectCode: 'HU-493T', category: 'Elective', electiveGroup: 'Open Elective', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ee-sem7-open-5', departmentId: 'dept-ee', semesterId: 'sem-7', subjectName: 'Polymeric Materials and their Applications', subjectCode: 'CY-401T', category: 'Elective', electiveGroup: 'Open Elective', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ee-sem7-open-6', departmentId: 'dept-ee', semesterId: 'sem-7', subjectName: 'Futuristic Materials', subjectCode: 'PH-419T', category: 'Elective', electiveGroup: 'Open Elective', credits: 4, createdAt: '2024-01-01' },
 
-  // Semester 8 (Theory / Project / Practical Components)
-  { id: 'sub-ee-sem8-1', departmentId: 'dept-ee', semesterId: 'sem-8', subjectName: 'Major Project', subjectCode: 'EE-410P', category: 'Project', credits: 8, createdAt: '2024-01-01' },
+  // Semester 8 (Theory, Pool Electives, Open Electives & Projects)
+  { id: 'sub-ee-sem7-2', departmentId: 'dept-ee', semesterId: 'sem-8', subjectName: 'Electric Drives & Control', subjectCode: 'EE-402T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ee-sem8-ee404', departmentId: 'dept-ee', semesterId: 'sem-8', subjectName: 'Electrical Machine Design', subjectCode: 'EE-404T', category: 'Theory', credits: 4, createdAt: '2024-01-01' },
+  // Semester 8 Pool Electives
+  { id: 'sub-ee-sem8-pool-1', departmentId: 'dept-ee', semesterId: 'sem-8', subjectName: 'E.H.V AC & DC Transmission', subjectCode: 'EE-406T', category: 'Elective', electiveGroup: 'Pool Elective', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ee-sem8-pool-2', departmentId: 'dept-ee', semesterId: 'sem-8', subjectName: 'Power Quality', subjectCode: 'EE-408T', category: 'Elective', electiveGroup: 'Pool Elective', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ee-sem8-pool-3', departmentId: 'dept-ee', semesterId: 'sem-8', subjectName: 'Power System Operation & Control', subjectCode: 'EE-410T', category: 'Elective', electiveGroup: 'Pool Elective', credits: 4, createdAt: '2024-01-01' },
+  // Semester 8 Open Electives
+  { id: 'sub-ee-sem8-open-1', departmentId: 'dept-ee', semesterId: 'sem-8', subjectName: 'Material Imperfection and Applications', subjectCode: 'PH-429T', category: 'Elective', electiveGroup: 'Open Elective', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ee-sem8-open-2', departmentId: 'dept-ee', semesterId: 'sem-8', subjectName: 'Quantitative Methods in Economics', subjectCode: 'HU-409T', category: 'Elective', electiveGroup: 'Open Elective', credits: 4, createdAt: '2024-01-01' },
+  { id: 'sub-ee-sem8-open-3', departmentId: 'dept-ee', semesterId: 'sem-8', subjectName: 'Foreign Trade', subjectCode: 'HU-407T', category: 'Elective', electiveGroup: 'Open Elective', credits: 4, createdAt: '2024-01-01' },
+  // Projects & Practicals
+  { id: 'sub-ee-sem8-1', departmentId: 'dept-ee', semesterId: 'sem-8', subjectName: 'Project-II', subjectCode: 'EE-406P', category: 'Project', credits: 10, createdAt: '2024-01-01' },
   { id: 'sub-ee-sem8-2', departmentId: 'dept-ee', semesterId: 'sem-8', subjectName: 'Internship', subjectCode: 'EE-412P', category: 'Practical', note: 'Internship / Practical component (Option with MOOC-I EE-420N)', credits: 4, createdAt: '2024-01-01' },
   { id: 'sub-ee-sem8-3', departmentId: 'dept-ee', semesterId: 'sem-8', subjectName: 'MOOC-I', subjectCode: 'EE-420N', category: 'Elective', note: 'MOOC-I online course component (Option with Internship EE-412P)', credits: 4, createdAt: '2024-01-01' },
 

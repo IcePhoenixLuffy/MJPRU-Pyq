@@ -173,7 +173,7 @@ export function getParentRoute(route: NavigationRoute): NavigationRoute | null {
     };
   }
 
-  if (route.tab === 'recent' || route.tab === 'about' || route.tab === 'contact' || route.tab === 'admin') {
+  if (route.tab === 'recent' || route.tab === 'about' || route.tab === 'admin') {
     if (route.paperId) {
       return {
         ...route,
@@ -309,10 +309,6 @@ export function getPageTitle(
 
   if (route.tab === 'about') {
     return `About MJPRU PYQ – Academic Mission & Disclaimer`;
-  }
-
-  if (route.tab === 'contact') {
-    return `Contact & Academic Inquiries | MJPRU PYQ`;
   }
 
   if (route.tab === 'admin') {

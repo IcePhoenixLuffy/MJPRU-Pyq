@@ -25,7 +25,13 @@ export const supabase: SupabaseClient | null = isSupabaseConfigured()
     })
   : null;
 
-export const OFFICIAL_ADMIN_EMAIL = 'admin@mjpru.ac.in';
+const processEnv = (typeof process !== 'undefined' && process.env ? process.env : {}) as Record<string, string | undefined>;
+export const OFFICIAL_ADMIN_EMAIL =
+  (env.VITE_OFFICIAL_ADMIN_EMAIL ||
+    processEnv.VITE_OFFICIAL_ADMIN_EMAIL ||
+    processEnv.OFFICIAL_ADMIN_EMAIL ||
+    'admin@mjpru.ac.in').trim();
+const sqlSafeAdminEmail = OFFICIAL_ADMIN_EMAIL.replace(/'/g, "''");
 
 /**
  * Checks whether an authenticated Supabase user is the authorized administrator.
@@ -45,7 +51,7 @@ export const isAuthorizedAdminUser = (user: { email?: string; app_metadata?: Rec
 export const SUPABASE_SQL_SETUP = `-- ==============================================================================
 -- MJPRU PYQ Database Schema & Security Setup
 -- University: M.J.P. Rohilkhand University, Bareilly (U.P.)
--- Authorized Administrator: admin@mjpru.ac.in
+-- Authorized Administrator: ${sqlSafeAdminEmail}
 -- ==============================================================================
 
 -- 1. Enable UUID Extension
@@ -163,12 +169,12 @@ CREATE POLICY "Public subjects read" ON public.subjects FOR SELECT USING (true);
 CREATE POLICY "Public question papers read" ON public.question_papers FOR SELECT USING (true);
 CREATE POLICY "Public profiles read" ON public.profiles FOR SELECT USING (true);
 
--- Authenticated Admin WRITE access restricted strictly to admin@mjpru.ac.in or role 'admin'
+-- Authenticated Admin WRITE access restricted strictly to ${sqlSafeAdminEmail} or role 'admin'
 DROP POLICY IF EXISTS "Admin write departments" ON public.departments;
 CREATE POLICY "Admin write departments" ON public.departments 
   FOR ALL USING (
     auth.role() = 'authenticated' AND (
-      auth.jwt() ->> 'email' = 'admin@mjpru.ac.in' OR 
+      auth.jwt() ->> 'email' = '${sqlSafeAdminEmail}' OR 
       (auth.jwt() -> 'app_metadata' ->> 'role') = 'admin'
     )
   );
@@ -177,7 +183,7 @@ DROP POLICY IF EXISTS "Admin write subjects" ON public.subjects;
 CREATE POLICY "Admin write subjects" ON public.subjects 
   FOR ALL USING (
     auth.role() = 'authenticated' AND (
-      auth.jwt() ->> 'email' = 'admin@mjpru.ac.in' OR 
+      auth.jwt() ->> 'email' = '${sqlSafeAdminEmail}' OR 
       (auth.jwt() -> 'app_metadata' ->> 'role') = 'admin'
     )
   );
@@ -186,7 +192,7 @@ DROP POLICY IF EXISTS "Admin write papers" ON public.question_papers;
 CREATE POLICY "Admin write papers" ON public.question_papers 
   FOR ALL USING (
     auth.role() = 'authenticated' AND (
-      auth.jwt() ->> 'email' = 'admin@mjpru.ac.in' OR 
+      auth.jwt() ->> 'email' = '${sqlSafeAdminEmail}' OR 
       (auth.jwt() -> 'app_metadata' ->> 'role') = 'admin'
     )
   );
@@ -208,7 +214,7 @@ CREATE POLICY "Admin Upload PDF" ON storage.objects
   FOR INSERT WITH CHECK (
     bucket_id = 'pyq-papers' AND 
     auth.role() = 'authenticated' AND (
-      auth.jwt() ->> 'email' = 'admin@mjpru.ac.in' OR 
+      auth.jwt() ->> 'email' = '${sqlSafeAdminEmail}' OR 
       (auth.jwt() -> 'app_metadata' ->> 'role') = 'admin'
     )
   );
@@ -218,7 +224,7 @@ CREATE POLICY "Admin Update PDF" ON storage.objects
   FOR UPDATE USING (
     bucket_id = 'pyq-papers' AND 
     auth.role() = 'authenticated' AND (
-      auth.jwt() ->> 'email' = 'admin@mjpru.ac.in' OR 
+      auth.jwt() ->> 'email' = '${sqlSafeAdminEmail}' OR 
       (auth.jwt() -> 'app_metadata' ->> 'role') = 'admin'
     )
   );
@@ -228,7 +234,7 @@ CREATE POLICY "Admin Delete PDF" ON storage.objects
   FOR DELETE USING (
     bucket_id = 'pyq-papers' AND 
     auth.role() = 'authenticated' AND (
-      auth.jwt() ->> 'email' = 'admin@mjpru.ac.in' OR 
+      auth.jwt() ->> 'email' = '${sqlSafeAdminEmail}' OR 
       (auth.jwt() -> 'app_metadata' ->> 'role') = 'admin'
     )
   );

@@ -126,7 +126,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             await supabase.auth.signOut();
             setIsAuthenticated(false);
             setCurrentUser(null);
-            setAuthError('Access Denied: Only authorized administrator accounts (admin@mjpru.ac.in) have access.');
+            setAuthError(`Access Denied: Only authorized administrator accounts (${OFFICIAL_ADMIN_EMAIL}) have access.`);
           }
         }
       } catch (err) {
@@ -1812,7 +1812,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 <li>Set them in your environment variables:
                   <code className="block bg-white border border-slate-200 p-2.5 rounded-xl text-slate-800 font-mono mt-1 shadow-2xs">
                     VITE_SUPABASE_URL=https://your-project.supabase.co<br />
-                    VITE_SUPABASE_ANON_KEY=your-anon-public-key-here
+                    VITE_SUPABASE_ANON_KEY=your-anon-public-key-here<br />
+                    VITE_OFFICIAL_ADMIN_EMAIL=admin@mjpru.ac.in
                   </code>
                 </li>
                 <li>Go to the <strong>SQL Editor</strong> in Supabase, paste the script below, and run it.</li>
