@@ -14,10 +14,9 @@ export const MagneticCursor: React.FC = () => {
   const [isEnabled, setIsEnabled] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [isClicking, setIsClicking] = useState(false);
+  const [position, setPosition] = useState({ x: -100, y: -100 });
   const [hoverType, setHoverType] = useState<'button' | 'card' | 'input' | null>(null);
 
-  const cursorRef = useRef<HTMLDivElement | null>(null);
-  const posRef = useRef({ x: -100, y: -100 });
   const activeElementRef = useRef<HTMLElement | null>(null);
   const originalTransitionRef = useRef<string>('');
 
@@ -37,10 +36,7 @@ export const MagneticCursor: React.FC = () => {
     const handleMouseMove = (e: MouseEvent) => {
       const mouseX = e.clientX;
       const mouseY = e.clientY;
-      posRef.current = { x: mouseX, y: mouseY };
-      if (cursorRef.current) {
-        cursorRef.current.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0)`;
-      }
+      setPosition({ x: mouseX, y: mouseY });
 
       // Detect hover over interactive elements
       const target = e.target as HTMLElement | null;
@@ -104,10 +100,7 @@ export const MagneticCursor: React.FC = () => {
     const handleMouseUp = () => setIsClicking(false);
 
     const handleMouseLeave = () => {
-      posRef.current = { x: -100, y: -100 };
-      if (cursorRef.current) {
-        cursorRef.current.style.transform = 'translate3d(-100px, -100px, 0)';
-      }
+      setPosition({ x: -100, y: -100 });
       if (activeElementRef.current) {
         activeElementRef.current.style.transform = 'translate3d(0px, 0px, 0px)';
         activeElementRef.current = null;
@@ -145,35 +138,27 @@ export const MagneticCursor: React.FC = () => {
       aria-hidden="true"
     >
       <div
-        ref={cursorRef}
-        className="fixed top-0 left-0 will-change-transform"
+        className={`fixed top-0 left-0 transition-[width,height,transform,background-color] duration-150 ease-out flex items-center justify-center ${cursorSize}`}
         style={{
-          transform: `translate3d(${posRef.current.x}px, ${posRef.current.y}px, 0)`,
+          transform: `translate3d(${position.x}px, ${position.y}px, 0) translate(-50%, -50%) rotate(${
+            isHovered ? (hoverType === 'input' ? '0deg' : '90deg') : '45deg'
+          }) scale(${isClicking ? 0.8 : 1})`,
+          background: isHovered
+            ? (hoverType === 'input'
+                ? '#0e0fed'
+                : 'linear-gradient(135deg, #f2b1d8 0%, #ffdc6a 50%, #8bf0ba 100%)')
+            : 'linear-gradient(135deg, #0e0fed 0%, #94f0f1 100%)',
+          boxShadow: isHovered
+            ? '0 0 16px rgba(14, 15, 237, 0.45), 0 0 6px rgba(242, 177, 216, 0.6)'
+            : '0 0 10px rgba(14, 15, 237, 0.35), 0 1px 3px rgba(0, 0, 0, 0.2)',
+          border: isHovered ? '1.5px solid #0e0fed' : '1px solid rgba(255, 255, 255, 0.8)',
         }}
       >
-        <div
-          className={`transition-[width,height,transform,background-color] duration-150 ease-out flex items-center justify-center ${cursorSize}`}
-          style={{
-            transform: `translate(-50%, -50%) rotate(${
-              isHovered ? (hoverType === 'input' ? '0deg' : '90deg') : '45deg'
-            }) scale(${isClicking ? 0.8 : 1})`,
-            background: isHovered
-              ? (hoverType === 'input'
-                  ? '#0e0fed'
-                  : 'linear-gradient(135deg, #f2b1d8 0%, #ffdc6a 50%, #8bf0ba 100%)')
-              : 'linear-gradient(135deg, #0e0fed 0%, #94f0f1 100%)',
-            boxShadow: isHovered
-              ? '0 0 16px rgba(14, 15, 237, 0.45), 0 0 6px rgba(242, 177, 216, 0.6)'
-              : '0 0 10px rgba(14, 15, 237, 0.35), 0 1px 3px rgba(0, 0, 0, 0.2)',
-            border: isHovered ? '1.5px solid #0e0fed' : '1px solid rgba(255, 255, 255, 0.8)',
-          }}
-        >
-          {/* Subtle center precision core */}
-          <div 
-            className="w-1 h-1 rounded-full bg-white transition-opacity duration-150"
-            style={{ opacity: isHovered ? 0.9 : 0.6 }}
-          />
-        </div>
+        {/* Subtle center precision core */}
+        <div 
+          className="w-1 h-1 rounded-full bg-white transition-opacity duration-150"
+          style={{ opacity: isHovered ? 0.9 : 0.6 }}
+        />
       </div>
     </div>
   );

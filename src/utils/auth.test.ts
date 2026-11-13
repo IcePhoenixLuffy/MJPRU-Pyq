@@ -2,21 +2,32 @@ import { test } from 'node:test';
 import assert from 'node:assert';
 import { OFFICIAL_ADMIN_EMAIL, isAuthorizedAdminUser } from '../lib/supabase';
 
-test('isAuthorizedAdminUser approves users with admin role in app_metadata', () => {
+test('isAuthorizedAdminUser approves official admin email', () => {
+  assert.strictEqual(isAuthorizedAdminUser({ email: 'admin@mjpru.ac.in' }), true);
+  assert.strictEqual(isAuthorizedAdminUser({ email: 'ADMIN@MJPRU.AC.IN' }), true);
+  assert.strictEqual(isAuthorizedAdminUser({ email: '  admin@mjpru.ac.in  ' }), true);
+});
+
+test('isAuthorizedAdminUser approves users with admin role in metadata', () => {
   assert.strictEqual(
-    isAuthorizedAdminUser({ app_metadata: { role: 'admin' } }),
+    isAuthorizedAdminUser({ email: 'staff@mjpru.ac.in', app_metadata: { role: 'admin' } }),
+    true
+  );
+  assert.strictEqual(
+    isAuthorizedAdminUser({ email: 'staff@mjpru.ac.in', user_metadata: { role: 'admin' } }),
     true
   );
 });
 
-test('isAuthorizedAdminUser rejects users without admin role in app_metadata', () => {
-  assert.strictEqual(isAuthorizedAdminUser({ app_metadata: { role: 'faculty' } }), false);
-  assert.strictEqual(isAuthorizedAdminUser({ app_metadata: {} }), false);
-  assert.strictEqual(isAuthorizedAdminUser({ user_metadata: { role: 'admin' } } as { app_metadata?: Record<string, any> }), false);
+test('isAuthorizedAdminUser rejects ordinary users without admin email or role', () => {
+  assert.strictEqual(isAuthorizedAdminUser({ email: 'student@mjpru.ac.in' }), false);
+  assert.strictEqual(isAuthorizedAdminUser({ email: 'john.doe@gmail.com' }), false);
+  assert.strictEqual(isAuthorizedAdminUser({ email: 'faculty@mjpru.ac.in', app_metadata: { role: 'faculty' } }), false);
   assert.strictEqual(isAuthorizedAdminUser(null), false);
   assert.strictEqual(isAuthorizedAdminUser(undefined), false);
+  assert.strictEqual(isAuthorizedAdminUser({ email: '' }), false);
 });
 
-test('OFFICIAL_ADMIN_EMAIL constant defaults to admin@mjpru.ac.in', () => {
+test('OFFICIAL_ADMIN_EMAIL constant is strictly admin@mjpru.ac.in', () => {
   assert.strictEqual(OFFICIAL_ADMIN_EMAIL, 'admin@mjpru.ac.in');
 });
